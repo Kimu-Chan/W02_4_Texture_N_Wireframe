@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35825.156 d17.13
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "W02_4_Texture_N_Wireframe", "W02_4_Texture_N_Wireframe\W02_4_Texture_N_Wireframe.vcxproj", "{4A803852-0987-40A0-BFB2-99BCC72FD3F8}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "W02_4_Texture_N_Wireframe", "W02_4_Texture_N_Wireframe\Intermediate\ProjectFiles\W02_4_Texture_N_Wireframe.vcxproj", "{4A803852-0987-40A0-BFB2-99BCC72FD3F8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{C8D5274F-AC00-46C7-1F8D-E88E81087A52}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,6 +26,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4A803852-0987-40A0-BFB2-99BCC72FD3F8} = {C8D5274F-AC00-46C7-1F8D-E88E81087A52}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4125FF5E-36F2-4EC4-8AAE-F0F1ACC0D63D}
