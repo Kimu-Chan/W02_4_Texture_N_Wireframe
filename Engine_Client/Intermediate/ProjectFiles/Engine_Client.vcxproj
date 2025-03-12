@@ -17,12 +17,13 @@
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{4a803852-0987-40a0-bfb2-99bcc72fd3f8}</ProjectGuid>
-    <RootNamespace>W024TextureNWireframe</RootNamespace>
+    <ProjectGuid>{3584311f-76d2-4fd8-a595-dbc9f5e6889f}</ProjectGuid>
+    <RootNamespace>EngineClient</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -52,24 +53,27 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
+
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Label="Shared">
+  <ImportGroup Label="Shared" >
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
+    <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    </ImportGroup>
+    <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    </ImportGroup>
+    <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    </ImportGroup>
+    <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    </ImportGroup>
+
   <PropertyGroup Label="UserMacros" />
+
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -126,32 +130,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\Source\Cube.h" />
-    <ClInclude Include="..\..\Source\json.hpp" />
-    <ClInclude Include="..\..\Source\Sphere.h" />
-    <ClInclude Include="..\..\Source\ThirdParty\ImGUI\imconfig.h" />
-    <ClInclude Include="..\..\Source\ThirdParty\ImGUI\imgui.h" />
-    <ClInclude Include="..\..\Source\ThirdParty\ImGUI\imgui_impl_dx11.h" />
-    <ClInclude Include="..\..\Source\ThirdParty\ImGUI\imgui_impl_win32.h" />
-    <ClInclude Include="..\..\Source\ThirdParty\ImGUI\imgui_internal.h" />
-    <ClInclude Include="..\..\Source\ThirdParty\ImGUI\imstb_rectpack.h" />
-    <ClInclude Include="..\..\Source\ThirdParty\ImGUI\imstb_textedit.h" />
-    <ClInclude Include="..\..\Source\ThirdParty\ImGUI\imstb_truetype.h" />
-    <ClInclude Include="..\..\Source\ThirdParty\Json\json.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="..\..\Source\ShaderW0.hlsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\Source\ThirdParty\ImGUI\imgui.cpp" />
-    <ClCompile Include="..\..\Source\ThirdParty\ImGUI\imgui_demo.cpp" />
-    <ClCompile Include="..\..\Source\ThirdParty\ImGUI\imgui_draw.cpp" />
-    <ClCompile Include="..\..\Source\ThirdParty\ImGUI\imgui_impl_dx11.cpp" />
-    <ClCompile Include="..\..\Source\ThirdParty\ImGUI\imgui_impl_win32.cpp" />
-    <ClCompile Include="..\..\Source\ThirdParty\ImGUI\imgui_tables.cpp" />
-    <ClCompile Include="..\..\Source\ThirdParty\ImGUI\imgui_widgets.cpp" />
-  </ItemGroup>
+
+  <ItemGroup></ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

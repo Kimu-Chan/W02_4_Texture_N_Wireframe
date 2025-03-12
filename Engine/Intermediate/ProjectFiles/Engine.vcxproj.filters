@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\Source\ThirdParty\ImGUI\imgui.cpp">
+      <Filter>Source\ThirdParty\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ThirdParty\ImGUI\imgui_demo.cpp">
+      <Filter>Source\ThirdParty\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ThirdParty\ImGUI\imgui_draw.cpp">
+      <Filter>Source\ThirdParty\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ThirdParty\ImGUI\imgui_impl_dx11.cpp">
+      <Filter>Source\ThirdParty\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ThirdParty\ImGUI\imgui_impl_win32.cpp">
+      <Filter>Source\ThirdParty\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ThirdParty\ImGUI\imgui_tables.cpp">
+      <Filter>Source\ThirdParty\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ThirdParty\ImGUI\imgui_widgets.cpp">
+      <Filter>Source\ThirdParty\ImGUI</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Source\ThirdParty\ImGUI\imconfig.h">
+      <Filter>Source\ThirdParty\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\ImGUI\imgui.h">
+      <Filter>Source\ThirdParty\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\ImGUI\imgui_impl_dx11.h">
+      <Filter>Source\ThirdParty\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\ImGUI\imgui_impl_win32.h">
+      <Filter>Source\ThirdParty\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\ImGUI\imgui_internal.h">
+      <Filter>Source\ThirdParty\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\ImGUI\imstb_rectpack.h">
+      <Filter>Source\ThirdParty\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\ImGUI\imstb_textedit.h">
+      <Filter>Source\ThirdParty\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\ImGUI\imstb_truetype.h">
+      <Filter>Source\ThirdParty\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\Json\json.hpp">
+      <Filter>Source\ThirdParty\JSON</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Cube.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Sphere.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source">
+      <UniqueIdentifier>{19b43ff2-b1ac-48b0-bc29-b94d73f19ab9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{15d43516-cd59-419c-b9bd-c0ba737061eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\ThirdParty">
+      <UniqueIdentifier>{02a84114-6ff8-4b1a-a2c3-eb88a18150e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\ThirdParty\ImGUI">
+      <UniqueIdentifier>{ba38614b-206e-4c75-b0ac-99f537d88fdf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\ThirdParty\JSON">
+      <UniqueIdentifier>{7579e94f-053a-423b-8755-1c6d5870fced}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\Shaders\ShaderW0.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>
