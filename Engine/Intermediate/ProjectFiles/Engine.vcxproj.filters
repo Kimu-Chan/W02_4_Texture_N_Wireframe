@@ -74,6 +74,9 @@
     <Filter Include="Source\ThirdParty\JSON">
       <UniqueIdentifier>{7579e94f-053a-423b-8755-1c6d5870fced}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Launch">
+      <UniqueIdentifier>{2e0b46d7-c405-454f-ba31-4d0e91eba227}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\..\Shaders\ShaderW0.hlsl">
