@@ -1,5 +1,16 @@
 ﻿#pragma once
 
+/*
+ * Unreal Engine의 HAL/PlatformMemory.h를 목표로 하는 헤더
+ *
+#include "CoreTypes.h"
+#include "GenericPlatform/GenericPlatformMemory.h"
+
+#include COMPILED_PLATFORM_HEADER(PlatformMemory.h)
+ */
+
+#define MULTI_THREAD
+
 #include "PlatformType.h"
 
 enum EAllocationType : uint8
@@ -10,22 +21,27 @@ enum EAllocationType : uint8
 
 /**
  * 엔진의 Heap 메모리의 할당량을 추적하는 클래스
- *
+ * malloc, free 할때마다 메모리 사용량을 추적합니다.
  * @note new로 생성한 객체는 추적하지 않습니다.
  */
 struct FPlatformMemory
 {
 private:
+#ifdef MULTI_THREAD
 	static std::atomic<uint64> ObjectAllocationBytes;
 	static std::atomic<uint64> ObjectAllocationCount;
 	static std::atomic<uint64> ContainerAllocationBytes;
 	static std::atomic<uint64> ContainerAllocationCount;
+#else
+	static std::atomic<uint64> TotalAllocationBytes;
+	static std::atomic<uint64> TotalAllocationCount;
+#endif
 
 	template <EAllocationType AllocType>
-	static void IncrementStats(size_t Size);
+	static void IncrementStats(SIZE_T Size);
 
 	template <EAllocationType AllocType>
-	static void DecrementStats(size_t Size);
+	static void DecrementStats(SIZE_T Size);
 
 public:
 	template <EAllocationType AllocType>
@@ -51,9 +67,7 @@ public:
 template <EAllocationType AllocType>
 void FPlatformMemory::IncrementStats(size_t Size)
 {
-	// TotalAllocationBytes += Size;
-	// ++TotalAllocationCount;
-
+#ifdef MULTI_THREAD
 	if constexpr (AllocType == EAT_Container)
 	{
 		ContainerAllocationBytes.fetch_add(Size, std::memory_order_relaxed);
@@ -68,15 +82,16 @@ void FPlatformMemory::IncrementStats(size_t Size)
 	{
 		static_assert(false, "Unknown allocation type");
 	}
+#else
+	TotalAllocationBytes += Size;
+	++TotalAllocationCount;
+#endif
 }
 
 template <EAllocationType AllocType>
 void FPlatformMemory::DecrementStats(size_t Size)
 {
-	// TotalAllocationBytes -= Size;
-	// --TotalAllocationCount;
-
-	// 멀티스레드 대비
+#ifdef MULTI_THREAD
 	if constexpr (AllocType == EAT_Container)
 	{
 		ContainerAllocationBytes.fetch_sub(Size, std::memory_order_relaxed);
@@ -91,10 +106,14 @@ void FPlatformMemory::DecrementStats(size_t Size)
 	{
 		static_assert(false, "Unknown allocation type");
 	}
+#else
+	TotalAllocationBytes -= Size;
+	--TotalAllocationCount;
+#endif
 }
 
 template <EAllocationType AllocType>
-void* FPlatformMemory::Malloc(size_t Size)
+void* FPlatformMemory::Malloc(const size_t Size)
 {
 	void* Ptr = std::malloc(Size);
 	if (Ptr)
@@ -105,7 +124,7 @@ void* FPlatformMemory::Malloc(size_t Size)
 }
 
 template <EAllocationType AllocType>
-void* FPlatformMemory::AlignedMalloc(size_t Size, size_t Alignment)
+void* FPlatformMemory::AlignedMalloc(const size_t Size, const size_t Alignment)
 {
 	void* Ptr = _aligned_malloc(Size, Alignment);
 	if (Ptr)
@@ -116,7 +135,7 @@ void* FPlatformMemory::AlignedMalloc(size_t Size, size_t Alignment)
 }
 
 template <EAllocationType AllocType>
-void FPlatformMemory::Free(void* Address, size_t Size)
+void FPlatformMemory::Free(void* Address, const size_t Size)
 {
 	if (Address)
 	{
@@ -126,7 +145,7 @@ void FPlatformMemory::Free(void* Address, size_t Size)
 }
 
 template <EAllocationType AllocType>
-void FPlatformMemory::AlignedFree(void* Address, size_t Size)
+void FPlatformMemory::AlignedFree(void* Address, const size_t Size)
 {
 	if (Address)
 	{
@@ -138,6 +157,7 @@ void FPlatformMemory::AlignedFree(void* Address, size_t Size)
 template <EAllocationType AllocType>
 uint64 FPlatformMemory::GetAllocationBytes()
 {
+#ifdef MULTI_THREAD
 	if constexpr (AllocType == EAT_Container)
 	{
 		return ContainerAllocationBytes;
@@ -151,11 +171,15 @@ uint64 FPlatformMemory::GetAllocationBytes()
 		static_assert(false, "Unknown AllocationType");
 		return -1;
 	}
+#else
+	return TotalAllocationBytes;
+#endif
 }
 
 template <EAllocationType AllocType>
 uint64 FPlatformMemory::GetAllocationCount()
 {
+#ifdef MULTI_THREAD
 	if constexpr (AllocType == EAT_Container)
 	{
 		return ContainerAllocationCount;
@@ -169,5 +193,8 @@ uint64 FPlatformMemory::GetAllocationCount()
 		static_assert(false, "Unknown AllocationType");
 		return -1;
 	}
+#else
+	return TotalAllocationCount;
+#endif
 }
 

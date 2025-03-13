@@ -22,7 +22,7 @@ namespace ESearchCase
 {
 enum Type : uint8
 {
-	/** Case sensitive. Upper/lower casing must match for strings to be considered equal. */
+	/** Case-sensitive . Upper/lower casing must match for strings to be considered equal. */
 	CaseSensitive,
 
 	/** Ignore case. Upper/lower casing does not matter when making a comparison. */
@@ -65,7 +65,7 @@ public:
 	FString(FString&&) = default;
 	FString& operator=(FString&&) = default;
 
-	FString(BaseStringType InString) : PrivateString(std::move(InString)) {}
+	explicit FString(BaseStringType InString) : PrivateString(std::move(InString)) {}
 
 #if IS_WIDECHAR
 private:
@@ -155,7 +155,7 @@ FORCEINLINE const TCHAR* FString::operator*() const
 
 FORCEINLINE FString FString::operator+(const FString& SubStr) const
 {
-	return this->PrivateString + SubStr.PrivateString;
+	return static_cast<FString>(this->PrivateString + SubStr.PrivateString);
 }
 
 FString operator+(const FString& Lhs, const FString& Rhs)
@@ -182,8 +182,8 @@ FORCEINLINE FString& FString::operator+=(const FString& SubStr)
 
 template <>
 struct std::hash<FString> {
-	size_t operator()(const FString& obj) const {
+	size_t operator()(const FString& InString) const {
 		// 해시 계산 로직
-		return std::hash<FString::BaseStringType>()(obj.PrivateString);
+		return std::hash<FString::BaseStringType>()(InString.PrivateString);
 	}
 };
