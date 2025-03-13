@@ -5,6 +5,7 @@
 #include "Core/Math/Transform.h"
 #include "Engine/GameFrameWork/Camera.h"
 #include "CoreUObject/Components/PrimitiveComponent.h"
+#include "Core/Math/Box.h"
 
 void URenderer::Create(HWND hWindow)
 {
@@ -219,7 +220,7 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp)
         }
 
     ConstantUpdateInfo UpdateInfo{ 
-        PrimitiveComp->GetWorldTransform(), 
+        PrimitiveComp->GetWorldTransform().GetMatrix(),
         PrimitiveComp->GetCustomColor(), 
         PrimitiveComp->IsUseVertexColor()
     };
@@ -236,6 +237,68 @@ void URenderer::RenderPrimitiveInternal(ID3D11Buffer* pBuffer, UINT numVertices)
     DeviceContext->IASetVertexBuffers(0, 1, &pBuffer, &Stride, &Offset);
 
     DeviceContext->Draw(numVertices, 0);
+}
+
+void URenderer::RenderBox(const FBox& Box, const FVector4& Color) const
+{
+    // 월드변환이 이미 돼있다
+    ConstantUpdateInfo UpdateInfo
+    {
+        FMatrix::Identity,
+        Color,
+        false,
+    };
+
+    UpdateConstant(UpdateInfo);
+    DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+
+    // Box의 Min, Max를 이용해 버텍스 배열 생성
+    FVertexSimple BoxVertices[8] =
+    {
+        {Box.Min.X, Box.Min.Y, Box.Min.Z, 1.0f, 1.0f, 1.0f, 1.0f},
+        {Box.Min.X, Box.Min.Y, Box.Max.Z, 1.0f, 1.0f, 1.0f, 1.0f},
+        {Box.Min.X, Box.Max.Y, Box.Min.Z, 1.0f, 1.0f, 1.0f, 1.0f},
+        {Box.Min.X, Box.Max.Y, Box.Max.Z, 1.0f, 1.0f, 1.0f, 1.0f},
+        {Box.Max.X, Box.Min.Y, Box.Min.Z, 1.0f, 1.0f, 1.0f, 1.0f},
+        {Box.Max.X, Box.Min.Y, Box.Max.Z, 1.0f, 1.0f, 1.0f, 1.0f},
+        {Box.Max.X, Box.Max.Y, Box.Min.Z, 1.0f, 1.0f, 1.0f, 1.0f},
+        {Box.Max.X, Box.Max.Y, Box.Max.Z, 1.0f, 1.0f, 1.0f, 1.0f},
+    };
+
+    std::vector<UINT> Indices =
+    {
+        0, 2, 2, 3, 3, 1, 1, 0, // 앞면
+        4, 6, 6, 7, 7, 5, 5, 4, // 뒷면
+        // 상단과 하단 연결
+        0, 4, 2, 6, 3, 7, 1, 5  // 상단과 하단을 연결하는 선
+    };
+
+    ID3D11Buffer* VertexBuffer = CreateVertexBuffer(BoxVertices, sizeof(FVertexSimple) * 8);
+
+    D3D11_SUBRESOURCE_DATA initData = {};
+    initData.pSysMem = BoxVertices;
+    UINT Stride = sizeof(FVertexSimple);
+    UINT Offset = 0;
+
+    // !NOTE : 임시 -> 나중에 버퍼는 캐시해야됨
+    ID3D11Buffer* IndexBuffer = nullptr;
+    D3D11_BUFFER_DESC bufferDesc = {};
+    bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+    bufferDesc.ByteWidth = sizeof(UINT) * Indices.size();
+    bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+    initData.pSysMem = Indices.data();
+
+    Device->CreateBuffer(&bufferDesc, &initData, &IndexBuffer);
+
+    DeviceContext->IASetVertexBuffers(0, 1, &VertexBuffer, &Stride, &Offset);
+    DeviceContext->IASetIndexBuffer(IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+    DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+
+    DeviceContext->DrawIndexed(Indices.size(), 0, 0);
+    if (IndexBuffer)
+        IndexBuffer->Release();
+    if (VertexBuffer)
+        VertexBuffer->Release();
 }
 
 ID3D11Buffer* URenderer::CreateVertexBuffer(const FVertexSimple* Vertices, UINT ByteWidth) const
@@ -271,7 +334,7 @@ void URenderer::UpdateConstant(const ConstantUpdateInfo& UpdateInfo) const
     FMatrix MVP = 
         FMatrix::Transpose(ProjectionMatrix) * 
         FMatrix::Transpose(ViewMatrix) * 
-        FMatrix::Transpose(UpdateInfo.Transform.GetMatrix());    // ��� ���۸� CPU �޸𸮿� ����
+        FMatrix::Transpose(UpdateInfo.TransformMatrix);    // ��� ���۸� CPU �޸𸮿� ����
 
     // D3D11_MAP_WRITE_DISCARD�� ���� ������ �����ϰ� ���ο� �����ͷ� ����� ���� ���
     DeviceContext->Map(ConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &ConstantBufferMSR);

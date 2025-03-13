@@ -78,7 +78,7 @@ void UWorld::Render()
     }
         
     RenderMainTexture(*Renderer);
-
+	RenderBoundingBoxes(*Renderer);
         
     // DisplayPickingTexture(*Renderer);
 
@@ -133,6 +133,15 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
     }
 }
 
+void UWorld::RenderBoundingBoxes(URenderer& Renderer)
+{
+    for (FBox* Box : BoundingBoxes)
+    {
+        if (Box && Box->IsValid())
+            Renderer.RenderBox(*Box);
+    }
+}
+
 void UWorld::DisplayPickingTexture(URenderer& Renderer)
 {
     Renderer.RenderPickingTexture();
@@ -155,7 +164,7 @@ void UWorld::ClearWorld()
 
 bool UWorld::DestroyActor(AActor* InActor)
 {
-    //@TODO: ³ªÁß¿¡ Destroy°¡ ½ÇÆÐÇÒ ÀÏÀÌ ÀÖ´Ù¸é return false; ÇÏ±â
+    //@TODO: ï¿½ï¿½ï¿½ß¿ï¿½ Destroyï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ù¸ï¿½ return false; ï¿½Ï±ï¿½
     assert(InActor);
 
     if (PendingDestroyActors.Find(InActor) != -1)
@@ -163,13 +172,13 @@ bool UWorld::DestroyActor(AActor* InActor)
         return true;
     }
 
-    // »èÁ¦µÉ ¶§ Destroyed È£Ãâ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Destroyed È£ï¿½ï¿½
     InActor->Destroyed();
 
-    // World¿¡¼­ Á¦°Å
+    // Worldï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     Actors.Remove(InActor);
 
-    // Á¦°Å ´ë±â¿­¿¡ Ãß°¡
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½â¿­ï¿½ï¿½ ï¿½ß°ï¿½
     PendingDestroyActors.Add(InActor);
     return true;
 }
@@ -265,4 +274,27 @@ UWorldInfo UWorld::GetWorldInfo() const
         i++;
     }
     return WorldInfo;
+}
+
+bool UWorld::LineTrace(const FVector& Start, const FVector& End, USceneComponent** FirstHitComponent) const
+{
+    for (AActor* Actor : Actors)
+    {
+        if (Actor->IsGizmoActor())
+        {
+            continue;
+        }
+        for (UActorComponent* Component : Actor->GetComponents())
+        {
+            if (USceneComponent* SceneComponent = dynamic_cast<USceneComponent*>(Component))
+            {
+                //if (SceneComponent->LineTrace(Start, End))
+                //{
+                //	*FirstHitComponent = SceneComponent;
+                //	return true;
+                //}
+            }
+        }
+    }
+    return false;
 }

@@ -40,7 +40,7 @@ private:
 	
     struct ConstantUpdateInfo
     {
-        const FTransform& Transform;
+        const FMatrix& TransformMatrix;
 		const FVector4& Color;
         bool bUseVertexColor;
     };
@@ -77,6 +77,8 @@ public:
      * @param numVertices 버텍스 버퍼에 저장된 버텍스의 총 개수
      */
     void RenderPrimitiveInternal(ID3D11Buffer* pBuffer, UINT numVertices) const;
+
+	void RenderBox(const class FBox& Box, const FVector4& Color = FVector4(1.0f, 1.0f, 1.0f, 1.0f)) const;
 
     /**
      * 정점 데이터로 Vertex Buffer를 생성합니다.

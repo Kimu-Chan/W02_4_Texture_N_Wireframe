@@ -2,11 +2,15 @@
 #include "PrimitiveComponent.h"
 #include "CoreUObject/World.h"
 #include "Engine/GameFrameWork/Actor.h"
+#include "World.h"
+
 
 
 void UPrimitiveComponent::BeginPlay()
 {
     Super::BeginPlay();
+    InitBoundingBox();
+    GetOwner()->GetWorld()->AddBoundingBox(&BoundingBox);
 }
 
 void UPrimitiveComponent::Tick(float DeltaTime)
