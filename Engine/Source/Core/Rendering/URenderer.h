@@ -105,6 +105,9 @@ public:
 
 	void OnUpdateWindowSize(int Width, int Height);
 
+    void GetPrimitiveLocalBounds(EPrimitiveType Type, FVector& OutMin, FVector& OutMax);
+
+
 protected:
     /** Direct3D Device 및 SwapChain을 생성합니다. */
     void CreateDeviceAndSwapChain(HWND hWindow);
@@ -167,7 +170,7 @@ protected:
 	
 	// Buffer Cache
 
-	std::unique_ptr<FBufferCache> BufferCache;
+	std::unique_ptr<struct FBufferCache> BufferCache;
 
 	FMatrix WorldMatrix;
     FMatrix ViewMatrix;

@@ -1,7 +1,7 @@
 #include "pch.h" 
 #include "SceneComponent.h"
 #include "PrimitiveComponent.h"
-#include "Debug/DebugConsole.h"
+#include "Debugging/DebugConsole.h"
 
 void USceneComponent::BeginPlay()
 {
@@ -13,12 +13,12 @@ void USceneComponent::Tick(float DeltaTime)
     Super::Tick(DeltaTime);
 }
 
-// ???�드 ?�랜?�폼 반환
+// 월드 트랜스폼 얻기
 const FTransform USceneComponent::GetWorldTransform()
 {
     if (Parent)
     {
-            // 부모�? ?�을 경우 부�??�드 * ??로컬
+            // 부모 월드 * 내 로컬
             FMatrix ParentWorld = Parent->GetWorldTransform().GetMatrix();
             FMatrix MyLocal = RelativeTransform.GetMatrix();
 
@@ -31,7 +31,7 @@ const FTransform USceneComponent::GetWorldTransform()
 
 void USceneComponent::SetRelativeTransform(const FTransform& InTransform)
 {
-    // ??로컬 ?�랜?�폼 갱신
+    // 로컬 트랜스폼 갱신
     RelativeTransform = InTransform;
     FVector Rot = RelativeTransform.GetRotation().GetEuler();
 
@@ -67,6 +67,6 @@ void USceneComponent::ApplyParentWorldTransform(const FTransform& ParentWorldTra
 
     FMatrix NewMatrix = MyLocal * ParentWorld.Inverse();
 
-    // ??로컬 ?�랜?�폼 갱신
+    // 로컬 트랜스폼 갱신
     SetRelativeTransform(NewMatrix.GetTransform());
 }

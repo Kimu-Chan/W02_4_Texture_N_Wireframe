@@ -169,6 +169,7 @@
     <ClInclude Include="Source\Core\HAL\PlatformType.h" />
     <ClInclude Include="Source\Core\Input\PlayerController.h" />
     <ClInclude Include="Source\Core\Input\PlayerInput.h" />
+    <ClInclude Include="Source\Core\Math\Box.h" />
     <ClInclude Include="Source\Core\Math\MathUtility.h" />
     <ClInclude Include="Source\Core\Math\Matrix.h" />
     <ClInclude Include="Source\Core\Math\Plane.h" />
@@ -217,6 +218,7 @@
     <ClCompile Include="Source\Core\HAL\PlatformMemory.cpp" />
     <ClCompile Include="Source\Core\Input\PlayerController.cpp" />
     <ClCompile Include="Source\Core\Input\PlayerInput.cpp" />
+    <ClCompile Include="Source\Core\Math\Box.cpp" />
     <ClCompile Include="Source\Core\Math\Matrix.cpp" />
     <ClCompile Include="Source\Core\Math\Plane.cpp" />
     <ClCompile Include="Source\Core\Math\Vector.cpp" />

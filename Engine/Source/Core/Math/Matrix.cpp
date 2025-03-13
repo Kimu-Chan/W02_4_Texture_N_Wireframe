@@ -370,3 +370,53 @@ FTransform FMatrix::GetTransform() const
         FQuat RotationQuat = FQuat::MakeFromRotationMatrix(*this);
         return FTransform(GetTranslation(), RotationQuat, GetScale());
 }
+
+FVector FMatrix::TransformPosition(const FVector& Position) const
+{
+    FVector4 Result = FMatrix::TransformVector4(FVector4(Position.X, Position.Y, Position.Z, 1.0f));
+    return FVector(Result.X, Result.Y, Result.Z);
+}
+
+FMatrix FMatrix::GetTransformMatrix() const
+{
+    FMatrix Translation;
+    Translation.M[3][0] = M[3][0];
+    Translation.M[3][1] = M[3][1];
+    Translation.M[3][2] = M[3][2];
+
+    return Translation;
+}
+
+FMatrix FMatrix::GetRotationMatrix() const
+{
+    FMatrix Rotation;
+    FVector Scale = GetScale();
+
+    if (FMath::Abs(Scale.X) < SMALL_NUMBER) Scale.X = 1.0f;
+    if (FMath::Abs(Scale.Y) < SMALL_NUMBER) Scale.Y = 1.0f;
+    if (FMath::Abs(Scale.Z) < SMALL_NUMBER) Scale.Z = 1.0f;
+
+    Rotation.M[0][0] = M[0][0] / Scale.X;
+    Rotation.M[0][1] = M[0][1] / Scale.X;
+    Rotation.M[0][2] = M[0][2] / Scale.X;
+
+    Rotation.M[1][0] = M[1][0] / Scale.Y;
+    Rotation.M[1][1] = M[1][1] / Scale.Y;
+    Rotation.M[1][2] = M[1][2] / Scale.Y;
+
+    Rotation.M[2][0] = M[2][0] / Scale.Z;
+    Rotation.M[2][1] = M[2][1] / Scale.Z;
+    Rotation.M[2][2] = M[2][2] / Scale.Z;
+
+    return Rotation;
+}
+
+FMatrix FMatrix::GetScaleMatrix() const
+{
+    FMatrix Scale;
+    Scale.M[0][0] = M[0][0];
+    Scale.M[1][1] = M[1][1];
+    Scale.M[2][2] = M[2][2];
+
+    return Scale;
+}

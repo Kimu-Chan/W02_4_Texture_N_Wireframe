@@ -6,6 +6,7 @@
 #include "Core/Container/Set.h"
 #include "CoreUObject/Object.h"
 #include "CoreUObject/Components/ActorComponent.h"
+#include "Core/Math/Box.h"
 
 class USceneComponent : public UActorComponent
 {
@@ -42,7 +43,13 @@ protected:
 	FTransform RelativeTransform = FTransform();
 	bool bCanEverTick = true;
 
-	// debug
+
+	// 바운딩 박스
+protected:
+	FBox BoundingBox;
+	virtual void InitBoundingBox() {};
+	virtual void UpdateBoundingBox() {};
+
 protected:
 	bool bIsPicked = false;
 };

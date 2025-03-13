@@ -127,6 +127,9 @@
     <ClCompile Include="Source\Debugging\DebugConsole.cpp">
       <Filter>Header Files\Debug</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Core\Math\Box.cpp">
+      <Filter>Source Files\Core\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Core\HAL\PlatformType.h">
@@ -290,6 +293,9 @@
     </ClInclude>
     <ClInclude Include="Source\Debugging\DebugConsole.h">
       <Filter>Source Files\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Math\Box.h">
+      <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

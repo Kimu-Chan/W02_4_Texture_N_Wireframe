@@ -35,15 +35,15 @@ void URenderer::Release()
 void URenderer::CreateShader()
 {
     /**
-    * ÄÄÆÄÀÏµÈ ¼ÎÀÌ´õÀÇ ¹ÙÀÌÆ®ÄÚµå¸¦ ÀúÀåÇÒ º¯¼ö (ID3DBlob)
+    * ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½Úµå¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ID3DBlob)
     *
-    * ¹ü¿ë ¸Þ¸ð¸® ¹öÆÛ¸¦ ³ªÅ¸³»´Â Çü½Ä
-    *   - ¿©±â¼­´Â shader object bytecode¸¦ ´ã±âÀ§ÇØ ¾²ÀÓ
-    * ´ÙÀ½ µÎ ¸Þ¼­µå¸¦ Á¦°øÇÑ´Ù.
+    * ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¸ï¿½ ï¿½ï¿½ï¿½Û¸ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    *   - ï¿½ï¿½ï¿½â¼­ï¿½ï¿½ shader object bytecodeï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    * ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Þ¼ï¿½ï¿½å¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
     *   - LPVOID GetBufferPointer
-    *     - ¹öÆÛ¸¦ °¡¸®Å°´Â void* Æ÷ÀÎÅÍ¸¦ µ¹·ÁÁØ´Ù.
+    *     - ï¿½ï¿½ï¿½Û¸ï¿½ ï¿½ï¿½ï¿½ï¿½Å°ï¿½ï¿½ void* ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø´ï¿½.
     *   - SIZE_T GetBufferSize
-    *     - ¹öÆÛÀÇ Å©±â(¹ÙÀÌÆ® °¹¼ö)¸¦ µ¹·ÁÁØ´Ù
+    *     - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å©ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø´ï¿½
     */
     ID3DBlob* VertexShaderCSO;
     ID3DBlob* PixelShaderCSO;
@@ -109,26 +109,26 @@ void URenderer::ReleaseShader()
 void URenderer::CreateConstantBuffer()
 {
     D3D11_BUFFER_DESC ConstantBufferDesc = {};
-    ConstantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;                        // ¸Å ÇÁ·¹ÀÓ CPU¿¡¼­ ¾÷µ¥ÀÌÆ® ÇÏ±â À§ÇØ
-    ConstantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;             // »ó¼ö ¹öÆÛ·Î ¼³Á¤
-    ConstantBufferDesc.ByteWidth = sizeof(FConstants) + 0xf & 0xfffffff0;  // 16byteÀÇ ¹è¼ö·Î ¿Ã¸²
-    ConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;            // CPU¿¡¼­ ¾²±â Á¢±ÙÀÌ °¡´ÉÇÏ°Ô ¼³Á¤
+    ConstantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;                        // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ CPUï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½
+    ConstantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;             // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Û·ï¿½ ï¿½ï¿½ï¿½ï¿½
+    ConstantBufferDesc.ByteWidth = sizeof(FConstants) + 0xf & 0xfffffff0;  // 16byteï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã¸ï¿½
+    ConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;            // CPUï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½
 
     Device->CreateBuffer(&ConstantBufferDesc, nullptr, &ConstantBuffer);
 
     D3D11_BUFFER_DESC ConstantBufferDescPicking = {};
-    ConstantBufferDescPicking.Usage = D3D11_USAGE_DYNAMIC;                        // ¸Å ÇÁ·¹ÀÓ CPU¿¡¼­ ¾÷µ¥ÀÌÆ® ÇÏ±â À§ÇØ
-    ConstantBufferDescPicking.BindFlags = D3D11_BIND_CONSTANT_BUFFER;             // »ó¼ö ¹öÆÛ·Î ¼³Á¤
-    ConstantBufferDescPicking.ByteWidth = sizeof(FPickingConstants) + 0xf & 0xfffffff0;  // 16byteÀÇ ¹è¼ö·Î ¿Ã¸²
-    ConstantBufferDescPicking.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;            // CPU¿¡¼­ ¾²±â Á¢±ÙÀÌ °¡´ÉÇÏ°Ô ¼³Á¤
+    ConstantBufferDescPicking.Usage = D3D11_USAGE_DYNAMIC;                        // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ CPUï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½
+    ConstantBufferDescPicking.BindFlags = D3D11_BIND_CONSTANT_BUFFER;             // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Û·ï¿½ ï¿½ï¿½ï¿½ï¿½
+    ConstantBufferDescPicking.ByteWidth = sizeof(FPickingConstants) + 0xf & 0xfffffff0;  // 16byteï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã¸ï¿½
+    ConstantBufferDescPicking.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;            // CPUï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½
 
     Device->CreateBuffer(&ConstantBufferDescPicking, nullptr, &ConstantPickingBuffer);
 
     D3D11_BUFFER_DESC ConstantBufferDescDepth = {};
-    ConstantBufferDescPicking.Usage = D3D11_USAGE_DYNAMIC;                        // ¸Å ÇÁ·¹ÀÓ CPU¿¡¼­ ¾÷µ¥ÀÌÆ® ÇÏ±â À§ÇØ
-    ConstantBufferDescPicking.BindFlags = D3D11_BIND_CONSTANT_BUFFER;             // »ó¼ö ¹öÆÛ·Î ¼³Á¤
-    ConstantBufferDescPicking.ByteWidth = sizeof(FDepthConstants) + 0xf & 0xfffffff0;  // 16byteÀÇ ¹è¼ö·Î ¿Ã¸²
-    ConstantBufferDescPicking.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;            // CPU¿¡¼­ ¾²±â Á¢±ÙÀÌ °¡´ÉÇÏ°Ô ¼³Á¤
+    ConstantBufferDescPicking.Usage = D3D11_USAGE_DYNAMIC;                        // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ CPUï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½
+    ConstantBufferDescPicking.BindFlags = D3D11_BIND_CONSTANT_BUFFER;             // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Û·ï¿½ ï¿½ï¿½ï¿½ï¿½
+    ConstantBufferDescPicking.ByteWidth = sizeof(FDepthConstants) + 0xf & 0xfffffff0;  // 16byteï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã¸ï¿½
+    ConstantBufferDescPicking.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;            // CPUï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½
 
     Device->CreateBuffer(&ConstantBufferDescPicking, nullptr, &ConstantsDepthBuffer);
 }
@@ -165,29 +165,29 @@ void URenderer::Prepare() const
     DeviceContext->ClearRenderTargetView(FrameBufferRTV, ClearColor);
     DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
     
-    // InputAssemblerÀÇ Vertex ÇØ¼® ¹æ½ÄÀ» ¼³Á¤
+    // InputAssemblerï¿½ï¿½ Vertex ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-    // RasterizationÇÒ Viewport¸¦ ¼³Á¤ 
+    // Rasterizationï¿½ï¿½ Viewportï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 
     DeviceContext->RSSetViewports(1, &ViewportInfo);
     DeviceContext->RSSetState(RasterizerState);
 
     /**
-     * OutputMerger ¼³Á¤
-     * ·»´õ¸µ ÆÄÀÌÇÁ¶óÀÎÀÇ ÃÖÁ¾ ´Ü°è·Î½á, ¾îµð¿¡ ±×¸±Áö(·»´õ Å¸°Ù)¿Í ¾î¶»°Ô ±×¸±Áö(ºí·»µù)¸¦ ÁöÁ¤
+     * OutputMerger ï¿½ï¿½ï¿½ï¿½
+     * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ü°ï¿½Î½ï¿½, ï¿½ï¿½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½)ï¿½ï¿½ ï¿½î¶»ï¿½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
      */
-    DeviceContext->OMSetRenderTargets(1, &FrameBufferRTV, DepthStencilView);    // DepthStencil ºä ¼³Á¤
+    DeviceContext->OMSetRenderTargets(1, &FrameBufferRTV, DepthStencilView);    // DepthStencil ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     DeviceContext->OMSetBlendState(nullptr, nullptr, 0xffffffff);
 }
 
 void URenderer::PrepareShader() const
 {
-    // ±âº» ¼ÎÀÌ´õ¶û InputLayoutÀ» ¼³Á¤
+    // ï¿½âº» ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ InputLayoutï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     DeviceContext->VSSetShader(SimpleVertexShader, nullptr, 0);
     DeviceContext->PSSetShader(SimplePixelShader, nullptr, 0);
     DeviceContext->IASetInputLayout(SimpleInputLayout);
 
-    // ¹öÅØ½º ½¦ÀÌ´õ¿¡ »ó¼ö ¹öÆÛ¸¦ ¼³Á¤
+    // ï¿½ï¿½ï¿½Ø½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Û¸ï¿½ ï¿½ï¿½ï¿½ï¿½
     if (ConstantBuffer)
     {
         DeviceContext->VSSetConstantBuffers(0, 1, &ConstantBuffer);
@@ -271,12 +271,12 @@ void URenderer::UpdateConstant(const ConstantUpdateInfo& UpdateInfo) const
     FMatrix MVP = 
         FMatrix::Transpose(ProjectionMatrix) * 
         FMatrix::Transpose(ViewMatrix) * 
-        FMatrix::Transpose(UpdateInfo.Transform.GetMatrix());    // »ó¼ö ¹öÆÛ¸¦ CPU ¸Þ¸ð¸®¿¡ ¸ÅÇÎ
+        FMatrix::Transpose(UpdateInfo.Transform.GetMatrix());    // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Û¸ï¿½ CPU ï¿½Þ¸ð¸®¿ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-    // D3D11_MAP_WRITE_DISCARD´Â ÀÌÀü ³»¿ëÀ» ¹«½ÃÇÏ°í »õ·Î¿î µ¥ÀÌÅÍ·Î µ¤¾î¾²±â À§ÇØ »ç¿ë
+    // D3D11_MAP_WRITE_DISCARDï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í·ï¿½ ï¿½ï¿½ï¿½î¾²ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
     DeviceContext->Map(ConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &ConstantBufferMSR);
     {
-        // ¸ÅÇÎµÈ ¸Þ¸ð¸®¸¦ FConstants ±¸Á¶Ã¼·Î Ä³½ºÆÃ
+        // ï¿½ï¿½ï¿½Îµï¿½ ï¿½Þ¸ð¸®¸ï¿½ FConstants ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½
         FConstants* Constants = static_cast<FConstants*>(ConstantBufferMSR.pData);
         Constants->MVP = MVP;
         Constants->Color = UpdateInfo.Color;
@@ -294,44 +294,44 @@ ID3D11DeviceContext* URenderer::GetDeviceContext() const
 
 void URenderer::CreateDeviceAndSwapChain(HWND hWindow)
 {
-    // Áö¿øÇÏ´Â Direct3D ±â´É ·¹º§À» Á¤ÀÇ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ Direct3D ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     D3D_FEATURE_LEVEL FeatureLevels[] = { D3D_FEATURE_LEVEL_11_0 };
 
-    // SwapChain ±¸Á¶Ã¼ ÃÊ±âÈ­
+    // SwapChain ï¿½ï¿½ï¿½ï¿½Ã¼ ï¿½Ê±ï¿½È­
     DXGI_SWAP_CHAIN_DESC SwapChainDesc = {};
-    SwapChainDesc.BufferDesc.Width = 0;                            // Ã¢ Å©±â¿¡ ¸Â°Ô ÀÚµ¿À¸·Î ¼³Á¤
-    SwapChainDesc.BufferDesc.Height = 0;                           // Ã¢ Å©±â¿¡ ¸Â°Ô ÀÚµ¿À¸·Î ¼³Á¤
-    SwapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;  // »ö»ó Æ÷¸ä
-    SwapChainDesc.SampleDesc.Count = 1;                            // ¸ÖÆ¼ »ùÇÃ¸µ ºñÈ°¼ºÈ­
-    SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;   // ·»´õ Å¸°ÙÀ¸·Î ¼³Á¤
-    SwapChainDesc.BufferCount = 2;                                 // ´õºí ¹öÆÛ¸µ
-    SwapChainDesc.OutputWindow = hWindow;                          // ·»´õ¸µÇÒ Ã¢ ÇÚµé
-    SwapChainDesc.Windowed = TRUE;                                 // Ã¢ ¸ðµå
-    SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;      // ½º¿Ò ¹æ½Ä
+    SwapChainDesc.BufferDesc.Width = 0;                            // Ã¢ Å©ï¿½â¿¡ ï¿½Â°ï¿½ ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    SwapChainDesc.BufferDesc.Height = 0;                           // Ã¢ Å©ï¿½â¿¡ ï¿½Â°ï¿½ ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    SwapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;  // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    SwapChainDesc.SampleDesc.Count = 1;                            // ï¿½ï¿½Æ¼ ï¿½ï¿½ï¿½Ã¸ï¿½ ï¿½ï¿½È°ï¿½ï¿½È­
+    SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;   // ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    SwapChainDesc.BufferCount = 2;                                 // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Û¸ï¿½
+    SwapChainDesc.OutputWindow = hWindow;                          // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¢ ï¿½Úµï¿½
+    SwapChainDesc.Windowed = TRUE;                                 // Ã¢ ï¿½ï¿½ï¿½
+    SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;      // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 
-    // Direct3D Device¿Í SwapChainÀ» »ý¼º
+    // Direct3D Deviceï¿½ï¿½ SwapChainï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     D3D11CreateDeviceAndSwapChain(
-        // ÀÔ·Â ¸Å°³º¯¼ö
-        nullptr,                                                       // µð¹ÙÀÌ½º¸¦ ¸¸µé ¶§ »ç¿ëÇÒ ºñµð¿À ¾î´ðÅÍ¿¡ ´ëÇÑ Æ÷ÀÎÅÍ
-        D3D_DRIVER_TYPE_HARDWARE,                                      // ¸¸µé µå¶óÀÌ¹ö À¯ÇüÀ» ³ªÅ¸³»´Â D3D_DRIVER_TYPE ¿­°ÅÇü °ª
-        nullptr,                                                       // ¼ÒÇÁÆ®¿þ¾î ·¡½ºÅÍ¶óÀÌÀú¸¦ ±¸ÇöÇÏ´Â DLL¿¡ ´ëÇÑ ÇÚµé
-        D3D11_CREATE_DEVICE_BGRA_SUPPORT | D3D11_CREATE_DEVICE_DEBUG,  // »ç¿ëÇÒ ·±Å¸ÀÓ °èÃþÀ» ÁöÁ¤ÇÏ´Â D3D11_CREATE_DEVICE_FLAG ¿­°ÅÇü °ªµéÀÇ Á¶ÇÕ
-        FeatureLevels,                                                 // ¸¸µé·Á´Â ±â´É ¼öÁØÀÇ ¼ø¼­¸¦ °áÁ¤ÇÏ´Â D3D_FEATURE_LEVEL ¹è¿­¿¡ ´ëÇÑ Æ÷ÀÎÅÍ
-        ARRAYSIZE(FeatureLevels),                                      // pFeatureLevels ¹è¿­ÀÇ ¿ä¼Ò ¼ö
-        D3D11_SDK_VERSION,                                             // SDK ¹öÀü. ÁÖ·Î D3D11_SDK_VERSIONÀ» »ç¿ë
-        &SwapChainDesc,                                                // SwapChain ¼³Á¤°ú °ü·ÃµÈ DXGI_SWAP_CHAIN_DESC ±¸Á¶Ã¼¿¡ ´ëÇÑ Æ÷ÀÎÅÍ
+        // ï¿½Ô·ï¿½ ï¿½Å°ï¿½ï¿½ï¿½ï¿½ï¿½
+        nullptr,                                                       // ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Í¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        D3D_DRIVER_TYPE_HARDWARE,                                      // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½ï¿½ï¿½ D3D_DRIVER_TYPE ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+        nullptr,                                                       // ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ DLLï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½
+        D3D11_CREATE_DEVICE_BGRA_SUPPORT | D3D11_CREATE_DEVICE_DEBUG,  // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ D3D11_CREATE_DEVICE_FLAG ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        FeatureLevels,                                                 // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ D3D_FEATURE_LEVEL ï¿½è¿­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        ARRAYSIZE(FeatureLevels),                                      // pFeatureLevels ï¿½è¿­ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½
+        D3D11_SDK_VERSION,                                             // SDK ï¿½ï¿½ï¿½ï¿½. ï¿½Ö·ï¿½ D3D11_SDK_VERSIONï¿½ï¿½ ï¿½ï¿½ï¿½
+        &SwapChainDesc,                                                // SwapChain ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ãµï¿½ DXGI_SWAP_CHAIN_DESC ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-        // Ãâ·Â ¸Å°³º¯¼ö
-        &SwapChain,                                                    // »ý¼ºµÈ IDXGISwapChain ÀÎÅÍÆäÀÌ½º¿¡ ´ëÇÑ Æ÷ÀÎÅÍ
-        &Device,                                                       // »ý¼ºµÈ ID3D11Device ÀÎÅÍÆäÀÌ½º¿¡ ´ëÇÑ Æ÷ÀÎÅÍ
-        nullptr,                                                       // ¼±ÅÃµÈ ±â´É ¼öÁØÀ» ³ªÅ¸³»´Â D3D_FEATURE_LEVEL °ªÀ» ¹ÝÈ¯
-        &DeviceContext                                                 // »ý¼ºµÈ ID3D11DeviceContext ÀÎÅÍÆäÀÌ½º¿¡ ´ëÇÑ Æ÷ÀÎÅÍ
+        // ï¿½ï¿½ï¿½ ï¿½Å°ï¿½ï¿½ï¿½ï¿½ï¿½
+        &SwapChain,                                                    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ IDXGISwapChain ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        &Device,                                                       // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ID3D11Device ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        nullptr,                                                       // ï¿½ï¿½ï¿½Ãµï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½ï¿½ï¿½ D3D_FEATURE_LEVEL ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
+        &DeviceContext                                                 // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ID3D11DeviceContext ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     );
 
-    // »ý¼ºµÈ SwapChainÀÇ Á¤º¸ °¡Á®¿À±â
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ SwapChainï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     SwapChain->GetDesc(&SwapChainDesc);
 
-    // ºäÆ÷Æ® Á¤º¸ ¼³Á¤
+    // ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     ViewportInfo = {
         0.0f, 0.0f,
         static_cast<float>(SwapChainDesc.BufferDesc.Width), static_cast<float>(SwapChainDesc.BufferDesc.Height),
@@ -343,7 +343,7 @@ void URenderer::ReleaseDeviceAndSwapChain()
 {
     if (DeviceContext)
     {
-        DeviceContext->Flush(); // ³²ÀÌÀÖ´Â GPU ¸í·É ½ÇÇà
+        DeviceContext->Flush(); // ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ GPU ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     }
 
     if (SwapChain)
@@ -367,13 +367,13 @@ void URenderer::ReleaseDeviceAndSwapChain()
 
 void URenderer::CreateFrameBuffer()
 {
-    // ½º¿Ò Ã¼ÀÎÀ¸·ÎºÎÅÍ ¹é ¹öÆÛ ÅØ½ºÃ³ °¡Á®¿À±â
+    // ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½ï¿½ï¿½ï¿½Îºï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Ã³ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     SwapChain->GetBuffer(0, IID_PPV_ARGS(&FrameBuffer));
 
-    // ·»´õ Å¸°Ù ºä »ý¼º
+    // ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     D3D11_RENDER_TARGET_VIEW_DESC FrameBufferRTVDesc = {};
-    FrameBufferRTVDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;      // »ö»ó Æ÷¸Ë
-    FrameBufferRTVDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D; // 2D ÅØ½ºÃ³
+    FrameBufferRTVDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;      // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    FrameBufferRTVDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D; // 2D ï¿½Ø½ï¿½Ã³
 
     Device->CreateRenderTargetView(FrameBuffer, &FrameBufferRTVDesc, &FrameBufferRTV);
 }
@@ -385,11 +385,11 @@ void URenderer::CreateDepthStencilBuffer()
     DepthBufferDesc.Height = static_cast<UINT>(ViewportInfo.Height);
     DepthBufferDesc.MipLevels = 1;
     DepthBufferDesc.ArraySize = 1;
-    DepthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;            // 32ºñÆ® Áß 24ºñÆ®´Â ±íÀÌ, 8ºñÆ®´Â ½ºÅÙ½Ç
+    DepthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;            // 32ï¿½ï¿½Æ® ï¿½ï¿½ 24ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, 8ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½Ù½ï¿½
     DepthBufferDesc.SampleDesc.Count = 1;
     DepthBufferDesc.SampleDesc.Quality = 0;
     DepthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-    DepthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;              // ÅØ½ºÃÄ ¹ÙÀÎµù ÇÃ·¡±×¸¦ DepthStencil·Î ¼³Á¤
+    DepthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;              // ï¿½Ø½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Îµï¿½ ï¿½Ã·ï¿½ï¿½×¸ï¿½ DepthStencilï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     DepthBufferDesc.CPUAccessFlags = 0;
     DepthBufferDesc.MiscFlags = 0;
 
@@ -408,7 +408,7 @@ void URenderer::CreateDepthStencilState()
     D3D11_DEPTH_STENCIL_DESC DepthStencilDesc = {};
     DepthStencilDesc.DepthEnable = TRUE;
     DepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-    DepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;                     // ´õ ÀÛÀº ±íÀÌ°ªÀÌ ¿ÔÀ» ¶§ ÇÈ¼¿À» °»½ÅÇÔ
+    DepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;                     // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
     Device->CreateDepthStencilState(&DepthStencilDesc, &DepthStencilState);
     
@@ -473,8 +473,8 @@ void URenderer::ReleaseDepthStencilBuffer()
 void URenderer::CreateRasterizerState()
 {
     D3D11_RASTERIZER_DESC RasterizerDesc = {};
-    RasterizerDesc.FillMode = D3D11_FILL_SOLID; // Ã¤¿ì±â ¸ðµå
-    RasterizerDesc.CullMode = D3D11_CULL_BACK;  // ¹é ÆäÀÌ½º ÄÃ¸µ
+    RasterizerDesc.FillMode = D3D11_FILL_SOLID; // Ã¤ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+    RasterizerDesc.CullMode = D3D11_CULL_BACK;  // ï¿½ï¿½ ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½Ã¸ï¿½
     RasterizerDesc.FrontCounterClockwise = FALSE;
 
     Device->CreateRasterizerState(&RasterizerDesc, &RasterizerState);
@@ -536,8 +536,8 @@ void URenderer::CreatePickingTexture(HWND hWnd)
     Device->CreateTexture2D(&textureDesc, nullptr, &PickingFrameBuffer);
 
     D3D11_RENDER_TARGET_VIEW_DESC PickingFrameBufferRTVDesc = {};
-    PickingFrameBufferRTVDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;      // »ö»ó Æ÷¸Ë
-    PickingFrameBufferRTVDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D; // 2D ÅØ½ºÃ³
+    PickingFrameBufferRTVDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;      // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    PickingFrameBufferRTVDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D; // 2D ï¿½Ø½ï¿½Ã³
     
     Device->CreateRenderTargetView(PickingFrameBuffer, &PickingFrameBufferRTVDesc, &PickingFrameBufferRTV);
 }
@@ -549,10 +549,10 @@ void URenderer::PrepareZIgnore()
 
 void URenderer::PreparePicking()
 {
-    // ·»´õ Å¸°Ù ¹ÙÀÎµù
+    // ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½Îµï¿½
     DeviceContext->OMSetRenderTargets(1, &PickingFrameBufferRTV, DepthStencilView);
     DeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
-    DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);                // DepthStencil »óÅÂ ¼³Á¤. StencilRef: ½ºÅÙ½Ç Å×½ºÆ® °á°úÀÇ ·¹ÆÛ·±½º
+    DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);                // DepthStencil ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. StencilRef: ï¿½ï¿½ï¿½Ù½ï¿½ ï¿½×½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Û·ï¿½ï¿½ï¿½
 
     DeviceContext->ClearRenderTargetView(PickingFrameBufferRTV, PickingClearColor);
 }
@@ -603,7 +603,7 @@ void URenderer::UpdateConstantDepth(int Depth) const
 
 void URenderer::PrepareMain()
 {
-    DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);                // DepthStencil »óÅÂ ¼³Á¤. StencilRef: ½ºÅÙ½Ç Å×½ºÆ® °á°úÀÇ ·¹ÆÛ·±½º
+    DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);                // DepthStencil ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. StencilRef: ï¿½ï¿½ï¿½Ù½ï¿½ ï¿½×½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Û·ï¿½ï¿½ï¿½
     DeviceContext->OMSetRenderTargets(1, &FrameBufferRTV, DepthStencilView);
     DeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
 }
@@ -617,13 +617,13 @@ FVector4 URenderer::GetPixel(FVector MPos)
 {
     MPos.X = FMath::Clamp(MPos.X, 0.0f, ViewportInfo.Width);
     MPos.Y = FMath::Clamp(MPos.Y, 0.0f, ViewportInfo.Height);
-    // 1. Staging ÅØ½ºÃ³ »ý¼º (1x1 ÇÈ¼¿)
+    // 1. Staging ï¿½Ø½ï¿½Ã³ ï¿½ï¿½ï¿½ï¿½ (1x1 ï¿½È¼ï¿½)
     D3D11_TEXTURE2D_DESC stagingDesc = {};
-    stagingDesc.Width = 1; // ÇÈ¼¿ 1°³¸¸ º¹»ç
+    stagingDesc.Width = 1; // ï¿½È¼ï¿½ 1ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     stagingDesc.Height = 1;
     stagingDesc.MipLevels = 1;
     stagingDesc.ArraySize = 1;
-    stagingDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // ¿øº» ÅØ½ºÃ³ Æ÷¸Ë°ú µ¿ÀÏ
+    stagingDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // ï¿½ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Ã³ ï¿½ï¿½ï¿½Ë°ï¿½ ï¿½ï¿½ï¿½ï¿½
     stagingDesc.SampleDesc.Count = 1;
     stagingDesc.Usage = D3D11_USAGE_STAGING;
     stagingDesc.BindFlags = 0;
@@ -632,12 +632,12 @@ FVector4 URenderer::GetPixel(FVector MPos)
     ID3D11Texture2D* stagingTexture = nullptr;
     Device->CreateTexture2D(&stagingDesc, nullptr, &stagingTexture);
 
-    // 2. º¹»çÇÒ ¿µ¿ª Á¤ÀÇ (D3D11_BOX)
+    // 2. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (D3D11_BOX)
     D3D11_BOX srcBox = {};
     srcBox.left = static_cast<UINT>(MPos.X);
-    srcBox.right = srcBox.left + 1; // 1ÇÈ¼¿ ³Êºñ
+    srcBox.right = srcBox.left + 1; // 1ï¿½È¼ï¿½ ï¿½Êºï¿½
     srcBox.top = static_cast<UINT>(MPos.Y);
-    srcBox.bottom = srcBox.top + 1; // 1ÇÈ¼¿ ³ôÀÌ
+    srcBox.bottom = srcBox.top + 1; // 1ï¿½È¼ï¿½ ï¿½ï¿½ï¿½ï¿½
     srcBox.front = 0;
     srcBox.back = 1;
     FVector4 color{ 1, 1, 1, 1 };
@@ -645,21 +645,21 @@ FVector4 URenderer::GetPixel(FVector MPos)
     if (stagingTexture == nullptr)
         return color;
 
-    // 3. Æ¯Á¤ ÁÂÇ¥¸¸ º¹»ç
+    // 3. Æ¯ï¿½ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     DeviceContext->CopySubresourceRegion(
-        stagingTexture, // ´ë»ó ÅØ½ºÃ³
-        0,              // ´ë»ó ¼­ºê¸®¼Ò½º
-        0, 0, 0,        // ´ë»ó ÁÂÇ¥ (x, y, z)
-        PickingFrameBuffer, // ¿øº» ÅØ½ºÃ³
-        0,              // ¿øº» ¼­ºê¸®¼Ò½º
-        &srcBox         // º¹»ç ¿µ¿ª
+        stagingTexture, // ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Ã³
+        0,              // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ê¸®ï¿½Ò½ï¿½
+        0, 0, 0,        // ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ (x, y, z)
+        PickingFrameBuffer, // ï¿½ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Ã³
+        0,              // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ê¸®ï¿½Ò½ï¿½
+        &srcBox         // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     );
 
-    // 4. µ¥ÀÌÅÍ ¸ÅÇÎ
+    // 4. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     D3D11_MAPPED_SUBRESOURCE mapped = {};
     DeviceContext->Map(stagingTexture, 0, D3D11_MAP_READ, 0, &mapped);
 
-    // 5. ÇÈ¼¿ µ¥ÀÌÅÍ ÃßÃâ (1x1 ÅØ½ºÃ³ÀÌ¹Ç·Î offset = 0)
+    // 5. ï¿½È¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (1x1 ï¿½Ø½ï¿½Ã³ï¿½Ì¹Ç·ï¿½ offset = 0)
     const BYTE* pixelData = static_cast<const BYTE*>(mapped.pData);
 
     if (pixelData)
@@ -673,7 +673,7 @@ FVector4 URenderer::GetPixel(FVector MPos)
     std::cout << "X: " << (int)color.X << " Y: " << (int)color.Y
         << " Z: " << color.Z << " A: " << color.W << "\n";
 
-    // 6. ¸ÅÇÎ ÇØÁ¦ ¹× Á¤¸®
+    // 6. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     DeviceContext->Unmap(stagingTexture, 0);
     stagingTexture->Release();
 
@@ -727,6 +727,17 @@ void URenderer::OnUpdateWindowSize(int Width, int Height)
         ReleaseDepthStencilBuffer();
         CreateDepthStencilBuffer();
     }
+}
+
+void URenderer::GetPrimitiveLocalBounds(EPrimitiveType Type, FVector& OutMin, FVector& OutMax)
+{
+    BufferInfo Info = BufferCache->GetBufferInfo(Type);
+    if (Info.GetBuffer() == nullptr)
+    {
+        return;
+    }
+    OutMin = Info.GetMin();
+    OutMax = Info.GetMax();
 }
 
 void URenderer::RenderPickingTexture()

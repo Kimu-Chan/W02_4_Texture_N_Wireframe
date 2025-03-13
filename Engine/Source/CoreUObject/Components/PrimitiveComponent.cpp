@@ -50,3 +50,13 @@ void UPrimitiveComponent::RegisterComponentWithWorld(UWorld* World)
 {
     World->AddRenderComponent(this);
 }
+
+void UPrimitiveComponent::InitBoundingBox()
+{
+    Super::InitBoundingBox();
+}
+
+void UPrimitiveComponent::UpdateBoundingBox()
+{
+    Super::InitBoundingBox();
+}

@@ -45,6 +45,11 @@ public:
 	void SetIsOrthoGraphic(bool IsOrtho) { bIsOrthoGraphic = IsOrtho; }
 	bool GetIsOrthoGraphic() { return bIsOrthoGraphic;}
 	
+	// 바운딩 박스
+public:
+	virtual void InitBoundingBox() override;
+	virtual void UpdateBoundingBox() override;
+
 protected:
 	bool bCanBeRendered = false;
 	bool bUseVertexColor = true;
@@ -65,8 +70,17 @@ public:
 	{
 		return EPrimitiveType::EPT_Cube;
 	}
-};
 
+protected:
+	virtual void InitBoundingBox() override
+	{
+		FVector Min;
+		FVector Max;
+		UEngine::Get().GetRenderer()->GetPrimitiveLocalBounds(EPrimitiveType::EPT_Cube, Min, Max);
+
+		BoundingBox.Init(Min, Max);
+	}
+};
 class USphereComp : public UPrimitiveComponent
 {
 	using Super = UPrimitiveComponent;
@@ -79,6 +93,15 @@ public:
 	EPrimitiveType GetType() override
 	{
 		return EPrimitiveType::EPT_Sphere;
+	}
+protected:
+	virtual void InitBoundingBox() override
+	{
+		FVector Min;
+		FVector Max;
+		UEngine::Get().GetRenderer()->GetPrimitiveLocalBounds(EPrimitiveType::EPT_Sphere, Min, Max);
+
+		BoundingBox.Init(Min, Max);
 	}
 };
 
@@ -94,6 +117,15 @@ public:
 	EPrimitiveType GetType() override
 	{
 		return EPrimitiveType::EPT_Triangle;
+	}
+protected:
+	virtual void InitBoundingBox() override
+	{
+		FVector Min;
+		FVector Max;
+		UEngine::Get().GetRenderer()->GetPrimitiveLocalBounds(EPrimitiveType::EPT_Triangle, Min, Max);
+
+		BoundingBox.Init(Min, Max);
 	}
 };
 
@@ -111,6 +143,15 @@ public:
 	{
 		return EPrimitiveType::EPT_Line;
 	}
+protected:
+	virtual void InitBoundingBox() override
+	{
+		FVector Min;
+		FVector Max;
+		UEngine::Get().GetRenderer()->GetPrimitiveLocalBounds(EPrimitiveType::EPT_Line, Min, Max);
+
+		BoundingBox.Init(Min, Max);
+	}
 };
 
 class UCylinderComp : public UPrimitiveComponent
@@ -127,6 +168,15 @@ public:
 	{
 		return EPrimitiveType::EPT_Cylinder;
 	}
+protected:
+	virtual void InitBoundingBox() override
+	{
+		FVector Min;
+		FVector Max;
+		UEngine::Get().GetRenderer()->GetPrimitiveLocalBounds(EPrimitiveType::EPT_Cylinder, Min, Max);
+
+		BoundingBox.Init(Min, Max);
+	}
 };
 
 class UConeComp : public UPrimitiveComponent
@@ -141,5 +191,15 @@ public:
 	EPrimitiveType GetType() override
 	{
 		return EPrimitiveType::EPT_Cone;
+	}
+
+protected:
+	virtual void InitBoundingBox() override
+	{
+		FVector Min;
+		FVector Max;
+		UEngine::Get().GetRenderer()->GetPrimitiveLocalBounds(EPrimitiveType::EPT_Cone, Min, Max);
+
+		BoundingBox.Init(Min, Max);
 	}
 };
