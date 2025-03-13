@@ -170,7 +170,7 @@ protected:
 	
 	// Buffer Cache
 
-	std::unique_ptr<struct FBufferCache> BufferCache;
+	std::unique_ptr<class FBufferCache> BufferCache;
 
 	FMatrix WorldMatrix;
     FMatrix ViewMatrix;

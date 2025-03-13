@@ -57,6 +57,7 @@ class FBufferCache
 {
 private:
 	TMap <EPrimitiveType, BufferInfo> Cache;
+	TMap <EPrimitiveType, TArray<FVertexSimple>> PrimitiveVertices;
 
 public:
 	FBufferCache();

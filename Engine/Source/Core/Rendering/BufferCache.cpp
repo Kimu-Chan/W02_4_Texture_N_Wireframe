@@ -35,6 +35,7 @@ BufferInfo FBufferCache::CreateVertexBufferInfo(EPrimitiveType Type)
     D3D_PRIMITIVE_TOPOLOGY Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
     FVertexSimple* Vertices = nullptr;
 
+    // !TODO : 모든 프리미티브들에 대해서 동일한 방법의 캐싱 사용
     switch (Type)
     {
     case EPrimitiveType::EPT_Line:
@@ -56,16 +57,16 @@ BufferInfo FBufferCache::CreateVertexBufferInfo(EPrimitiveType Type)
         break;
     case EPrimitiveType::EPT_Cylinder:
     {
-        TArray<FVertexSimple> VerticesArr = CreateCylinderVertices();
-        Size = VerticesArr.Num();
-        Vertices = VerticesArr.GetData();
+		PrimitiveVertices.Add(EPrimitiveType::EPT_Cylinder, CreateCylinderVertices());
+		Size = PrimitiveVertices[EPrimitiveType::EPT_Cylinder].Num();
+        Vertices = PrimitiveVertices[EPrimitiveType::EPT_Cylinder].GetData();
         break;
     }
     case EPrimitiveType::EPT_Cone:
     {
-        TArray<FVertexSimple> VerticesArr = CreateConeVertices();
-        Size = VerticesArr.Num();
-        Vertices = VerticesArr.GetData();
+        PrimitiveVertices.Add(EPrimitiveType::EPT_Cone, CreateConeVertices());
+        Size = PrimitiveVertices[EPrimitiveType::EPT_Cone].Num();
+        Vertices = PrimitiveVertices[EPrimitiveType::EPT_Cone].GetData();
         break;
     }
     }
