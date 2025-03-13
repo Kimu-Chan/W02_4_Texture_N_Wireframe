@@ -1,0 +1,20 @@
+#include "pch.h" 
+#include "Engine/Engine.h"
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
+{
+        // 사용 안하는 파라미터들
+        UNREFERENCED_PARAMETER(hPrevInstance);
+        UNREFERENCED_PARAMETER(lpCmdLine);
+        UNREFERENCED_PARAMETER(nShowCmd);
+
+
+        UEngine& Engine = UEngine::Get();
+        Engine.Initialize(hInstance, L"Jungle Engine", L"JungleWindow", 1280, 720);
+
+        Engine.Run();
+
+        Engine.Shutdown();
+
+        return 0;
+}
