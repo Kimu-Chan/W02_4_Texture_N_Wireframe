@@ -164,7 +164,7 @@ void UWorld::ClearWorld()
 
 bool UWorld::DestroyActor(AActor* InActor)
 {
-    //@TODO: ���߿� Destroy�� ������ ���� �ִٸ� return false; �ϱ�
+    //@TODO: 나중에 Destroy가 실패할 일이 있다면 return false; 하기
     assert(InActor);
 
     if (PendingDestroyActors.Find(InActor) != -1)
@@ -172,13 +172,13 @@ bool UWorld::DestroyActor(AActor* InActor)
         return true;
     }
 
-    // ������ �� Destroyed ȣ��
+    // 삭제될 때 Destroyed 호출
     InActor->Destroyed();
 
-    // World���� ����
+    // World에서 제거
     Actors.Remove(InActor);
 
-    // ���� ��⿭�� �߰�
+    // 제거 대기열에 추가
     PendingDestroyActors.Add(InActor);
     return true;
 }
