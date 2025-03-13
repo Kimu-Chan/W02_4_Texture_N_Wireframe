@@ -13,7 +13,7 @@ void USceneComponent::Tick(float DeltaTime)
     Super::Tick(DeltaTime);
 }
 
-// 월드 트랜스폼 얻기
+// 월드 트랜스폼 반환
 const FTransform USceneComponent::GetWorldTransform()
 {
     if (Parent)
