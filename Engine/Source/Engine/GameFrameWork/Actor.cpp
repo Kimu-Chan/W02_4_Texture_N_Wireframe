@@ -92,7 +92,7 @@ FTransform AActor::GetActorTransform() const
 
 void AActor::SetActorTransform(const FTransform& InTransform)
 {
-	// InTransformÀº ¿ùµå ±âÁØÀÓ
+	// InTransformï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	if (RootComponent)
 	{
 		RootComponent->SetRelativeTransform(InTransform);

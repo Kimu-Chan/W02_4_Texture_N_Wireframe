@@ -21,19 +21,19 @@ void APlayerController::HandleCameraMovement(float DeltaTime) {
     }
 
     ACamera* Camera = FEditorManager::Get().GetCamera();
-    
-	// Camera Speed //
-	float MouseWheel = APlayerInput::Get().GetMouseWheel();
 
-	float CameraSpeed = Camera->CameraSpeed;
-	CameraSpeed += MouseWheel * 0.1f;
-	CameraSpeed = FMath::Clamp(CameraSpeed, 0.1f, 5.0f);
+    // Camera Speed //
+    float MouseWheel = APlayerInput::Get().GetMouseWheel();
+
+    float CameraSpeed = Camera->CameraSpeed;
+    CameraSpeed += MouseWheel * 0.1f;
+    CameraSpeed = FMath::Clamp(CameraSpeed, 0.1f, 5.0f);
 
     Camera->CameraSpeed = CameraSpeed;
 
-	APlayerInput::Get().SetMouseWheel(0.0f);    // Reset MouseWheel After Set Camera Speed
+    APlayerInput::Get().SetMouseWheel(0.0f);    // Reset MouseWheel After Set Camera Speed
 
-	// Last Frame Mouse Position
+    // Last Frame Mouse Position
     FVector MousePrePos = APlayerInput::Get().GetMousePrePos();
     FVector MousePos = APlayerInput::Get().GetMousePos();
     FVector DeltaPos = MousePos - MousePrePos;
@@ -42,9 +42,9 @@ void APlayerController::HandleCameraMovement(float DeltaTime) {
     FTransform CameraTransform = Camera->GetActorTransform();
 
     FVector TargetRotation = CameraTransform.GetRotation().GetEuler();
-	TargetRotation.Y += Camera->CameraSpeed * DeltaPos.Y * DeltaTime * 2.0f;    //@TODO: CameraRotaionSpeed¸¦ ³ªÁß¿¡ Á¶ÀýÇÒ ¼ö ÀÖµµ·Ï ¼öÁ¤
+    TargetRotation.Y += Camera->CameraSpeed * DeltaPos.Y * DeltaTime * 2.0f;    //@TODO: CameraRotaionSpeedë¥¼ ë‚˜ì¤‘ì— ì¡°ì ˆí•  ìˆ˜ ìžˆë„ë¡ ìˆ˜ì •
     TargetRotation.Z += Camera->CameraSpeed * DeltaPos.X * DeltaTime * 2.0f;
-    
+
     TargetRotation.Y = FMath::Clamp(TargetRotation.Y, -Camera->MaxYDegree, Camera->MaxYDegree);
     CameraTransform.SetRotation(TargetRotation);
 
@@ -73,7 +73,7 @@ void APlayerController::HandleCameraMovement(float DeltaTime) {
         NewVelocity = NewVelocity.GetSafeNormal();
     }
 
-    //È¸ÀüÀÌ¶û ¸¶¿ì½ºÅ¬¸¯ ±¸Çö Ä«¸Þ¶ó·Î ÇØ¾ßÇÒµí?
+    //íšŒì „ì´ëž‘ ë§ˆìš°ìŠ¤í´ë¦­ êµ¬í˜„ ì¹´ë©”ë¼ë¡œ í•´ì•¼í• ë“¯?
     CameraTransform.Translate(NewVelocity * DeltaTime * Camera->CameraSpeed);
     Camera->SetActorTransform(CameraTransform);
     // FCamera::Get().SetVelocity(NewVelocity);
@@ -87,14 +87,14 @@ void APlayerController::HandleGizmoMovement(float DeltaTime)
     }
 
     AActor* SelectedActor = FEditorManager::Get().GetSelectedActor();
-    
+
     //@TODO: Check with Gizmo
     if (SelectedActor == nullptr)
     {
         return;
     }
 
-    
+
 }
 
 void APlayerController::ProcessPlayerInput(float DeltaTime) {

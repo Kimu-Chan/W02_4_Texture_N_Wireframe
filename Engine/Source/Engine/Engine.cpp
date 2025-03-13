@@ -31,7 +31,7 @@ LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         break;
 
     // Handle Key Input
-	case WM_KEYDOWN:    //@TODO: WinApi�� AysncKeyState�� ��ü ����
+	case WM_KEYDOWN:    //@TODO: WinApi의 AysncKeyState로 교체 검토
         APlayerInput::Get().KeyDown(static_cast<EKeyCode>(wParam));
         if ((lParam>>30)%2 != 0)
         {
@@ -141,8 +141,8 @@ void UEngine::Run()
             World->LateTick(DeltaTime);
         }
 
-        //�� Actor���� TickActor() -> PlayerTick() -> TickPlayerInput() ȣ���ϴµ� ������ Message���� ó���ϰ� �ִ�.
-        APlayerInput::Get().TickPlayerInput();  //@TODO: TickPlayerInput�� �ű���.
+        //각 Actor에서 TickActor() -> PlayerTick() -> TickPlayerInput() 호출하는데 지금은 Message에서 처리하고 있다.
+        APlayerInput::Get().TickPlayerInput();  //@TODO: TickPlayerInput을 옮기자.
         
         // TickPlayerInput
         APlayerController::Get().ProcessPlayerInput(DeltaTime);
@@ -152,7 +152,7 @@ void UEngine::Run()
 
         Renderer->SwapBuffer();
 
-        // FPS ����
+        // FPS 제한
         double ElapsedTime;
         do
         {

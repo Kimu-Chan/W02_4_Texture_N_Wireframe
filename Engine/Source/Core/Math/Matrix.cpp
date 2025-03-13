@@ -212,7 +212,7 @@ FMatrix FMatrix::Transpose(const FMatrix& Matrix)
         {
                 for (int j = 0; j < 4; ++j)
                 {
-                        Result.M[i][j] = Matrix.M[j][i]; // ���?���� �ٲ� ��ġ
+                        Result.M[i][j] = Matrix.M[j][i];
                 }
         }
         return Result;
@@ -248,15 +248,15 @@ FMatrix FMatrix::GetScaleMatrix(const FVector& InScale)
 
 FMatrix FMatrix::GetRotateMatrix(const FQuat& Q)
 {
-        // ���ʹϾ� ��� ����
+        // 쿼터니언 요소 추출
         const float x = Q.X, y = Q.Y, z = Q.Z, w = Q.W;
 
-        // �߰� ��갪
+        // 중간 계산값
         const float xx = x * x, yy = y * y, zz = z * z;
         const float xy = x * y, xz = x * z, yz = y * z;
         const float wx = w * x, wy = w * y, wz = w * z;
 
-        // ȸ�� ��� ����
+        // 회전 행렬 구성
         FMatrix Result;
 
         Result.M[0][0] = 1.0f - 2.0f * (yy + zz);
@@ -277,18 +277,18 @@ FMatrix FMatrix::GetRotateMatrix(const FQuat& Q)
         Result.M[3][0] = 0.0f;
         Result.M[3][1] = 0.0f;
         Result.M[3][2] = 0.0f;
-        Result.M[3][3] = 1.0f; // 4x4 ����̹Ƿ� ������ ���� 1
+        Result.M[3][3] = 1.0f; // 4x4 행렬이므로 마지막 값은 1
 
         return Result;
 }
 
 /// <summary>
-/// �� ��ȯ ����� �����մϴ�.
+/// 뷰 변환 행렬을 생성합니다.
 /// </summary>
-/// <param name="EyePosition">ī�޶��� �������Դϴ�.</param>
-/// <param name="FocusPoint">ī�޶� �ٶ󺸴� ���� �������Դϴ�.</param>
-/// <param name="UpDirection">ī�޶��� ���� �����Դϴ�.</param>
-/// <returns>�� ��ȯ ����� ��ȯ�մϴ�.</returns>
+/// <param name="EyePosition">카메라의 포지션입니다.</param>
+/// <param name="FocusPoint">카메라가 바라보는 곳의 포지션입니다.</param>
+/// <param name="UpDirection">카메라의 위쪽 방향입니다.</param>
+/// <returns>뷰 변환 행렬을 반환합니다.</returns>
 FMatrix FMatrix::LookAtLH(const FVector& EyePosition, const FVector& FocusPoint, const FVector& WorldUp)
 {
         FVector Forward = (FocusPoint - EyePosition).GetSafeNormal();
@@ -322,14 +322,14 @@ FMatrix FMatrix::PerspectiveFovLH(float FieldOfView, float AspectRatio, float Ne
 
 FMatrix FMatrix::OrthoLH(float ScreenWidth, float ScreenHeight, float NearPlane, float FarPlane)
 {
-	FMatrix Result;
-	Result.M[0][0] = 2.0f / ScreenWidth;
-	Result.M[1][1] = 2.0f / ScreenHeight;
-	Result.M[2][2] = 1.0f / (FarPlane - NearPlane);
-	Result.M[2][3] = 0.0f;
-	Result.M[3][2] = -NearPlane / (FarPlane - NearPlane);
-	Result.M[3][3] = 1.0f;
-	return Result;
+    FMatrix Result;
+    Result.M[0][0] = 2.0f / ScreenWidth;
+    Result.M[1][1] = 2.0f / ScreenHeight;
+    Result.M[2][2] = 1.0f / (FarPlane - NearPlane);
+    Result.M[2][3] = 0.0f;
+    Result.M[3][2] = -NearPlane / (FarPlane - NearPlane);
+    Result.M[3][3] = 1.0f;
+    return Result;
 }
 
 FVector FMatrix::GetTranslation() const

@@ -7,7 +7,7 @@
 #define _TCHAR_DEFINED  // TCHAR 재정의 에러 때문
 
 #ifdef TEXT             // Windows.h의 TEXT를 삭제
-    #undef TEXT
+	#undef TEXT
 #endif
 //~ Windows.h
 
@@ -20,9 +20,9 @@
 #define IS_WIDECHAR 0
 
 #if IS_WIDECHAR 
-    #define TEXT(x) L##x
+	#define TEXT(x) L##x
 #else
-    #define TEXT(x) x
+	#define TEXT(x) x
 #endif
 
 // unsigned int type
@@ -41,7 +41,7 @@ typedef char ANSICHAR;
 typedef wchar_t WIDECHAR;
 
 #if IS_WIDECHAR
-    typedef WIDECHAR TCHAR;
+	typedef WIDECHAR TCHAR;
 #else
-    typedef ANSICHAR TCHAR;
+	typedef ANSICHAR TCHAR;
 #endif

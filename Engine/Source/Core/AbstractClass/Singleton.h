@@ -7,39 +7,39 @@ template <typename Derived>
 class TSingleton
 {
 private:
-    static Derived* Instance;
-    TSingleton() = default;
+	static Derived* Instance;
+	TSingleton() = default;
 
-    friend Derived;
+	friend Derived;
 
 public:
-    ~TSingleton();
+	~TSingleton();
 
-    // 이동 & 복사 생성자 제거
-    TSingleton(const TSingleton&) = delete;
-    TSingleton& operator=(const TSingleton&) = delete;
-    TSingleton(TSingleton&&) = delete;
-    TSingleton& operator=(TSingleton&&) = delete;
+	// 이동 & 복사 생성자 제거
+	TSingleton(const TSingleton&) = delete;
+	TSingleton& operator=(const TSingleton&) = delete;
+	TSingleton(TSingleton&&) = delete;
+	TSingleton& operator=(TSingleton&&) = delete;
 
-    static Derived& Get();
+	static Derived& Get();
 };
 
 
 template <typename Derived>
 TSingleton<Derived>::~TSingleton()
 {
-    delete Instance;
-    Instance = nullptr;
+	delete Instance;
+	Instance = nullptr;
 }
 
 template <typename Derived>
 Derived& TSingleton<Derived>::Get()
 {
-    if (Instance == nullptr)
-    {
-        Instance = new Derived();
-    }
-    return *Instance;
+	if (Instance == nullptr)
+	{
+		Instance = new Derived();
+	}
+	return *Instance;
 }
 
 template <typename Derived>
