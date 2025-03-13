@@ -69,7 +69,6 @@ T* UWorld::SpawnActor(FString InName, const FVector& InLocation, const FVector& 
 	T* NewActor = FObjectFactory::ConstructObject<T>();
 	if (NewActor != nullptr)
 	{
-		// TODO: loc, rot, scale 세팅
 		NewActor->SetActorLocation(InLocation);
 		NewActor->SetActorRotation(InRotation);
 		NewActor->SetActorScale3D(InScale);

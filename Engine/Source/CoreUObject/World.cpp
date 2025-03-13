@@ -63,7 +63,6 @@ void UWorld::LateTick(float DeltaTime)
 void UWorld::Render()
 {
     URenderer* Renderer = UEngine::Get().GetRenderer();
-
     if (Renderer == nullptr)
     {
         return;
@@ -72,7 +71,7 @@ void UWorld::Render()
     ACamera* cam = FEditorManager::Get().GetCamera();
     Renderer->UpdateViewMatrix(cam->GetActorTransform());
     Renderer->UpdateProjectionMatrix(cam);
-        
+
     if (APlayerInput::Get().GetMouseDown(false))
     {
         RenderPickingTexture(*Renderer);
@@ -126,12 +125,14 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
         RenderComponent->Render();
     }
 
+    /* TODO: Z 관련 렌더는 기즈모를 가장 앞에 렌더하기 위한 것으로, 다른 방법으로 해결 가능
     Renderer.PrepareZIgnore();
     for (auto& RenderComponent: ZIgnoreRenderComponents)
     {
         uint32 depth = RenderComponent->GetOwner()->GetDepth();
         RenderComponent->Render();
     }
+    */
 }
 
 void UWorld::DisplayPickingTexture(URenderer& Renderer)

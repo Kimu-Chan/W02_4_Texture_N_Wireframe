@@ -19,7 +19,7 @@ public:
 		requires std::derived_from<T, UObject>
 	static T* ConstructObject()
 	{
-		UE_LOG("DEBUG: Construct %s Object", typeid(T).name());
+		UE_LOG(TEXT("DEBUG: Construct %s Object"), typeid(T).name());
 
 		constexpr size_t ObjectSize = sizeof(T);
 		void* RawMemory = FPlatformMemory::Malloc<EAT_Object>(ObjectSize);
