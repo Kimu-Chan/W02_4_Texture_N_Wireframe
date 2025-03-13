@@ -13,7 +13,6 @@ public:
 	UPrimitiveComponent() = default;
 	virtual ~UPrimitiveComponent() = default;
 
-public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	void UpdateConstantPicking(const URenderer& Renderer, FVector4 UUIDColor) const;
@@ -36,10 +35,8 @@ public:
 	}
 	const FVector4& GetCustomColor() const { return CustomColor; }
 
-public:
 	virtual void RegisterComponentWithWorld(class UWorld* World);
 
-public:
 	void SetCanBeRendered(bool bRender) { bCanBeRendered = bRender; }
 
 	void SetIsOrthoGraphic(bool IsOrtho) { bIsOrthoGraphic = IsOrtho; }
@@ -51,6 +48,7 @@ protected:
 	bool bIsOrthoGraphic = false;
 	FVector4 CustomColor = FVector4(1.0f, 1.0f, 1.0f, 1.0f);
 };
+
 
 class UCubeComp : public UPrimitiveComponent
 {
@@ -82,6 +80,7 @@ public:
 	}
 };
 
+
 class UTriangleComp : public UPrimitiveComponent
 {
 	using Super = UPrimitiveComponent;
@@ -96,6 +95,7 @@ public:
 		return EPrimitiveType::EPT_Triangle;
 	}
 };
+
 
 class ULineComp : public UPrimitiveComponent
 {
@@ -113,6 +113,7 @@ public:
 	}
 };
 
+
 class UCylinderComp : public UPrimitiveComponent
 {
 	using Super = UPrimitiveComponent;
@@ -128,6 +129,7 @@ public:
 		return EPrimitiveType::EPT_Cylinder;
 	}
 };
+
 
 class UConeComp : public UPrimitiveComponent
 {

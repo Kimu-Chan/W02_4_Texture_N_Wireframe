@@ -67,7 +67,7 @@ void AActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Components.Empty();
 }
 
-void AActor::Pick()
+void AActor::OnActorPicked()
 {
 	if (RootComponent)
 	{
@@ -76,7 +76,7 @@ void AActor::Pick()
 	}
 }
 
-void AActor::UnPick()
+void AActor::OnActorUnPicked()
 {
 	if (RootComponent)
 	{
@@ -99,7 +99,7 @@ void AActor::SetActorTransform(const FTransform& InTransform)
 	}
 	else
 	{
-		UE_LOG("RootComponent is nullptr");
+		UE_LOG(TEXT("RootComponent is nullptr"));
 	}
 }
 
@@ -120,16 +120,14 @@ void AActor::SetColor(FVector4 InColor)
 		return;
 	}
 
-	UPrimitiveComponent* RootPrimitive = dynamic_cast<UPrimitiveComponent*>(RootComponent);
-	if (RootPrimitive)
+	if (UPrimitiveComponent* RootPrimitive = dynamic_cast<UPrimitiveComponent*>(RootComponent))
 	{
 		RootPrimitive->SetCustomColor(InColor);
 	}
 
 	for (auto& Component : Components)
 	{
-		UPrimitiveComponent* PrimitiveComponent = dynamic_cast<UPrimitiveComponent*>(Component);
-		if (PrimitiveComponent)
+		if (UPrimitiveComponent* PrimitiveComponent = dynamic_cast<UPrimitiveComponent*>(Component))
 		{
 			PrimitiveComponent->SetCustomColor(InColor);
 		}
@@ -143,16 +141,14 @@ void AActor::SetUseVertexColor(bool bUseVertexColor)
 		return;
 	}
 
-	UPrimitiveComponent* RootPrimitive = dynamic_cast<UPrimitiveComponent*>(RootComponent);
-	if (RootPrimitive)
+	if (UPrimitiveComponent* RootPrimitive = dynamic_cast<UPrimitiveComponent*>(RootComponent))
 	{
 		RootPrimitive->SetUseVertexColor(bUseVertexColor);
 	}
 
 	for (auto& Component : Components)
 	{
-		UPrimitiveComponent* PrimitiveComponent = dynamic_cast<UPrimitiveComponent*>(Component);
-		if (PrimitiveComponent)
+		if (UPrimitiveComponent* PrimitiveComponent = dynamic_cast<UPrimitiveComponent*>(Component))
 		{
 			PrimitiveComponent->SetUseVertexColor(bUseVertexColor);
 		}

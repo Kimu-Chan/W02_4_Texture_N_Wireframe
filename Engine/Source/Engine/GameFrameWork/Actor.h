@@ -6,7 +6,6 @@
 #include "CoreUObject/ObjectFactory.h"
 #include "CoreUObject/Components/ActorComponent.h"
 #include "CoreUObject/Components/SceneComponent.h"
-#include "CoreUObject/Components/PrimitiveComponent.h"
 #include "Engine/EngineTypes.h"
 
 class UWorld;
@@ -18,17 +17,6 @@ public:
 	AActor();
 	virtual ~AActor() override = default;
 
-	void SetDepth(int InDepth)
-	{
-		Depth = InDepth;
-	}
-
-	int GetDepth() const
-	{
-		return Depth;
-	}
-
-public:
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaTime);
 	virtual void LateTick (float DeltaTime); // 렌더 후 호출
@@ -38,13 +26,18 @@ public:
 	TSet<UActorComponent*>& GetComponents() { return Components; }
 
 	UWorld* GetWorld() const { return World; }
+	
 	void SetWorld(UWorld* InWorld) { World = InWorld; }
 
 	bool IsGizmoActor() const { return bIsGizmo; }
 
+	void SetDepth(uint32 InDepth) { Depth = InDepth; }
+
+	uint32 GetDepth() const { return Depth; }
+	
 private:
-	virtual void Pick();
-	virtual void UnPick();
+	virtual void OnActorPicked();
+	virtual void OnActorUnPicked();
 
 	uint32 Depth;
 	bool bIsPicked = false;
@@ -52,7 +45,6 @@ private:
 public:
 	bool IsPicked() const { return bIsPicked; }
 
-public:
 	template<typename T>
 		requires std::derived_from<T, UActorComponent>
 	T* AddComponent()
@@ -92,11 +84,9 @@ public:
 
 	bool Destroy();
 
-public:
 	USceneComponent* GetRootComponent() const { return RootComponent; }
 	void SetRootComponent(USceneComponent* InRootComponent) { RootComponent = InRootComponent; }
 
-public:
 	void SetColor(FVector4 InColor);
 	void SetUseVertexColor(bool bUseVertexColor);
 

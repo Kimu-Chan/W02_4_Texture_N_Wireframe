@@ -39,6 +39,7 @@ public:
 	BufferInfo GetBufferInfo(EPrimitiveType Type);
 
 public:
+	// 동적으로 버텍스 정보 생성
 	TArray<FVertexSimple> CreateArrowVertices();
 	TArray<FVertexSimple> CreateConeVertices();
 	TArray<FVertexSimple> CreateCylinderVertices();

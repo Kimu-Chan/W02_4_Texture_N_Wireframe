@@ -26,6 +26,21 @@ private:
 		uint32 bUseVertexColor;
 		FVector Padding;
 	};
+
+	struct alignas(16) FCbChangeOnResizeAndFov
+	{
+		FMatrix ProjectionMatrix;
+	};
+
+	struct alignas(16) FCbChangeEveryFrame
+	{
+		FMatrix ViewMatrix;
+	};
+
+	struct alignas(16) FCbChangeEveryObject
+	{
+		FMatrix WorldMatrix;
+	};
 	
 	struct alignas(16) FPickingConstants
 	{
@@ -56,7 +71,7 @@ public:
 
 	void ReleaseShader();
 
-	void CreateConstantBuffer();
+	HRESULT CreateConstantBuffer();
 
 	void ReleaseConstantBuffer();
 
@@ -146,9 +161,15 @@ protected:
 	// 렌더링에 필요한 리소스 및 상태를 관리하기 위한 변수들
 	ID3D11Texture2D* FrameBuffer = nullptr;                 // 화면 출력용 텍스처
 	ID3D11RenderTargetView* FrameBufferRTV = nullptr;       // 텍스처를 렌더 타겟으로 사용하는 뷰
-	ID3D11RasterizerState* RasterizerState = nullptr;       // 래스터라이저 상태(컬링, 채우기 모드 등 정의)
-	ID3D11Buffer* ConstantBuffer = nullptr;                 // 쉐이더에 데이터를 전달하기 위한 상수 버퍼
+	ID3D11RasterizerState* MeshRasterizerState = nullptr;       // 래스터라이저 상태(컬링, 채우기 모드 등 정의)
+	ID3D11RasterizerState* WireframeRasterizerState = nullptr;  
 
+	// 상수 버퍼들
+	ID3D11Buffer* ConstantBuffer = nullptr;                 // 쉐이더에 데이터를 전달하기 위한 상수 버퍼
+	ID3D11Buffer* CbChangeOnResizeAndFov = nullptr;         // 화면 크기와 FOV값이 변할때 Projection matrix만 업데이트하기 위한 상수 버퍼
+	ID3D11Buffer* CbChangeEveryFrame = nullptr;             // 한 프레임에 한번 업데이트 되는 카메라의 뷰 매트릭스를 위한 상수 버퍼
+	ID3D11Buffer* CbChangeEveryObject = nullptr;            // 각 오브젝트의 정보를 업데이트하는 상수 버퍼
+	
 	FLOAT ClearColor[4] = { 0.025f, 0.025f, 0.025f, 1.0f }; // 화면을 초기화(clear)할 때 사용할 색상 (RGBA)
 	D3D11_VIEWPORT ViewportInfo = {};                       // 렌더링 영역을 정의하는 뷰포트 정보
 
@@ -169,7 +190,6 @@ protected:
 
 	std::unique_ptr<FBufferCache> BufferCache;
 
-	FMatrix WorldMatrix;
 	FMatrix ViewMatrix;
 	FMatrix ProjectionMatrix;
 

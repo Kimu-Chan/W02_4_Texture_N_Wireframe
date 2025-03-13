@@ -18,12 +18,12 @@ const FTransform USceneComponent::GetWorldTransform()
 {
     if (Parent)
     {
-            // 부모�? ?�을 경우 부�??�드 * ??로컬
-            FMatrix ParentWorld = Parent->GetWorldTransform().GetMatrix();
-            FMatrix MyLocal = RelativeTransform.GetMatrix();
+        // 부모�? ?�을 경우 부�??�드 * ??로컬
+        FMatrix ParentWorld = Parent->GetWorldTransform().GetMatrix();
+        FMatrix MyLocal = RelativeTransform.GetMatrix();
 
-            FMatrix NewMatrix = MyLocal * ParentWorld;
-            return NewMatrix.GetTransform();
+        FMatrix NewMatrix = MyLocal * ParentWorld;
+        return NewMatrix.GetTransform();
     }
 
     return RelativeTransform;
@@ -34,7 +34,6 @@ void USceneComponent::SetRelativeTransform(const FTransform& InTransform)
     // 로컬 트랜스폼 갱신
     RelativeTransform = InTransform;
     FVector Rot = RelativeTransform.GetRotation().GetEuler();
-
 }
 
 void USceneComponent::Pick(bool bPicked)
@@ -42,7 +41,7 @@ void USceneComponent::Pick(bool bPicked)
     bIsPicked = bPicked;
     for (auto& Child : Children)
     {
-            Child->Pick(bPicked);
+        Child->Pick(bPicked);
     }
 }
 
@@ -50,13 +49,13 @@ void USceneComponent::SetupAttachment(USceneComponent* InParent, bool bUpdateChi
 {
     if (InParent)
     {
-            Parent = InParent;
-            InParent->Children.Add(this);
-            ApplyParentWorldTransform(InParent->GetWorldTransform());
+        Parent = InParent;
+        InParent->Children.Add(this);
+        ApplyParentWorldTransform(InParent->GetWorldTransform());
     }
     else
     {
-            UE_LOG("Parent is nullptr");
+        UE_LOG(TEXT("Parent is nullptr"));
     }
 }
 

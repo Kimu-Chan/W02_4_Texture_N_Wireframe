@@ -20,7 +20,7 @@ void FEditorManager::SelectActor(AActor* NewActor)
         
     if (SelectedActor != nullptr && SelectedActor != NewActor)
     {
-        SelectedActor->UnPick();
+        SelectedActor->OnActorUnPicked();
         GizmoHandle->SetActive(false);
     }
 
@@ -28,7 +28,7 @@ void FEditorManager::SelectActor(AActor* NewActor)
         
     if (SelectedActor != nullptr)
     {
-        SelectedActor->Pick();
+        SelectedActor->OnActorPicked();
         GizmoHandle->SetActive(true);
         //FVector Pos = SelectedActor->GetActorTransform().GetPosition();
         //FTransform GizmoTransform = GizmoHandle->GetActorTransform();

@@ -45,20 +45,20 @@ void APlayerController::HandleCameraMovement(float DeltaTime) {
     TargetRotation.Y += Camera->CameraSpeed * DeltaPos.Y * DeltaTime * 2.0f;    //@TODO: CameraRotaionSpeed를 나중에 조절할 수 있도록 수정
     TargetRotation.Z += Camera->CameraSpeed * DeltaPos.X * DeltaTime * 2.0f;
 
-    TargetRotation.Y = FMath::Clamp(TargetRotation.Y, -Camera->MaxYDegree, Camera->MaxYDegree);
+    TargetRotation.Y = FMath::Clamp(TargetRotation.Y, -Camera->MaxPitch, Camera->MaxPitch);
     CameraTransform.SetRotation(TargetRotation);
 
     if (APlayerInput::Get().IsPressedKey(EKeyCode::A)) {
-        NewVelocity -= Camera->GetRight();
+        NewVelocity -= Camera->GetRightVector();
     }
     if (APlayerInput::Get().IsPressedKey(EKeyCode::D)) {
-        NewVelocity += Camera->GetRight();
+        NewVelocity += Camera->GetRightVector();
     }
     if (APlayerInput::Get().IsPressedKey(EKeyCode::W)) {
-        NewVelocity += Camera->GetForward();
+        NewVelocity += Camera->GetForwardVector();
     }
     if (APlayerInput::Get().IsPressedKey(EKeyCode::S)) {
-        NewVelocity -= Camera->GetForward();
+        NewVelocity -= Camera->GetForwardVector();
     }
     if (APlayerInput::Get().IsPressedKey(EKeyCode::Q))
     {

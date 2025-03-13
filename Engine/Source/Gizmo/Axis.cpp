@@ -1,5 +1,6 @@
 #include "pch.h" 
 #include "Axis.h"
+#include "Components/PrimitiveComponent.h"
 
 AAxis::AAxis()
 {

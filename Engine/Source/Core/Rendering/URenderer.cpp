@@ -106,31 +106,73 @@ void URenderer::ReleaseShader()
     }
 }
 
-void URenderer::CreateConstantBuffer()
+HRESULT URenderer::CreateConstantBuffer()
 {
-    D3D11_BUFFER_DESC ConstantBufferDesc = {};
-    ConstantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;                        // 매 프레임 CPU에서 업데이트 하기 위해
-    ConstantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;             // 상수 버퍼로 설정
-    ConstantBufferDesc.ByteWidth = sizeof(FConstants) + 0xf & 0xfffffff0;  // 16byte의 배수로 올림
-    ConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;            // CPU에서 쓰기 접근이 가능하게 설정
+    HRESULT hr = S_OK;
+    
+    D3D11_BUFFER_DESC DynamicConstantBufferDesc = {};
+    DynamicConstantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;                        // 매 프레임 CPU에서 업데이트 하기 위해
+    DynamicConstantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;             // 상수 버퍼로 설정
+    DynamicConstantBufferDesc.ByteWidth = sizeof(FConstants) + 0xf & 0xfffffff0;  // 16byte의 배수로 올림
+    DynamicConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;            // CPU에서 쓰기 접근이 가능하게 설정
+    hr = Device->CreateBuffer(&DynamicConstantBufferDesc, nullptr, &ConstantBuffer);
+    if (FAILED(hr))
+    {
+        return hr;
+    }
 
-    Device->CreateBuffer(&ConstantBufferDesc, nullptr, &ConstantBuffer);
+    DynamicConstantBufferDesc.ByteWidth = sizeof(FCbChangeEveryFrame) + 0xf & 0xfffffff0;  // 16byte의 배수로 올림
+    hr = Device->CreateBuffer(&DynamicConstantBufferDesc, nullptr, &CbChangeEveryFrame);
+    if (FAILED(hr))
+    {
+        return hr;
+    }
 
+    DynamicConstantBufferDesc.ByteWidth = sizeof(FCbChangeEveryObject) + 0xf & 0xfffffff0;  // 16byte의 배수로 올림
+    hr = Device->CreateBuffer(&DynamicConstantBufferDesc, nullptr, &CbChangeEveryObject);
+    if (FAILED(hr))
+    {
+        return hr;
+    }
+    
+    D3D11_BUFFER_DESC DefaultConstantBufferDesc = {};
+    DefaultConstantBufferDesc.Usage = D3D11_USAGE_DEFAULT;                        // 자주 업데이트 하지 않으므로 Default로 설정
+    DefaultConstantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;             // 상수 버퍼로 설정
+    DefaultConstantBufferDesc.ByteWidth = sizeof(FCbChangeOnResizeAndFov) + 0xf & 0xfffffff0;  // 16byte의 배수로 올림
+    DefaultConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;            // CPU에서 쓰기 접근이 가능하게 설정
+    hr = Device->CreateBuffer(&DefaultConstantBufferDesc, nullptr, &CbChangeOnResizeAndFov);
+    if (FAILED(hr))
+    {
+        return hr;
+    }
+
+    // TODO: Picking 버퍼는 언제 쓰이고, Dynamic으로 설정할 필요가 있을지 알아보기
     D3D11_BUFFER_DESC ConstantBufferDescPicking = {};
     ConstantBufferDescPicking.Usage = D3D11_USAGE_DYNAMIC;                        // 매 프레임 CPU에서 업데이트 하기 위해
     ConstantBufferDescPicking.BindFlags = D3D11_BIND_CONSTANT_BUFFER;             // 상수 버퍼로 설정
     ConstantBufferDescPicking.ByteWidth = sizeof(FPickingConstants) + 0xf & 0xfffffff0;  // 16byte의 배수로 올림
     ConstantBufferDescPicking.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;            // CPU에서 쓰기 접근이 가능하게 설정
 
-    Device->CreateBuffer(&ConstantBufferDescPicking, nullptr, &ConstantPickingBuffer);
+    hr = Device->CreateBuffer(&ConstantBufferDescPicking, nullptr, &ConstantPickingBuffer);
+    if (FAILED(hr))
+    {
+        return hr;
+    }
 
+    // TODO: Depth 버퍼는 용도 부터 알아보기
     D3D11_BUFFER_DESC ConstantBufferDescDepth = {};
     ConstantBufferDescPicking.Usage = D3D11_USAGE_DYNAMIC;                        // 매 프레임 CPU에서 업데이트 하기 위해
     ConstantBufferDescPicking.BindFlags = D3D11_BIND_CONSTANT_BUFFER;             // 상수 버퍼로 설정
     ConstantBufferDescPicking.ByteWidth = sizeof(FDepthConstants) + 0xf & 0xfffffff0;  // 16byte의 배수로 올림
     ConstantBufferDescPicking.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;            // CPU에서 쓰기 접근이 가능하게 설정
 
-    Device->CreateBuffer(&ConstantBufferDescPicking, nullptr, &ConstantsDepthBuffer);
+    hr = Device->CreateBuffer(&ConstantBufferDescPicking, nullptr, &ConstantsDepthBuffer);
+    if (FAILED(hr))
+    {
+        return hr;
+    }
+    
+    return hr;
 }
 
 void URenderer::ReleaseConstantBuffer()
@@ -170,7 +212,7 @@ void URenderer::Prepare() const
 
     // Rasterization할 Viewport를 설정 
     DeviceContext->RSSetViewports(1, &ViewportInfo);
-    DeviceContext->RSSetState(RasterizerState);
+    DeviceContext->RSSetState(MeshRasterizerState);
 
     /**
      * OutputMerger 설정
@@ -268,11 +310,8 @@ void URenderer::UpdateConstant(const ConstantUpdateInfo& UpdateInfo) const
 
     D3D11_MAPPED_SUBRESOURCE ConstantBufferMSR;
 
-    FMatrix MVP =
-        FMatrix::Transpose(ProjectionMatrix) *
-        FMatrix::Transpose(ViewMatrix) *
-        FMatrix::Transpose(UpdateInfo.Transform.GetMatrix());    // 상수 버퍼를 CPU 메모리에 매핑
-
+    FMatrix MVP = FMatrix::Transpose(UpdateInfo.Transform.GetMatrix() * ViewMatrix * ProjectionMatrix);
+    
     // D3D11_MAP_WRITE_DISCARD는 이전 내용을 무시하고 새로운 데이터로 덮어쓰기 위해 사용
     DeviceContext->Map(ConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &ConstantBufferMSR);
     {
@@ -481,15 +520,15 @@ void URenderer::CreateRasterizerState()
     RasterizerDesc.CullMode = D3D11_CULL_BACK;  // 백 페이스 컬링
     RasterizerDesc.FrontCounterClockwise = FALSE;
 
-    Device->CreateRasterizerState(&RasterizerDesc, &RasterizerState);
+    Device->CreateRasterizerState(&RasterizerDesc, &MeshRasterizerState);
 }
 
 void URenderer::ReleaseRasterizerState()
 {
-    if (RasterizerState)
+    if (MeshRasterizerState)
     {
-        RasterizerState->Release();
-        RasterizerState = nullptr;
+        MeshRasterizerState->Release();
+        MeshRasterizerState = nullptr;
     }
 }
 
@@ -500,7 +539,6 @@ void URenderer::CreateBufferCache()
 
 void URenderer::InitMatrix()
 {
-    WorldMatrix = FMatrix::Identity;
     ViewMatrix = FMatrix::Identity;
     ProjectionMatrix = FMatrix::Identity;
 }
@@ -599,8 +637,8 @@ void URenderer::UpdateConstantDepth(int Depth) const
     {
         FDepthConstants* Constants = static_cast<FDepthConstants*>(ConstantBufferMSR.pData);
         Constants->DepthOffset = Depth;
-        Constants->nearPlane = Cam->GetNear();
-        Constants->farPlane = Cam->GetFar();
+        Constants->nearPlane = Cam->GetNearClip();
+        Constants->farPlane = Cam->GetFarClip();
     }
     DeviceContext->Unmap(ConstantsDepthBuffer, 0);
 }
@@ -694,8 +732,8 @@ void URenderer::UpdateProjectionMatrix(ACamera* Camera)
     float AspectRatio = UEngine::Get().GetScreenRatio();
 
     float FOV = FMath::DegreesToRadians(Camera->GetFieldOfView());
-    float Near = Camera->GetNear();
-    float Far = Camera->GetFar();
+    float Near = Camera->GetNearClip();
+    float Far = Camera->GetFarClip();
 
     if (Camera->ProjectionMode == ECameraProjectionMode::Perspective)
     {
