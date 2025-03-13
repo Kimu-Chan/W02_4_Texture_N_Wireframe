@@ -12,6 +12,7 @@
 #include "Engine/GameFrameWork/Cube.h"
 #include "Engine/GameFrameWork/Cylinder.h"
 #include "Engine/GameFrameWork/Sphere.h"
+#include "Engine/GameFramework/Arrow.h"
 
 
 void UWorld::BeginPlay()
@@ -208,7 +209,7 @@ void UWorld::LoadWorld(const char* SceneName)
         FTransform Transform = FTransform(ObjectInfo->Location, FQuat(), ObjectInfo->Scale);
         Transform.Rotate(ObjectInfo->Rotation);
 
-        FVector SpawnLocation = Transform.GetPosition();
+        FVector SpawnLocation = Transform.GetLocation();
         FVector SpawnRotation = Transform.GetRotation().GetEuler();
         FVector SpawnScale = Transform.GetScale();
 
@@ -260,7 +261,7 @@ UWorldInfo UWorld::GetWorldInfo() const
         }
         WorldInfo.ObjctInfos[i] = new UObjectInfo();
         const FTransform& Transform = actor->GetActorTransform();
-        WorldInfo.ObjctInfos[i]->Location = Transform.GetPosition();
+        WorldInfo.ObjctInfos[i]->Location = Transform.GetLocation();
         WorldInfo.ObjctInfos[i]->Rotation = Transform.GetRotation();
         WorldInfo.ObjctInfos[i]->Scale = Transform.GetScale();
         WorldInfo.ObjctInfos[i]->ObjectType = actor->GetTypeName();

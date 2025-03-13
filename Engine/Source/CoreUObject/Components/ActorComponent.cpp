@@ -6,7 +6,7 @@ void UActorComponent::BeginPlay()
 {
 }
 
-void UActorComponent::Tick(float DeltaTime)
+void UActorComponent::TickComponent(float DeltaTime)
 {
 }
 

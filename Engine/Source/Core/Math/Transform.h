@@ -79,7 +79,7 @@ public:
 		Scale = {x, y, z};
 	}
 
-	FVector GetPosition() const
+	FVector GetLocation() const
 	{
 		return Position;
 	}
@@ -157,5 +157,10 @@ public:
 	{
 		FVector Axis = FVector(1, 0, 0).GetSafeNormal();
 		Rotation = FQuat::MultiplyQuaternions(FQuat(Axis, Angle), Rotation);
+	}
+
+	FTransform operator*(const FTransform& Other) const
+	{
+		return (GetMatrix() * Other.GetMatrix()).GetTransform();
 	}
 };

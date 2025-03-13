@@ -34,13 +34,13 @@ public:
 
 	uint32 GetDepth() const { return Depth; }
 
-	FVector GetActorLocation() const { return RootComponent->GetComponentLocation(); }
-	FVector GetActorRotation() const { return RootComponent->GetComponentRotation(); }
-	FVector GetActorScale() const { return RootComponent->GetComponentScale(); }
+	virtual FVector GetActorLocation() const;
+	virtual FVector GetActorRotation() const;
+	virtual FVector GetActorScale3D() const;
 
-	void SetActorLocation(FVector InLocation) { RootComponent->SetComponentLocation(InLocation); }
-	void SetActorRotation(FVector InRotation) { RootComponent->SetComponentRotation(InRotation); }
-	void SetActorScale(FVector InScale) { RootComponent->SetComponentScale(InScale); }
+	virtual bool SetActorLocation(const FVector& InLocation);
+	virtual bool SetActorRotation(const FVector& InRotation);
+	virtual bool SetActorScale3D(const FVector& InScale);
 	
 private:
 	virtual void OnActorPicked();

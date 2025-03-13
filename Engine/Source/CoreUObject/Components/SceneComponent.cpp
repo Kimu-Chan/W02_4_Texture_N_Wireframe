@@ -8,32 +8,27 @@ void USceneComponent::BeginPlay()
     Super::BeginPlay();
 }
 
-void USceneComponent::Tick(float DeltaTime)
+void USceneComponent::TickComponent(float DeltaTime)
 {
-    Super::Tick(DeltaTime);
+    Super::TickComponent(DeltaTime);
 }
 
 // 월드 트랜스폼 반환
 const FTransform USceneComponent::GetWorldTransform()
 {
-    if (Parent)
+    if (AttachParent)
     {
-        // 부모�? ?�을 경우 부�??�드 * ??로컬
-        FMatrix ParentWorld = Parent->GetWorldTransform().GetMatrix();
-        FMatrix MyLocal = RelativeTransform.GetMatrix();
-
-        FMatrix NewMatrix = MyLocal * ParentWorld;
-        return NewMatrix.GetTransform();
+        // 부모가 있을 경우: 로컬 * 부모 월드
+        return GetRelativeTransform() * AttachParent->GetWorldTransform();
     }
-
-    return RelativeTransform;
+    return GetRelativeTransform();
 }
 
 void USceneComponent::SetRelativeTransform(const FTransform& InTransform)
 {
-    // 로컬 트랜스폼 갱신
-    RelativeTransform = InTransform;
-    FVector Rot = RelativeTransform.GetRotation().GetEuler();
+    RelativeLocation = InTransform.GetLocation();
+    RelativeRotation = InTransform.GetRotation().GetEuler();
+    RelativeScale = InTransform.GetScale();
 }
 
 void USceneComponent::Pick(bool bPicked)
@@ -49,9 +44,10 @@ void USceneComponent::SetupAttachment(USceneComponent* InParent, bool bUpdateChi
 {
     if (InParent)
     {
-        Parent = InParent;
+        AttachParent = InParent;
         InParent->Children.Add(this);
-        ApplyParentWorldTransform(InParent->GetWorldTransform());
+        // TODO: 아래 함수를 호출해야하는지 생각해봐야함.
+        // ApplyParentWorldTransform(InParent->GetWorldTransform());
     }
     else
     {
@@ -62,7 +58,7 @@ void USceneComponent::SetupAttachment(USceneComponent* InParent, bool bUpdateChi
 void USceneComponent::ApplyParentWorldTransform(const FTransform& ParentWorldTransform)
 {
     FMatrix ParentWorld = ParentWorldTransform.GetMatrix();
-    FMatrix MyLocal = RelativeTransform.GetMatrix();
+    FMatrix MyLocal = GetRelativeTransform().GetMatrix();
 
     FMatrix NewMatrix = MyLocal * ParentWorld.Inverse();
 

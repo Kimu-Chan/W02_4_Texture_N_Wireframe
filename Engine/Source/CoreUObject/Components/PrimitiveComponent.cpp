@@ -9,9 +9,9 @@ void UPrimitiveComponent::BeginPlay()
     Super::BeginPlay();
 }
 
-void UPrimitiveComponent::Tick(float DeltaTime)
+void UPrimitiveComponent::TickComponent(float DeltaTime)
 {
-    Super::Tick(DeltaTime); 
+    Super::TickComponent(DeltaTime); 
 }
 
 void UPrimitiveComponent::UpdateConstantPicking(const URenderer& Renderer, const FVector4 UUIDColor)const

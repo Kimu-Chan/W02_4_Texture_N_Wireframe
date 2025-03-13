@@ -70,8 +70,11 @@ T* UWorld::SpawnActor(FString InName, const FVector& InLocation, const FVector& 
 	if (NewActor != nullptr)
 	{
 		// TODO: loc, rot, scale 세팅
-		
+		NewActor->SetActorLocation(InLocation);
+		NewActor->SetActorRotation(InRotation);
+		NewActor->SetActorScale3D(InScale);
 	}
+	
 	if (UWorld* World = UEngine::Get().GetWorld())
 	{
 		Actors.Add(NewActor);

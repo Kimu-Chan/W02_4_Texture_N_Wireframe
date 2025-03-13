@@ -44,8 +44,8 @@ void AGizmoHandle::Tick(float DeltaTime)
     AActor* SelectedActor = FEditorManager::Get().GetSelectedActor();
     if (SelectedActor != nullptr && bIsActive)
     {
-        FTransform GizmoTr = RootComponent->GetComponentTransform();
-        GizmoTr.SetPosition(SelectedActor->GetActorTransform().GetPosition());
+        FTransform GizmoTr = RootComponent->GetRelativeTransform();
+        GizmoTr.SetPosition(SelectedActor->GetActorTransform().GetLocation());
         SetActorTransform(GizmoTr);
     }
 
@@ -92,7 +92,7 @@ void AGizmoHandle::Tick(float DeltaTime)
             FVector RayDir = (RayEnd - RayOrigin).GetSafeNormal();
 
             // 액터와의 거리
-            float Distance = FVector::Distance(RayOrigin, Actor->GetActorTransform().GetPosition());
+            float Distance = FVector::Distance(RayOrigin, Actor->GetActorTransform().GetLocation());
 
             // Ray 방향으로 Distance만큼 재계산
             FVector Result = RayOrigin + RayDir * Distance;
@@ -118,12 +118,12 @@ void AGizmoHandle::SetScaleByDistance()
     FTransform MyTransform = GetActorTransform();
 
     // 액터의 월드 위치
-    FVector actorWorldPos = MyTransform.GetPosition();
+    FVector actorWorldPos = MyTransform.GetLocation();
 
     FTransform CameraTransform = FEditorManager::Get().GetCamera()->GetActorTransform();
 
     // 카메라의 월드 위치
-    FVector cameraWorldPos = CameraTransform.GetPosition();
+    FVector cameraWorldPos = CameraTransform.GetLocation();
 
     // 거리 계산
     float distance = (actorWorldPos - cameraWorldPos).Length();
@@ -154,7 +154,7 @@ const char* AGizmoHandle::GetTypeName()
 
 void AGizmoHandle::DoTransform(FTransform& AT, FVector Result, AActor* Actor)
 {
-    const FVector& AP = AT.GetPosition();
+    const FVector& AP = AT.GetLocation();
 
     if (SelectedAxis == ESelectedAxis::X)
     {

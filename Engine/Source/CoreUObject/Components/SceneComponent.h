@@ -14,35 +14,50 @@ class USceneComponent : public UActorComponent
 public:
 	USceneComponent() = default;
 
-public:
 	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
-
+	virtual void TickComponent(float DeltaTime) override;
 
 	/* 로컬 트랜스폼을 반환*/
-	FTransform GetComponentTransform() const { return RelativeTransform; }
+	FTransform GetRelativeTransform() const { return {RelativeLocation, RelativeRotation, RelativeScale}; }
+
 	/* 월드 트랜스폼을 반환, 이걸로 렌더링한다*/
 	const FTransform GetWorldTransform();
 
 	void SetRelativeTransform(const FTransform& InTransform);
 
+	FVector GetRelativeLocation() const { return RelativeLocation; }
+	FVector GetRelativeRotation() const { return RelativeRotation; }
+	FVector GetRelativeScale() const { return RelativeScale; }
+
+	void SetRelativeLocation(const FVector& InLocation) { RelativeLocation = InLocation; }
+	void SetRelativeRotation(const FVector& InRotation) { RelativeRotation = InRotation; }
+	void SetRelativeScale(const FVector& InScale) { RelativeScale = InScale; }
+
 	void Pick(bool bPicked);
-public:
+
 	bool IsPicked() const { return bIsPicked; }
 
-public:
 	void SetupAttachment(USceneComponent* InParent, bool bUpdateChildTransform = false);
+
 	// 부모의 월드 트랜스폼을 받아서 자신의 로컬 트랜스폼을 갱신
 	void ApplyParentWorldTransform(const FTransform& InTransform);
 
 protected:
-	USceneComponent* Parent = nullptr;
+	USceneComponent* AttachParent = nullptr;
+	
 	TSet<USceneComponent*> Children;
-	// 이건 내 로컬 트랜스폼
-	FTransform RelativeTransform = FTransform();
+
+	FVector RelativeLocation = FVector::ZeroVector;
+
+	FVector RelativeRotation = FVector::ZeroVector;
+
+	FVector RelativeScale = FVector::OneVector;
+	
 	bool bCanEverTick = true;
 
 	// debug
-protected:
 	bool bIsPicked = false;
+
+private:
+	AActor* OwnerPrivate = nullptr;
 };
