@@ -3,7 +3,7 @@
 #include "CoreUObject/World.h"
 #include "CoreUObject/Components/SceneComponent.h"
 #include "CoreUObject/Components/PrimitiveComponent.h"
-#include "Debug/DebugConsole.h"
+#include "Debugging/DebugConsole.h"
 #include "Static/EditorManager.h"
 
 AActor::AActor() : Depth{ 0 }

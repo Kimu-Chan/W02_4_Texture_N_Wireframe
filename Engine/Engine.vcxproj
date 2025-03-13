@@ -177,7 +177,7 @@
     <ClInclude Include="Source\Core\Rendering\BufferCache.h" />
     <ClInclude Include="Source\Core\Rendering\UI.h" />
     <ClInclude Include="Source\Core\Rendering\URenderer.h" />
-    <ClInclude Include="Source\Debug\DebugConsole.h" />
+    <ClInclude Include="Source\Debugging\DebugConsole.h" />
     <ClInclude Include="Source\EnginePch.h" />
     <ClInclude Include="Source\Engine\Engine.h" />
     <ClInclude Include="Source\Engine\EngineStatics.h" />
@@ -223,7 +223,7 @@
     <ClCompile Include="Source\Core\Rendering\BufferCache.cpp" />
     <ClCompile Include="Source\Core\Rendering\UI.cpp" />
     <ClCompile Include="Source\Core\Rendering\URenderer.cpp" />
-    <ClCompile Include="Source\Debug\DebugConsole.cpp" />
+    <ClCompile Include="Source\Debugging\DebugConsole.cpp" />
     <ClCompile Include="Source\EnginePch.cpp" />
     <ClCompile Include="Source\Engine\Engine.cpp" />
     <ClCompile Include="Source\Engine\EngineStatics.cpp" />

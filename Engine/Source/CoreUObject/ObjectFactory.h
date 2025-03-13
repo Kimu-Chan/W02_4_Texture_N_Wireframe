@@ -3,7 +3,7 @@
 #include "Engine/Engine.h"
 #include "Engine/EngineStatics.h"
 #include "Core/HAL/PlatformMemory.h"
-#include "Debug/DebugConsole.h"
+#include "Debugging/DebugConsole.h"
 
 class UObject;
 

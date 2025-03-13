@@ -6,7 +6,7 @@
 #include "Core/Container/Array.h"
 #include "Core/Container/Set.h"
 #include "Core/Container/String.h"
-#include "Debug/DebugConsole.h"
+#include "Debugging/DebugConsole.h"
 #include "Utils/JsonSavehelper.h"
 
 #include "Engine/GameFrameWork/Arrow.h"

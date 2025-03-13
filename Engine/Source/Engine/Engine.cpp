@@ -6,7 +6,7 @@
 #include "CoreUObject/ObjectFactory.h"
 #include "CoreUObject/World.h"
 #include "Gizmo/Axis.h"
-#include "Debug/DebugConsole.h"
+#include "Debugging/DebugConsole.h"
 #include "GameFrameWork/Camera.h"
 #include "GameFrameWork/Sphere.h"
 

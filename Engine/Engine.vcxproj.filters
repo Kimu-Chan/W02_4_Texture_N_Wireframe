@@ -64,9 +64,6 @@
     <ClCompile Include="Source\Primitive\PrimitiveVertices.cpp">
       <Filter>Source Files\Primitive</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Debug\DebugConsole.cpp">
-      <Filter>Source Files\Debug</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Engine\GameFrameWork\Actor.cpp">
       <Filter>Source Files\Engine\GameFrameWork</Filter>
     </ClCompile>
@@ -126,6 +123,9 @@
     </ClCompile>
     <ClCompile Include="Source\EnginePch.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debugging\DebugConsole.cpp">
+      <Filter>Header Files\Debug</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -228,9 +228,6 @@
     <ClInclude Include="Source\Primitive\PrimitiveVertices.h">
       <Filter>Header Files\Primitive</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Debug\DebugConsole.h">
-      <Filter>Header Files\Debug</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Engine\GameFrameWork\Actor.h">
       <Filter>Header Files\Engine\GameFrameWork</Filter>
     </ClInclude>
@@ -290,6 +287,9 @@
     </ClInclude>
     <ClInclude Include="Source\pch.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debugging\DebugConsole.h">
+      <Filter>Source Files\Debug</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
