@@ -420,3 +420,12 @@ FMatrix FMatrix::GetScaleMatrix() const
 
     return Scale;
 }
+
+float FMatrix::GetMaxScaleFactor() const
+{
+    float MaxScale = M[0][0];
+	MaxScale = FMath::Max(MaxScale, M[1][1]);
+	MaxScale = FMath::Max(MaxScale, M[2][2]);
+
+    return MaxScale;
+}

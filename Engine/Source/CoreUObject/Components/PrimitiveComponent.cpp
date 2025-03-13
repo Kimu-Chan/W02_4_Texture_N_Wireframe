@@ -71,7 +71,7 @@ void UPrimitiveComponent::InitBoundingBox()
     UEngine::Get().GetRenderer()->GetPrimitiveLocalBounds(Type, Min, Max);
 
     BoundingBox = std::make_shared<FBox>();
-    BoundingBox->Init(Min, Max);
+    BoundingBox->Init(this, Min, Max);
 
     if (AActor* Owner = GetOwner())
     {

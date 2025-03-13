@@ -1,13 +1,17 @@
 ﻿#pragma once
 #include "Vector.h"
 #include "Transform.h"
+#include "Ray.h"
+#include <Debugging/DebugConsole.h>
 
-class FBox
+class USceneComponent;
+
+struct FBox
 {
 public:
 	FBox() = default;
-	FBox(const FVector& InMin, const FVector& InMax)
-		: Min(InMin), Max(InMax)
+	FBox(USceneComponent* InOwner, const FVector& InMin, const FVector& InMax)
+		: Owner(InOwner), Min(InMin), Max(InMax)
 	{
 	}
 	FVector Min;
@@ -15,52 +19,55 @@ public:
 
 	FVector InitialMin;
 	FVector InitialMax;
+	USceneComponent* Owner = nullptr;
 	bool bCanBeRendered = false;
 
 	bool IsValid() const
 	{
 		return Min.X < Max.X && Min.Y < Max.Y && Min.Z < Max.Z;
 	}
-	bool IntersectRay(const FVector& Origin, const FVector& Dir) const
+	bool IntersectRay(const FRay& Ray) const
 	{
-		float tmin = (Min.X - Origin.X) / Dir.X;
-		float tmax = (Max.X - Origin.X) / Dir.X;
-		if (tmin > tmax)
-		{
-			float temp = tmin;
-			tmin = tmax;
-			tmax = temp;
-		}
-		float tymin = (Min.Y - Origin.Y) / Dir.Y;
-		float tymax = (Max.Y - Origin.Y) / Dir.Y;
-		if (tymin > tymax)
-		{
-			float temp = tymin;
-			tymin = tymax;
-			tymax = temp;
-		}
-		if ((tmin > tymax) || (tymin > tmax))
+		
+		USceneComponent* debug = Owner;
+
+		FVector NormalizedDir = Ray.Direction.GetSafeNormal();
+		// 1. Ray의 방향 역수
+		FVector InvDir{
+			1.0f / NormalizedDir.X,
+			1.0f / NormalizedDir.Y,
+			1.0f / NormalizedDir.Z
+		};
+
+		// 2. Ray의 방향에 따라 TMin, TMax 계산
+
+		float T1 = (Min.X - Ray.Origin.X) * InvDir.X;
+		float T2 = (Max.X - Ray.Origin.X) * InvDir.X;
+		float T3 = (Min.Y - Ray.Origin.Y) * InvDir.Y;
+		float T4 = (Max.Y - Ray.Origin.Y) * InvDir.Y;
+		float T5 = (Min.Z - Ray.Origin.Z) * InvDir.Z;
+		float T6 = (Max.Z - Ray.Origin.Z) * InvDir.Z;
+
+		float TMin = FMath::Max(FMath::Max(FMath::Min(T1, T2), FMath::Min(T3, T4)), FMath::Min(T5, T6));
+		float TMax = FMath::Min(FMath::Min(FMath::Max(T1, T2), FMath::Max(T3, T4)), FMath::Max(T5, T6));
+
+
+		UE_LOG("Ray Origin: %.2f, %.2f, %.2f", Ray.Origin.X, Ray.Origin.Y, Ray.Origin.Z);
+		UE_LOG("Ray Direction: %.2f, %.2f, %.2f", NormalizedDir.X, NormalizedDir.Y, NormalizedDir.Z);
+
+		// Ray가 AABB 뒤에서 시작함
+		if (TMin < 0)
 			return false;
-		if (tymin > tmin)
-			tmin = tymin;
-		if (tymax < tmax)
-			tmax = tymax;
-		float tzmin = (Min.Z - Origin.Z) / Dir.Z;
-		float tzmax = (Max.Z - Origin.Z) / Dir.Z;
-		if (tzmin > tzmax)
-		{
-			float temp = tzmin;
-			tzmin = tzmax;
-			tzmax = temp;
-		}
-		if ((tmin > tzmax) || (tzmin > tmax))
+
+		// 충돌하지 않음
+		if (TMin > TMax)
 			return false;
+
 		return true;
 	}
 	// Transform 변환 시 AABB도 변환
 	void Update(const FMatrix& InModelMatrix)
 	{
-		// 스케일 변환만 해주면된다
 		FVector Vertices[8] =
 		{
 			InModelMatrix.TransformPosition(FVector(InitialMin.X, InitialMin.Y, InitialMin.Z)),
@@ -90,14 +97,16 @@ public:
 		Max = NewMax;
 	}
 
-	void Init(const FVector& InMin, const FVector& InMax)
+	void Init(USceneComponent* InOwner, const FVector& InMin, const FVector& InMax)
 	{
+		Owner = InOwner;
 		InitialMin = Min = InMin;
 		InitialMax = Max = InMax;
 	}
 
-	void Init(const FVector& InCenter, float InRadius)
+	void Init(USceneComponent* InOwner, const FVector& InCenter, float InRadius)
 	{
+		Owner = InOwner;
 		Min = InCenter - FVector(InRadius, InRadius, InRadius);
 		Max = InCenter + FVector(InRadius, InRadius, InRadius);
 	}
@@ -107,5 +116,9 @@ public:
 		return (Min + Max) * 0.5f;
 	}
 
+	USceneComponent* GetOwner() const
+	{
+		return Owner;
+	}
 };
 

@@ -276,25 +276,15 @@ UWorldInfo UWorld::GetWorldInfo() const
     return WorldInfo;
 }
 
-bool UWorld::LineTrace(const FVector& Start, const FVector& End, USceneComponent** FirstHitComponent) const
+bool UWorld::LineTrace(const FRay& Ray, USceneComponent** FirstHitComponent) const
 {
-    for (AActor* Actor : Actors)
-    {
-        if (Actor->IsGizmoActor())
-        {
-            continue;
-        }
-        for (UActorComponent* Component : Actor->GetComponents())
-        {
-            if (USceneComponent* SceneComponent = dynamic_cast<USceneComponent*>(Component))
-            {
-                //if (SceneComponent->LineTrace(Start, End))
-                //{
-                //	*FirstHitComponent = SceneComponent;
-                //	return true;
-                //}
-            }
-        }
-    }
+	for (FBox* Box : BoundingBoxes)
+	{
+		if (Box && Box->IsValid() && Box->IntersectRay(Ray))
+		{
+			*FirstHitComponent = Box->GetOwner();
+			return true;
+		}
+	}
     return false;
 }

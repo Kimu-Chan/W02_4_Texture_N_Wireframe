@@ -8,6 +8,7 @@ struct FVertexSimple
     float R, G, B, A; // Color
 };
 
+// !TODO : 추후에 RTTI등으로 변경
 enum class EPrimitiveType : uint8
 {
 	EPT_None,
@@ -18,6 +19,11 @@ enum class EPrimitiveType : uint8
 	EPT_Cylinder,
 	EPT_Cone,
 	EPT_Max,
+};
+
+enum class EIndexBufferType : uint8
+{
+	EIT_Cube,
 };
 
 extern FVertexSimple LineVertices[2];

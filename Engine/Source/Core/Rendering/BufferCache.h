@@ -10,20 +10,20 @@
 
 struct Box;
 
-struct BufferInfo
+struct VertexBufferInfo
 {
 public:
-	BufferInfo() = default;
-	BufferInfo(ID3D11Buffer* InBuffer, int BufferSize, D3D_PRIMITIVE_TOPOLOGY InTopology, const FVertexSimple* InVertices)
+	VertexBufferInfo() = default;
+	VertexBufferInfo(ID3D11Buffer* InVertexBuffer, int InVertexBufferSize, D3D_PRIMITIVE_TOPOLOGY InTopology, const FVertexSimple* InVertices)
 	{
-		Buffer = InBuffer;
-		Size = BufferSize;
+		VertexBuffer = InVertexBuffer;
+		VertexBufferSize = InVertexBufferSize;
 		Topology = InTopology;
-		SetLocalBounds(InVertices, BufferSize);
+		SetLocalBounds(InVertices, InVertexBufferSize);
 	}
 
-	ID3D11Buffer* GetBuffer() const { return Buffer.Get(); }
-	int GetSize() const { return Size; }
+	ID3D11Buffer* GetVertexBuffer() const { return VertexBuffer.Get(); }
+	int GetSize() const { return VertexBufferSize; }
 	D3D_PRIMITIVE_TOPOLOGY GetTopology() const { return Topology; }
 	FVector LocalMin;
 	FVector LocalMax;
@@ -48,15 +48,32 @@ public:
 	FVector GetMax() const { return LocalMax; }
 
 private:
-	Microsoft::WRL::ComPtr<ID3D11Buffer> Buffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> VertexBuffer;
 	D3D_PRIMITIVE_TOPOLOGY Topology;
-	int Size;
+	int VertexBufferSize;
+};
+
+struct IndexBufferInfo
+{
+public:
+	IndexBufferInfo() = default;
+	IndexBufferInfo(ID3D11Buffer* InIndexBuffer, int InIndexBufferSize)
+	{
+		IndexBuffer = InIndexBuffer;
+		IndexBufferSize = InIndexBufferSize;
+	}
+	ID3D11Buffer* GetIndexBuffer() const { return IndexBuffer.Get(); }
+	int GetSize() const { return IndexBufferSize; }
+
+	Microsoft::WRL::ComPtr<ID3D11Buffer> IndexBuffer;
+	int IndexBufferSize;
+
 };
 
 class FBufferCache
 {
 private:
-	TMap <EPrimitiveType, BufferInfo> Cache;
+	TMap <EPrimitiveType, VertexBufferInfo> VertexBufferCache;
 	TMap <EPrimitiveType, TArray<FVertexSimple>> PrimitiveVertices;
 
 public:
@@ -64,13 +81,13 @@ public:
 	~FBufferCache();
 
 	void Init();
-	BufferInfo GetBufferInfo(EPrimitiveType Type);
+	VertexBufferInfo GetBufferInfo(EPrimitiveType Type);
 
 public:
 	TArray<FVertexSimple> CreateConeVertices();
 	TArray<FVertexSimple> CreateCylinderVertices();
 
 private :
-	BufferInfo CreateVertexBufferInfo(EPrimitiveType Type);
+	VertexBufferInfo CreateBufferInfo(EPrimitiveType Type);
 };
 
