@@ -9,7 +9,6 @@
 #include "Debugging/DebugConsole.h"
 #include "Utils/JsonSavehelper.h"
 
-#include "Engine/GameFrameWork/Arrow.h"
 #include "Engine/GameFrameWork/Picker.h"
 
 class AActor;
@@ -27,7 +26,7 @@ public:
 
 	template <typename T>
 		requires std::derived_from<T, AActor>
-	T* SpawnActor();
+	T* SpawnActor(FString InName, const FVector& InLocation, const FVector& InRotation, const FVector& InScale, AActor* InOwner);
   
 	bool DestroyActor(AActor* InActor);
 	
@@ -65,16 +64,19 @@ protected:
 
 template <typename T>
 	requires std::derived_from<T, AActor>
-T* UWorld::SpawnActor()
+T* UWorld::SpawnActor(FString InName, const FVector& InLocation, const FVector& InRotation, const FVector& InScale, AActor* InOwner)
 {
-	T* Actor = FObjectFactory::ConstructObject<T>();
-	
+	T* NewActor = FObjectFactory::ConstructObject<T>();
+	if (NewActor != nullptr)
+	{
+		// TODO: loc, rot, scale 세팅
+		
+	}
 	if (UWorld* World = UEngine::Get().GetWorld())
 	{
-		Actor->SetWorld(World);
-		Actors.Add(Actor);
-		ActorsToSpawn.Add(Actor);
-		return Actor;
+		Actors.Add(NewActor);
+		ActorsToSpawn.Add(NewActor);
+		return NewActor;
 	}
 
 	UE_LOG("Actor Construction Failed. World is nullptr");

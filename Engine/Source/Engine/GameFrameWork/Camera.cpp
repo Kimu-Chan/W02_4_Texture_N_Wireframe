@@ -9,7 +9,7 @@ ACamera::ACamera()
     , FarClip(100.f)
     , FieldOfView(90.f)
     , MaxPitch(89.8f)
-    , CameraSpeed(1.f)
+    , CameraSpeed(5.f)
     , ProjectionMode(ECameraProjectionMode::Perspective)
 {
     RootComponent = AddComponent<USceneComponent>();

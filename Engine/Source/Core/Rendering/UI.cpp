@@ -159,23 +159,27 @@ void UI::RenderPrimitiveSelection()
     if (ImGui::Button("Spawn"))
     {
         UWorld* World = UEngine::Get().GetWorld();
-        for (int i = 0 ;  i < NumOfSpawn; i++)
+        FVector SpawnLocation = FVector::ZeroVector;
+        FVector SpawnRotation = FVector::ZeroVector;
+        FVector SpawnScale = FVector::OneVector;
+
+        for (int i = 0; i < NumOfSpawn; i++)
         {
             if (strcmp(items[currentItem], "Sphere") == 0)
             {
-                World->SpawnActor<ASphere>();
+                World->SpawnActor<ASphere>(TEXT(""), SpawnLocation, SpawnRotation, SpawnScale, nullptr);
             }
             else if (strcmp(items[currentItem], "Cube") == 0)
             {
-                World->SpawnActor<ACube>();
+                World->SpawnActor<ACube>(TEXT(""), SpawnLocation, SpawnRotation, SpawnScale, nullptr);
             }
             else if (strcmp(items[currentItem], "Cylinder") == 0)
             {
-                World->SpawnActor<ACylinder>();
+                World->SpawnActor<ACylinder>(TEXT(""), SpawnLocation, SpawnRotation, SpawnScale, nullptr);
             }
             else if (strcmp(items[currentItem], "Cone") == 0)
             {
-                World->SpawnActor<ACone>();
+                World->SpawnActor<ACone>(TEXT(""), SpawnLocation, SpawnRotation, SpawnScale, nullptr);
             }
             //else if (strcmp(items[currentItem], "Triangle") == 0)
             //{
@@ -195,7 +199,7 @@ void UI::RenderPrimitiveSelection()
     
     if (ImGui::InputText("Scene Name", SceneNameInput, bufferSize))
     {
-            World->SceneName = SceneNameInput;
+        World->SceneName = SceneNameInput;
     }
     
     if (ImGui::Button("New Scene"))

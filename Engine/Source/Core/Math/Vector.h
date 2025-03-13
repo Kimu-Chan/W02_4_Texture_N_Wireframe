@@ -8,12 +8,37 @@ struct FVector
 	FVector() : X(0), Y(0), Z(0) {}
 	FVector(float X, float Y, float Z) : X(X), Y(Y), Z(Z) {}
 
+	// Vector(0, 0, 0)
 	static const FVector ZeroVector;
+	// Vector(1, 1, 1)
 	static const FVector OneVector;
+	// Vector(0, 0, 1)
+	static const FVector UpVector;
+	// Vector(0, 0, -1)
+	static const FVector DownVector;
+	// Vector(1, 0, 0)
+	static const FVector ForwardVector;
+	// Vector(-1, 0, 0)
+	static const FVector BackwardVector;
+	// Vector(0, 1, 0)
+	static const FVector RightVector;
+	// Vector(0, -1, 0)
+	static const FVector LeftVector;
+
+	// Unit X Axis Vector (1, 0, 0)
+	static const FVector XAxisVector;
+	// Unit Y Axis Vector (0, 1, 0)
+	static const FVector YAxisVector;
+	// Unit Z Axis Vector (0, 0, 1)
+	static const FVector ZAxisVector;
 
 public:
-	static FVector Zero() { return {0, 0, 0}; }
-	static FVector One() { return {1, 1, 1}; }
+	static inline FVector Zero() { return ZeroVector; }
+	static inline FVector One() { return OneVector; }
+
+	static inline FVector UnitX() { return XAxisVector; }
+	static inline FVector UnitY() { return YAxisVector; }
+	static inline FVector UnitZ() { return ZAxisVector; }
 
 	static float DotProduct(const FVector& A, const FVector& B);
 	static FVector CrossProduct(const FVector& A, const FVector& B);

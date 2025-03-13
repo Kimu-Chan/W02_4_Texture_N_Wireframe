@@ -10,7 +10,18 @@ void FEditorManager::SelectActor(AActor* NewActor)
 {
     if (GizmoHandle == nullptr)
     {
-        GizmoHandle = UEngine::Get().GetWorld()->SpawnActor<AGizmoHandle>();
+        FVector SpawnLocation = FVector::ZeroVector;
+        FVector SpawnRotation = FVector::ZeroVector;
+        FVector SpawnScale = FVector::OneVector;
+        
+        GizmoHandle = UEngine::Get().GetWorld()->SpawnActor<AGizmoHandle>(
+                "",
+                SpawnLocation,
+                SpawnRotation,
+                SpawnScale,
+                nullptr
+            );
+        
         GizmoHandle->SetDepth(1);
         GizmoHandle->SetActive(false);
     }

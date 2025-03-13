@@ -93,7 +93,7 @@ void UWorld::RenderPickingTexture(URenderer& Renderer)
     {
         if (RenderComponent->GetOwner()->GetDepth() > 0)
         {
-                continue;
+            continue;
         }
         uint32 UUID = RenderComponent->GetUUID();
         RenderComponent->UpdateConstantPicking(Renderer, APicker::EncodeUUID(UUID));
@@ -118,7 +118,7 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
     {
         if (RenderComponent->GetOwner()->GetDepth() > 0)
         {
-                continue;
+            continue;
         }
         uint32 depth = RenderComponent->GetOwner()->GetDepth();
         // RenderComponent->UpdateConstantDepth(Renderer, depth);
@@ -208,31 +208,35 @@ void UWorld::LoadWorld(const char* SceneName)
         FTransform Transform = FTransform(ObjectInfo->Location, FQuat(), ObjectInfo->Scale);
         Transform.Rotate(ObjectInfo->Rotation);
 
+        FVector SpawnLocation = Transform.GetPosition();
+        FVector SpawnRotation = Transform.GetRotation().GetEuler();
+        FVector SpawnScale = Transform.GetScale();
+
         AActor* Actor = nullptr;
                 
         if (ObjectInfo->ObjectType == "Actor")
         {
-            Actor = SpawnActor<AActor>();
+            Actor = SpawnActor<AActor>(TEXT(""), SpawnLocation, SpawnRotation, SpawnScale, nullptr);
         }
         else if (ObjectInfo->ObjectType == "Sphere")
         {
-            Actor = SpawnActor<ASphere>();
+            Actor = SpawnActor<ASphere>(TEXT(""), SpawnLocation, SpawnRotation, SpawnScale, nullptr);
         }
         else if (ObjectInfo->ObjectType == "Cube")
         {
-            Actor = SpawnActor<ACube>();
+            Actor = SpawnActor<ACube>(TEXT(""), SpawnLocation, SpawnRotation, SpawnScale, nullptr);
         }
         else if (ObjectInfo->ObjectType == "Arrow")
         {
-            Actor = SpawnActor<AArrow>();
+            Actor = SpawnActor<AArrow>(TEXT(""), SpawnLocation, SpawnRotation, SpawnScale, nullptr);
         }
         else if (ObjectInfo->ObjectType == "Cylinder")
         {
-            Actor = SpawnActor<ACylinder>();
+            Actor = SpawnActor<ACylinder>(TEXT(""), SpawnLocation, SpawnRotation, SpawnScale, nullptr);
         }
         else if (ObjectInfo->ObjectType == "Cone")
         {
-            Actor = SpawnActor<ACone>();
+            Actor = SpawnActor<ACone>(TEXT(""), SpawnLocation, SpawnRotation, SpawnScale, nullptr);
         }
                 
         Actor->SetActorTransform(Transform);

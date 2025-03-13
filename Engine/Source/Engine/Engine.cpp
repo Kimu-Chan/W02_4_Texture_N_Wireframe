@@ -215,14 +215,19 @@ void UEngine::InitWorld()
 {
     World = FObjectFactory::ConstructObject<UWorld>();
 
-    FEditorManager::Get().SetCamera(World->SpawnActor<ACamera>());
+    FVector SpawnLocation = FVector::ZeroVector;
+    FVector SpawnRotation = FVector::ZeroVector;
+    FVector SpawnScale = FVector::OneVector;
+
+    ACamera* Camera = World->SpawnActor<ACamera>("", SpawnLocation, SpawnRotation, SpawnScale, nullptr);
+    FEditorManager::Get().SetCamera(Camera);
 
     //// Test
     //AArrow* Arrow = World->SpawnActor<AArrow>();
     //World->SpawnActor<ASphere>();
     
-    World->SpawnActor<AAxis>();
-    World->SpawnActor<APicker>();
+    World->SpawnActor<AAxis>("", SpawnLocation, SpawnRotation, SpawnScale, nullptr );
+    World->SpawnActor<APicker>("", SpawnLocation, SpawnRotation, SpawnScale, nullptr);
 
     World->BeginPlay();
 }

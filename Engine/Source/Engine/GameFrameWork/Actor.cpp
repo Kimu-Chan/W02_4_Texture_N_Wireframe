@@ -18,7 +18,7 @@ void AActor::BeginPlay()
 
 		if (UPrimitiveComponent* PrimitiveComponent = dynamic_cast<UPrimitiveComponent*>(Component))
 		{
-			PrimitiveComponent->RegisterComponentWithWorld(World);
+			PrimitiveComponent->RegisterComponentWithWorld(GetWorld());
 		}
 	}
 }
@@ -51,9 +51,9 @@ void AActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		Component->EndPlay(EndPlayReason);
 		if (const auto PrimitiveComp = dynamic_cast<UPrimitiveComponent*>(Component))
 		{
-			if (World->ContainsZIgnoreComponent(PrimitiveComp))
+			if (GetWorld()->ContainsZIgnoreComponent(PrimitiveComp))
 			{
-				World->RemoveZIgnoreComponent(PrimitiveComp);
+				GetWorld()->RemoveZIgnoreComponent(PrimitiveComp);
 			}
 
 			GetWorld()->RemoveRenderComponent(PrimitiveComp);
@@ -65,6 +65,15 @@ void AActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		UEngine::Get().GObjects.Remove(Component->GetUUID());
 	}
 	Components.Empty();
+}
+
+UWorld* AActor::GetWorld()
+{
+	if (!World)
+	{
+		World = UEngine::Get().GetWorld();
+	}
+	return World;
 }
 
 void AActor::OnActorPicked()

@@ -23,17 +23,24 @@ public:
 	
 	virtual void Destroyed();
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason);
-	TSet<UActorComponent*>& GetComponents() { return Components; }
 
-	UWorld* GetWorld() const { return World; }
+	UWorld* GetWorld();
 	
-	void SetWorld(UWorld* InWorld) { World = InWorld; }
+	TSet<UActorComponent*>& GetComponents() { return Components; }
 
 	bool IsGizmoActor() const { return bIsGizmo; }
 
 	void SetDepth(uint32 InDepth) { Depth = InDepth; }
 
 	uint32 GetDepth() const { return Depth; }
+
+	FVector GetActorLocation() const { return RootComponent->GetComponentLocation(); }
+	FVector GetActorRotation() const { return RootComponent->GetComponentRotation(); }
+	FVector GetActorScale() const { return RootComponent->GetComponentScale(); }
+
+	void SetActorLocation(FVector InLocation) { RootComponent->SetComponentLocation(InLocation); }
+	void SetActorRotation(FVector InRotation) { RootComponent->SetComponentRotation(InRotation); }
+	void SetActorScale(FVector InScale) { RootComponent->SetComponentScale(InScale); }
 	
 private:
 	virtual void OnActorPicked();
