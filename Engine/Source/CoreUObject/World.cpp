@@ -155,7 +155,7 @@ void UWorld::ClearWorld()
 
 bool UWorld::DestroyActor(AActor* InActor)
 {
-    //@TODO: ³ªÁß¿¡ Destroy°¡ ½ÇÆĞÇÒ ÀÏÀÌ ÀÖ´Ù¸é return false; ÇÏ±â
+    //@TODO: ë‚˜ì¤‘ì— Destroyê°€ ì‹¤íŒ¨í•  ì¼ì´ ìˆë‹¤ë©´ return false; í•˜ê¸°
     assert(InActor);
 
     if (PendingDestroyActors.Find(InActor) != -1)
@@ -163,13 +163,13 @@ bool UWorld::DestroyActor(AActor* InActor)
         return true;
     }
 
-    // »èÁ¦µÉ ¶§ Destroyed È£Ãâ
+    // ì‚­ì œë  ë•Œ Destroyed í˜¸ì¶œ
     InActor->Destroyed();
 
-    // World¿¡¼­ Á¦°Å
+    // Worldì—ì„œ ì œê±°
     Actors.Remove(InActor);
 
-    // Á¦°Å ´ë±â¿­¿¡ Ãß°¡
+    // ì œê±° ëŒ€ê¸°ì—´ì— ì¶”ê°€
     PendingDestroyActors.Add(InActor);
     return true;
 }

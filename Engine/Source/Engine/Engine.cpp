@@ -31,7 +31,7 @@ LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         break;
 
     // Handle Key Input
-	case WM_KEYDOWN:    //@TODO: WinApi¿« AysncKeyState∑Œ ±≥√º ∞À≈‰
+	case WM_KEYDOWN:    //@TODO: WinApiÏùò AysncKeyStateÎ°ú ÍµêÏ≤¥ Í≤ÄÌÜ†
         APlayerInput::Get().KeyDown(static_cast<EKeyCode>(wParam));
         if ((lParam>>30)%2 != 0)
         {
@@ -141,8 +141,8 @@ void UEngine::Run()
             World->LateTick(DeltaTime);
         }
 
-        //∞¢ Actorø°º≠ TickActor() -> PlayerTick() -> TickPlayerInput() »£√‚«œ¥¬µ• ¡ˆ±›¿∫ Messageø°º≠ √≥∏Æ«œ∞Ì ¿÷¥Ÿ.
-        APlayerInput::Get().TickPlayerInput();  //@TODO: TickPlayerInput¿ª ø≈±‚¿⁄.
+        //Í∞Å ActorÏóêÏÑú TickActor() -> PlayerTick() -> TickPlayerInput() Ìò∏Ï∂úÌïòÎäîÎç∞ ÏßÄÍ∏àÏùÄ MessageÏóêÏÑú Ï≤òÎ¶¨ÌïòÍ≥† ÏûàÎã§.
+        APlayerInput::Get().TickPlayerInput();  //@TODO: TickPlayerInputÏùÑ ÏòÆÍ∏∞Ïûê.
         
         // TickPlayerInput
         APlayerController::Get().ProcessPlayerInput(DeltaTime);
@@ -152,7 +152,7 @@ void UEngine::Run()
 
         Renderer->SwapBuffer();
 
-        // FPS ¡¶«—
+        // FPS Ï†úÌïú
         double ElapsedTime;
         do
         {

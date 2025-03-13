@@ -3,6 +3,7 @@
 struct FVector4;
 struct FVector;
 struct FQuat;
+struct FTransform;
 
 struct alignas(16) FMatrix
 {
@@ -56,5 +57,5 @@ struct alignas(16) FMatrix
 
 	FVector4 TransformVector4(const FVector4& Vector) const;
 
-	class FTransform GetTransform() const;
+	FTransform GetTransform() const;
 };

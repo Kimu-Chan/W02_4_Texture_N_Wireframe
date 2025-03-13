@@ -11,22 +11,22 @@ class URenderer;
 class UI
 {
 public:
-    int currentItem = 0;
-    int NumOfSpawn = 0;
+	int currentItem = 0;
+	int NumOfSpawn = 0;
 	bool bIsInitialized = false;
-    
-    void Initialize(HWND hWnd, const class URenderer& Renderer, UINT ScreenWidth, UINT ScreenHeight);
-    void Update();
-    void Shutdown();
+	
+	void Initialize(HWND hWnd, const class URenderer& Renderer, UINT ScreenWidth, UINT ScreenHeight);
+	void Update();
+	void Shutdown();
 
 	void OnUpdateWindowSize(UINT InScreenWidth, UINT InScreenHeight);
 
 public:// UIWindows
-    void RenderControlPanel();
+	void RenderControlPanel();
 	void RenderMemoryUsage();
-    void RenderPrimitiveSelection();
-    void RenderCameraSettings();
-    void RenderPropertyWindow();
+	void RenderPrimitiveSelection();
+	void RenderCameraSettings();
+	void RenderPropertyWindow();
 
 private:
 	// Mouse 전용
@@ -35,17 +35,17 @@ private:
 		return {vec2.x / CurRatio.x, vec2.y / CurRatio.y };
 	}
 	
-    ImVec2 ResizeToScreen(const ImVec2& vec2) const
-    {
+	ImVec2 ResizeToScreen(const ImVec2& vec2) const
+	{
 		float ratio = GetMin();
 		float preMin = GetPreMin();
-    	return {vec2.x * PreRatio.x / CurRatio.x * ratio / preMin, vec2.y * PreRatio.y / CurRatio.y * ratio / preMin};
-    }
+		return {vec2.x * PreRatio.x / CurRatio.x * ratio / preMin, vec2.y * PreRatio.y / CurRatio.y * ratio / preMin};
+	}
 
-    ImVec2 GetRatio() const
-    {
-    	return {ScreenSize.x / InitialScreenSize.x, ScreenSize.y / InitialScreenSize.y};
-    }
+	ImVec2 GetRatio() const
+	{
+		return {ScreenSize.x / InitialScreenSize.x, ScreenSize.y / InitialScreenSize.y};
+	}
 
 	float GetMin() const
 	{
@@ -73,7 +73,7 @@ private:
 
 	bool bWasWindowSizeUpdated = true;
 	
-    ImVec2 ScreenSize;
+	ImVec2 ScreenSize;
 	ImVec2 InitialScreenSize;
 
 	ImVec2 PreRatio;

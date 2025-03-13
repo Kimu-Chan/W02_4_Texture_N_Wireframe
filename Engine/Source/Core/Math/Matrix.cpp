@@ -212,7 +212,7 @@ FMatrix FMatrix::Transpose(const FMatrix& Matrix)
         {
                 for (int j = 0; j < 4; ++j)
                 {
-                        Result.M[i][j] = Matrix.M[j][i]; // ï¿½ï¿½ï¿?ï¿½ï¿½ï¿½ï¿½ ï¿½Ù²ï¿½ ï¿½ï¿½Ä¡
+                        Result.M[i][j] = Matrix.M[j][i];
                 }
         }
         return Result;
@@ -248,15 +248,15 @@ FMatrix FMatrix::GetScaleMatrix(const FVector& InScale)
 
 FMatrix FMatrix::GetRotateMatrix(const FQuat& Q)
 {
-        // ÄõÅÍ´Ï¾ğ ¿ä¼Ò ÃßÃâ
+        // ì¿¼í„°ë‹ˆì–¸ ìš”ì†Œ ì¶”ì¶œ
         const float x = Q.X, y = Q.Y, z = Q.Z, w = Q.W;
 
-        // Áß°£ °è»ê°ª
+        // ì¤‘ê°„ ê³„ì‚°ê°’
         const float xx = x * x, yy = y * y, zz = z * z;
         const float xy = x * y, xz = x * z, yz = y * z;
         const float wx = w * x, wy = w * y, wz = w * z;
 
-        // È¸Àü Çà·Ä ±¸¼º
+        // íšŒì „ í–‰ë ¬ êµ¬ì„±
         FMatrix Result;
 
         Result.M[0][0] = 1.0f - 2.0f * (yy + zz);
@@ -277,18 +277,18 @@ FMatrix FMatrix::GetRotateMatrix(const FQuat& Q)
         Result.M[3][0] = 0.0f;
         Result.M[3][1] = 0.0f;
         Result.M[3][2] = 0.0f;
-        Result.M[3][3] = 1.0f; // 4x4 Çà·ÄÀÌ¹Ç·Î ¸¶Áö¸· °ªÀº 1
+        Result.M[3][3] = 1.0f; // 4x4 í–‰ë ¬ì´ë¯€ë¡œ ë§ˆì§€ë§‰ ê°’ì€ 1
 
         return Result;
 }
 
 /// <summary>
-/// ºä º¯È¯ Çà·ÄÀ» »ı¼ºÇÕ´Ï´Ù.
+/// ë·° ë³€í™˜ í–‰ë ¬ì„ ìƒì„±í•©ë‹ˆë‹¤.
 /// </summary>
-/// <param name="EyePosition">Ä«¸Ş¶óÀÇ Æ÷Áö¼ÇÀÔ´Ï´Ù.</param>
-/// <param name="FocusPoint">Ä«¸Ş¶ó°¡ ¹Ù¶óº¸´Â °÷ÀÇ Æ÷Áö¼ÇÀÔ´Ï´Ù.</param>
-/// <param name="UpDirection">Ä«¸Ş¶óÀÇ À§ÂÊ ¹æÇâÀÔ´Ï´Ù.</param>
-/// <returns>ºä º¯È¯ Çà·ÄÀ» ¹İÈ¯ÇÕ´Ï´Ù.</returns>
+/// <param name="EyePosition">ì¹´ë©”ë¼ì˜ í¬ì§€ì…˜ì…ë‹ˆë‹¤.</param>
+/// <param name="FocusPoint">ì¹´ë©”ë¼ê°€ ë°”ë¼ë³´ëŠ” ê³³ì˜ í¬ì§€ì…˜ì…ë‹ˆë‹¤.</param>
+/// <param name="UpDirection">ì¹´ë©”ë¼ì˜ ìœ„ìª½ ë°©í–¥ì…ë‹ˆë‹¤.</param>
+/// <returns>ë·° ë³€í™˜ í–‰ë ¬ì„ ë°˜í™˜í•©ë‹ˆë‹¤.</returns>
 FMatrix FMatrix::LookAtLH(const FVector& EyePosition, const FVector& FocusPoint, const FVector& WorldUp)
 {
         FVector Forward = (FocusPoint - EyePosition).GetSafeNormal();
@@ -322,14 +322,14 @@ FMatrix FMatrix::PerspectiveFovLH(float FieldOfView, float AspectRatio, float Ne
 
 FMatrix FMatrix::OrthoLH(float ScreenWidth, float ScreenHeight, float NearPlane, float FarPlane)
 {
-	FMatrix Result;
-	Result.M[0][0] = 2.0f / ScreenWidth;
-	Result.M[1][1] = 2.0f / ScreenHeight;
-	Result.M[2][2] = 1.0f / (FarPlane - NearPlane);
-	Result.M[2][3] = 0.0f;
-	Result.M[3][2] = -NearPlane / (FarPlane - NearPlane);
-	Result.M[3][3] = 1.0f;
-	return Result;
+    FMatrix Result;
+    Result.M[0][0] = 2.0f / ScreenWidth;
+    Result.M[1][1] = 2.0f / ScreenHeight;
+    Result.M[2][2] = 1.0f / (FarPlane - NearPlane);
+    Result.M[2][3] = 0.0f;
+    Result.M[3][2] = -NearPlane / (FarPlane - NearPlane);
+    Result.M[3][3] = 1.0f;
+    return Result;
 }
 
 FVector FMatrix::GetTranslation() const
