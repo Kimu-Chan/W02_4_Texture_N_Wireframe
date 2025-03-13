@@ -125,7 +125,13 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Debugging\DebugConsole.cpp">
-      <Filter>Header Files\Debug</Filter>
+      <Filter>Source Files\Debugging</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\Math\Box.cpp">
+      <Filter>Source Files\Core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\Math\Ray.cpp">
+      <Filter>Source Files\Core\Math</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -289,7 +295,13 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Debugging\DebugConsole.h">
-      <Filter>Source Files\Debug</Filter>
+      <Filter>Header Files\Debugging</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Math\Box.h">
+      <Filter>Header Files\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Math\Ray.h">
+      <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -371,12 +383,6 @@
     <Filter Include="Source Files\Primitive">
       <UniqueIdentifier>{42f9b16a-5b39-45c0-82e1-358bf68a1854}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Debug">
-      <UniqueIdentifier>{de34abb4-82ad-465d-8a3f-d6b7f0aee285}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Debug">
-      <UniqueIdentifier>{dc9b727a-8f1b-4b91-8bb2-aef243710124}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\CoreUObject">
       <UniqueIdentifier>{d9b892c6-7434-41ab-94d2-dcbddb852d0e}</UniqueIdentifier>
     </Filter>
@@ -406,6 +412,12 @@
     </Filter>
     <Filter Include="Source Files\Gizmo">
       <UniqueIdentifier>{24b6fc92-a6b3-466f-8bdf-93d85d815228}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Debugging">
+      <UniqueIdentifier>{de34abb4-82ad-465d-8a3f-d6b7f0aee285}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Debugging">
+      <UniqueIdentifier>{dc9b727a-8f1b-4b91-8bb2-aef243710124}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

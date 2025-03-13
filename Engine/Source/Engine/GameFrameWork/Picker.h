@@ -15,4 +15,9 @@ public:
     virtual void Tick(float DeltaTime) override;
     virtual void LateTick(float DeltaTime) override;
     virtual const char* GetTypeName() override;
+
+protected:
+    void PickByColor();
+    void PickByRay();
+    void HandleGizmo();
 };

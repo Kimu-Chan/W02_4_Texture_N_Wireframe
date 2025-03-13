@@ -20,7 +20,7 @@ public:
 	void UpdateConstantDepth(const URenderer& Renderer, int Depth) const;
 	virtual void Render();
 
-	virtual EPrimitiveType GetType() { return EPrimitiveType::EPT_None; }
+	EPrimitiveType GetType() { return Type; }
 
 	bool IsUseVertexColor() const { return bUseVertexColor; }
 
@@ -41,15 +41,24 @@ public:
 
 public:
 	void SetCanBeRendered(bool bRender) { bCanBeRendered = bRender; }
+	void SetBoundingBoxRenderable(bool bRender);
 
 	void SetIsOrthoGraphic(bool IsOrtho) { bIsOrthoGraphic = IsOrtho; }
 	bool GetIsOrthoGraphic() { return bIsOrthoGraphic;}
 	
+	// 바운딩 박스
+public:
+	virtual void InitBoundingBox() override;
+	virtual void UpdateBoundingBox() override;
+
 protected:
 	bool bCanBeRendered = false;
 	bool bUseVertexColor = true;
 	bool bIsOrthoGraphic = false;
 	FVector4 CustomColor = FVector4(1.0f, 1.0f, 1.0f, 1.0f);
+
+protected:
+	EPrimitiveType Type = EPrimitiveType::EPT_None;
 };
 
 class UCubeComp : public UPrimitiveComponent
@@ -59,14 +68,10 @@ public:
 	UCubeComp()
 	{
 		bCanBeRendered = true;
+		Type = EPrimitiveType::EPT_Cube;
 	}
 	virtual ~UCubeComp() = default;
-	EPrimitiveType GetType() override
-	{
-		return EPrimitiveType::EPT_Cube;
-	}
 };
-
 class USphereComp : public UPrimitiveComponent
 {
 	using Super = UPrimitiveComponent;
@@ -74,12 +79,9 @@ public:
 	USphereComp()
 	{
 		bCanBeRendered = true;
+		Type = EPrimitiveType::EPT_Sphere;
 	}
 	virtual ~USphereComp() = default;
-	EPrimitiveType GetType() override
-	{
-		return EPrimitiveType::EPT_Sphere;
-	}
 };
 
 class UTriangleComp : public UPrimitiveComponent
@@ -89,12 +91,9 @@ public:
 	UTriangleComp()
 	{
 		bCanBeRendered = true;
+		Type = EPrimitiveType::EPT_Triangle;
 	}
 	virtual ~UTriangleComp() = default;
-	EPrimitiveType GetType() override
-	{
-		return EPrimitiveType::EPT_Triangle;
-	}
 };
 
 class ULineComp : public UPrimitiveComponent
@@ -105,12 +104,9 @@ public:
 	ULineComp()
 	{
 		bCanBeRendered = true;
+		Type = EPrimitiveType::EPT_Line;
 	}
 	virtual ~ULineComp() = default;
-	EPrimitiveType GetType() override
-	{
-		return EPrimitiveType::EPT_Line;
-	}
 };
 
 class UCylinderComp : public UPrimitiveComponent
@@ -121,12 +117,9 @@ public:
 	UCylinderComp()
 	{
 		bCanBeRendered = true;
+		Type = EPrimitiveType::EPT_Cylinder;
 	}
 	virtual ~UCylinderComp() = default;
-	EPrimitiveType GetType() override
-	{
-		return EPrimitiveType::EPT_Cylinder;
-	}
 };
 
 class UConeComp : public UPrimitiveComponent
@@ -136,10 +129,9 @@ public:
 	UConeComp()
 	{
 		bCanBeRendered = true;
+		Type = EPrimitiveType::EPT_Cone;
 	}
 	virtual ~UConeComp() = default;
-	EPrimitiveType GetType() override
-	{
-		return EPrimitiveType::EPT_Cone;
-	}
+
+protected:
 };

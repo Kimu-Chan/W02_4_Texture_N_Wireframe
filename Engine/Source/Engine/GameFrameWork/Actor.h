@@ -42,6 +42,8 @@ public:
 
 	bool IsGizmoActor() const { return bIsGizmo; }
 
+	void SetBoundingBoxRenderable(bool bRenderable);
+
 private:
 	virtual void Pick();
 	virtual void UnPick();
@@ -102,6 +104,9 @@ public:
 
 protected:
 	bool bCanEverTick = true;
+	bool bUseBoundingBox = true;
+	bool bRenderBoundingBox = false; 
+
 	USceneComponent* RootComponent = nullptr;
 	bool bIsGizmo = false;
 

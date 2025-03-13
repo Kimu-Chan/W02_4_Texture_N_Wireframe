@@ -1,8 +1,8 @@
 #include "pch.h" 
 #include "BufferCache.h"
 #include "Engine/Engine.h"
-#include "Core/Container/Array.h"
 #include "Primitive/PrimitiveVertices.h"
+
 
 FBufferCache::FBufferCache()
 {
@@ -17,59 +17,62 @@ void FBufferCache::Init()
 
 }
 
-BufferInfo FBufferCache::GetBufferInfo(EPrimitiveType Type)
+VertexBufferInfo FBufferCache::GetBufferInfo(EPrimitiveType Type)
 {
-    if (!Cache.contains(Type))
+    if (!VertexBufferCache.Contains(Type))
     {
-        auto bufferInfo = CreateVertexBufferInfo(Type);
-        Cache.insert({ Type, bufferInfo });
+        auto bufferInfo = CreateBufferInfo(Type);
+		VertexBufferCache.Add(Type, bufferInfo);
     }
 
-    return Cache[Type];
+    return VertexBufferCache[Type];
 }
 
-BufferInfo FBufferCache::CreateVertexBufferInfo(EPrimitiveType Type)
+VertexBufferInfo FBufferCache::CreateBufferInfo(EPrimitiveType Type)
 {
-    ID3D11Buffer* Buffer = nullptr;
-    int Size = 0;
+    ID3D11Buffer* VertexBuffer = nullptr;
+    int VerticeSize = 0;
     D3D_PRIMITIVE_TOPOLOGY Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+    FVertexSimple* Vertices = nullptr;
 
+    // !TODO : 모든 프리미티브들에 대해서 동일한 방법의 캐싱 사용
     switch (Type)
     {
     case EPrimitiveType::EPT_Line:
-            Size = std::size(LineVertices);
-            Buffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(LineVertices, sizeof(FVertexSimple) * Size);
-            Topology = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
-            break;
+        VerticeSize = std::size(LineVertices);
+        Vertices = LineVertices;
+        Topology = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
+        break;
     case EPrimitiveType::EPT_Triangle:
-            Size = std::size(TriangleVertices);
-            Buffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(TriangleVertices, sizeof(FVertexSimple) * Size);
-            break;
+        VerticeSize = std::size(TriangleVertices);
+        Vertices = TriangleVertices;
+        break;
     case EPrimitiveType::EPT_Cube:
-            Size = std::size(CubeVertices);
-            Buffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(CubeVertices, sizeof(FVertexSimple) * Size);
-            break;
+        VerticeSize = std::size(CubeVertices);
+        Vertices = CubeVertices;
+        break;
     case EPrimitiveType::EPT_Sphere:
-            Size = std::size(SphereVertices);
-            Buffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(SphereVertices, sizeof(FVertexSimple) * Size);
-            break;
+        VerticeSize = std::size(SphereVertices);
+        Vertices = SphereVertices;
+        break;
     case EPrimitiveType::EPT_Cylinder:
     {
-            TArray<FVertexSimple> Vertices = CreateCylinderVertices();
-            Size = Vertices.Num();
-            Buffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(Vertices.GetData(), sizeof(FVertexSimple) * Size);
-            break;
+		PrimitiveVertices.Add(EPrimitiveType::EPT_Cylinder, CreateCylinderVertices());
+		VerticeSize = PrimitiveVertices[EPrimitiveType::EPT_Cylinder].Num();
+        Vertices = PrimitiveVertices[EPrimitiveType::EPT_Cylinder].GetData();
+        break;
     }
     case EPrimitiveType::EPT_Cone:
     {
-            TArray<FVertexSimple> Vertices = CreateConeVertices();
-            Size = Vertices.Num();
-            Buffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(Vertices.GetData(), sizeof(FVertexSimple) * Size);
-            break;
+        PrimitiveVertices.Add(EPrimitiveType::EPT_Cone, CreateConeVertices());
+        VerticeSize = PrimitiveVertices[EPrimitiveType::EPT_Cone].Num();
+        Vertices = PrimitiveVertices[EPrimitiveType::EPT_Cone].GetData();
+        break;
     }
     }
+    VertexBuffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(Vertices, sizeof(FVertexSimple) * VerticeSize);
 
-    return BufferInfo(Buffer, Size, Topology);
+    return VertexBufferInfo(VertexBuffer, VerticeSize, Topology, Vertices);
 }
 
 
@@ -80,7 +83,6 @@ TArray<FVertexSimple> FBufferCache::CreateConeVertices()
     int segments = 36;
     float radius = 1.f;
     float height = 1.f;
-
 
 	// Cone bottom
     for (int i = 0; i < segments; ++i)

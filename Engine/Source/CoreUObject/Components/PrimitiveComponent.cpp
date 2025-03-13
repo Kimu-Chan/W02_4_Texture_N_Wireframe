@@ -2,11 +2,14 @@
 #include "PrimitiveComponent.h"
 #include "CoreUObject/World.h"
 #include "Engine/GameFrameWork/Actor.h"
+#include "World.h"
+
 
 
 void UPrimitiveComponent::BeginPlay()
 {
     Super::BeginPlay();
+    InitBoundingBox();
 }
 
 void UPrimitiveComponent::Tick(float DeltaTime)
@@ -49,4 +52,37 @@ void UPrimitiveComponent::Render()
 void UPrimitiveComponent::RegisterComponentWithWorld(UWorld* World)
 {
     World->AddRenderComponent(this);
+}
+
+void UPrimitiveComponent::SetBoundingBoxRenderable(bool bRender)
+{
+    if (BoundingBox)
+    {
+		BoundingBox->bCanBeRendered = bRender;
+    }
+}
+
+void UPrimitiveComponent::InitBoundingBox()
+{
+    Super::InitBoundingBox();
+
+    FVector Min;
+    FVector Max;
+    UEngine::Get().GetRenderer()->GetPrimitiveLocalBounds(Type, Min, Max);
+
+    BoundingBox = std::make_shared<FBox>();
+    BoundingBox->Init(this, Min, Max);
+
+    if (AActor* Owner = GetOwner())
+    {
+        if (UWorld* World = Owner->GetWorld())
+        {
+			World->AddBoundingBox(BoundingBox.get());
+        }
+    }
+}
+
+void UPrimitiveComponent::UpdateBoundingBox()
+{
+    Super::InitBoundingBox();
 }

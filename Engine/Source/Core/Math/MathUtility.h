@@ -10,99 +10,99 @@
 
 struct FMath
 {
-    /** A와 B중에 더 작은 값을 반환합니다. */
-    template <typename T>
-    [[nodiscard]] static FORCEINLINE constexpr T Min(const T A, const T B)
-    {
-        return A < B ? A : B;
-    }
+	/** A와 B중에 더 작은 값을 반환합니다. */
+	template <typename T>
+	[[nodiscard]] static FORCEINLINE constexpr T Min(const T A, const T B)
+	{
+		return A < B ? A : B;
+	}
 
-    /** A와 B중에 더 큰 값을 반환합니다. */
-    template <typename T>
-    [[nodiscard]] static FORCEINLINE constexpr T Max(const T A, const T B)
-    {
-        return B < A ? A : B;
-    }
+	/** A와 B중에 더 큰 값을 반환합니다. */
+	template <typename T>
+	[[nodiscard]] static FORCEINLINE constexpr T Max(const T A, const T B)
+	{
+		return B < A ? A : B;
+	}
 
-    /** X를 Min과 Max의 사이의 값으로 클램핑 합니다. */
-    template <typename T>
-    [[nodiscard]] static FORCEINLINE constexpr T Clamp(const T X, const T MinValue, const T MaxValue)
-    {
-        return Max(Min(X, MaxValue), MinValue);
-    }
+	/** X를 Min과 Max의 사이의 값으로 클램핑 합니다. */
+	template <typename T>
+	[[nodiscard]] static FORCEINLINE constexpr T Clamp(const T X, const T MinValue, const T MaxValue)
+	{
+		return Max(Min(X, MaxValue), MinValue);
+	}
 
-    /** A의 절댓값을 구합니다. */
-    template <typename T>
-    [[nodiscard]] static FORCEINLINE constexpr T Abs(const T A)
-    {
-        return A < T(0) ? -A : A;
-    }
+	/** A의 절댓값을 구합니다. */
+	template <typename T>
+	[[nodiscard]] static FORCEINLINE constexpr T Abs(const T A)
+	{
+		return A < T(0) ? -A : A;
+	}
 
-    /** A의 제곱을 구합니다. */
-    template <typename T>
-    [[nodiscard]] static FORCEINLINE constexpr T Pow(const T A)
-    {
-        return A * A;
-    }
+	/** A의 제곱을 구합니다. */
+	template <typename T>
+	[[nodiscard]] static FORCEINLINE constexpr T Pow(const T A)
+	{
+		return A * A;
+	}
 
-    // A의 제곱근을 구합니다.
-    [[nodiscard]] static FORCEINLINE float Sqrt( float A ) { return sqrtf(A); }
-    [[nodiscard]] static FORCEINLINE double Sqrt( double A ) { return sqrt(A); }
+	// A의 제곱근을 구합니다.
+	[[nodiscard]] static FORCEINLINE float Sqrt( float A ) { return sqrtf(A); }
+	[[nodiscard]] static FORCEINLINE double Sqrt( double A ) { return sqrt(A); }
 
-    /** A의 역제곱근을 구합니다. */
-    [[nodiscard]] static FORCEINLINE float InvSqrt( float A ) { return 1.0f / sqrtf( A ); }
-    [[nodiscard]] static FORCEINLINE double InvSqrt( double A ) { return 1.0 / sqrt( A ); }
+	/** A의 역제곱근을 구합니다. */
+	[[nodiscard]] static FORCEINLINE float InvSqrt( float A ) { return 1.0f / sqrtf( A ); }
+	[[nodiscard]] static FORCEINLINE double InvSqrt( double A ) { return 1.0 / sqrt( A ); }
 
-    /** A와 B를 Alpha값에 따라 선형으로 보간합니다. */
-    template <typename T>
-    [[nodiscard]] static FORCEINLINE constexpr T Lerp(const T& A, const T& B, float Alpha)
-    {
-        return static_cast<T>((A * (1.0f - Alpha)) + (B * Alpha));
-    }
+	/** A와 B를 Alpha값에 따라 선형으로 보간합니다. */
+	template <typename T>
+	[[nodiscard]] static FORCEINLINE constexpr T Lerp(const T& A, const T& B, float Alpha)
+	{
+		return static_cast<T>((A * (1.0f - Alpha)) + (B * Alpha));
+	}
 
-    /** A와 B를 Alpha값에 따라 선형으로 보간합니다. */
-    template <typename T>
-    [[nodiscard]] static FORCEINLINE constexpr T Lerp(const T& A, const T& B, double Alpha)
-    {
-        return static_cast<T>((A * (1.0 - Alpha)) + (B * Alpha));
-    }
+	/** A와 B를 Alpha값에 따라 선형으로 보간합니다. */
+	template <typename T>
+	[[nodiscard]] static FORCEINLINE constexpr T Lerp(const T& A, const T& B, double Alpha)
+	{
+		return static_cast<T>((A * (1.0 - Alpha)) + (B * Alpha));
+	}
 
-    template <typename T>
-    [[nodiscard]] static FORCEINLINE constexpr auto RadiansToDegrees(const T& RadVal) -> decltype(RadVal * (180.0f / PI))
-    {
-        return RadVal * (180.0f / PI);
-    }
+	template <typename T>
+	[[nodiscard]] static FORCEINLINE constexpr auto RadiansToDegrees(const T& RadVal) -> decltype(RadVal * (180.0f / PI))
+	{
+		return RadVal * (180.0f / PI);
+	}
 
-    [[nodiscard]] static FORCEINLINE constexpr float RadiansToDegrees(float RadVal)
-    {
-        return RadVal * (180.0f / PI);
-    }
+	[[nodiscard]] static FORCEINLINE constexpr float RadiansToDegrees(float RadVal)
+	{
+		return RadVal * (180.0f / PI);
+	}
 
-    [[nodiscard]] static FORCEINLINE constexpr double RadiansToDegrees(double RadVal)
-    {
-        return RadVal * (180.0 / PI_DOUBLE);
-    }
+	[[nodiscard]] static FORCEINLINE constexpr double RadiansToDegrees(double RadVal)
+	{
+		return RadVal * (180.0 / PI_DOUBLE);
+	}
 
-    template <typename T>
-    [[nodiscard]] static FORCEINLINE constexpr auto DegreesToRadians(const T& DegVal) -> decltype(DegVal * (PI / 180.0f))
-    {
-        return DegVal * (PI / 180.0f);
-    }
+	template <typename T>
+	[[nodiscard]] static FORCEINLINE constexpr auto DegreesToRadians(const T& DegVal) -> decltype(DegVal * (PI / 180.0f))
+	{
+		return DegVal * (PI / 180.0f);
+	}
 
-    [[nodiscard]] static FORCEINLINE constexpr float DegreesToRadians(float DegVal)
-    {
-        return DegVal * (PI / 180.0f);
-    }
+	[[nodiscard]] static FORCEINLINE constexpr float DegreesToRadians(float DegVal)
+	{
+		return DegVal * (PI / 180.0f);
+	}
 
-    [[nodiscard]] static FORCEINLINE constexpr double DegreesToRadians(double DegVal)
-    {
-        return DegVal * (PI_DOUBLE / 180.0);
-    }
+	[[nodiscard]] static FORCEINLINE constexpr double DegreesToRadians(double DegVal)
+	{
+		return DegVal * (PI_DOUBLE / 180.0);
+	}
 
-    [[nodiscard]] static FORCEINLINE double Cos(double RadVal)
-    {
+	[[nodiscard]] static FORCEINLINE double Cos(double RadVal)
+	{
 		return cos(RadVal);
-    }
+	}
 
 	[[nodiscard]] static FORCEINLINE float Cos(float RadVal)
 	{
@@ -159,7 +159,7 @@ struct FMath
 
 	template <typename T>
 	[[nodiscard]] static FORCEINLINE T Square(T Value)
-    {
-	    return Value*Value;
-    }
+	{
+		return Value*Value;
+	}
 };

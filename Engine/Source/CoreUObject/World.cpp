@@ -78,7 +78,7 @@ void UWorld::Render()
     }
         
     RenderMainTexture(*Renderer);
-
+	RenderBoundingBoxes(*Renderer);
         
     // DisplayPickingTexture(*Renderer);
 
@@ -133,6 +133,15 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
     }
 }
 
+void UWorld::RenderBoundingBoxes(URenderer& Renderer)
+{
+    for (FBox* Box : BoundingBoxes)
+    {
+        if (Box && Box->bCanBeRendered && Box->IsValidBox())
+            Renderer.RenderBox(*Box);
+    }
+}
+
 void UWorld::DisplayPickingTexture(URenderer& Renderer)
 {
     Renderer.RenderPickingTexture();
@@ -155,7 +164,7 @@ void UWorld::ClearWorld()
 
 bool UWorld::DestroyActor(AActor* InActor)
 {
-    //@TODO: ³ªÁß¿¡ Destroy°¡ ½ÇÆĞÇÒ ÀÏÀÌ ÀÖ´Ù¸é return false; ÇÏ±â
+    //@TODO: ë‚˜ì¤‘ì— Destroyê°€ ì‹¤íŒ¨í•  ì¼ì´ ìˆë‹¤ë©´ return false; í•˜ê¸°
     assert(InActor);
 
     if (PendingDestroyActors.Find(InActor) != -1)
@@ -163,13 +172,13 @@ bool UWorld::DestroyActor(AActor* InActor)
         return true;
     }
 
-    // »èÁ¦µÉ ¶§ Destroyed È£Ãâ
+    // ì‚­ì œë  ë•Œ Destroyed í˜¸ì¶œ
     InActor->Destroyed();
 
-    // World¿¡¼­ Á¦°Å
+    // Worldì—ì„œ ì œê±°
     Actors.Remove(InActor);
 
-    // Á¦°Å ´ë±â¿­¿¡ Ãß°¡
+    // ì œê±° ëŒ€ê¸°ì—´ì— ì¶”ê°€
     PendingDestroyActors.Add(InActor);
     return true;
 }
@@ -265,4 +274,17 @@ UWorldInfo UWorld::GetWorldInfo() const
         i++;
     }
     return WorldInfo;
+}
+
+bool UWorld::LineTrace(const FRay& Ray, USceneComponent** FirstHitComponent) const
+{
+	for (FBox* Box : BoundingBoxes)
+	{
+		if (Box && Box->IsValidBox() && Box->IntersectRay(Ray))
+		{
+			*FirstHitComponent = Box->GetOwner();
+			return true;
+		}
+	}
+    return false;
 }

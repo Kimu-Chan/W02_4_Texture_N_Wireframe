@@ -2,7 +2,7 @@
 #include "UI.h"
 #include "Core/HAL/PlatformMemory.h"
 #include "URenderer.h"
-#include "Debug/DebugConsole.h"
+#include "Debugging/DebugConsole.h"
 #include "Static/EditorManager.h"
 #include "CoreUObject/World.h"
 #include "CoreUObject/Components/PrimitiveComponent.h"

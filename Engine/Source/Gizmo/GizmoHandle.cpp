@@ -10,80 +10,79 @@
 AGizmoHandle::AGizmoHandle()
 {
 	bIsGizmo = true;
-	// !NOTE : ZπÊ«‚¿∏∑Œ º≠¿÷¿Ω
+	bUseBoundingBox = true;
+	bRenderBoundingBox = false;
+
+	// !NOTE : ZÎ∞©Ìñ•ÏúºÎ°ú ÏÑúÏûàÏùå
 	// z
 	UCylinderComp* ZArrow = AddComponent<UCylinderComp>();
 	ZArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), FVector(1, 1, 1)));
 	ZArrow->SetCustomColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
 	CylinderComponents.Add(ZArrow);
 
-	// x
-	UCylinderComp* XArrow = AddComponent<UCylinderComp>();
-	XArrow->SetupAttachment(ZArrow);
-	XArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, -90.0f, 0.0f), FVector(1, 1, 1)));
-	XArrow->SetCustomColor(FVector4(1.0f, 0.0f, 0.0f, 1.0f));
-	CylinderComponents.Add(XArrow);
+    // x
+    UCylinderComp* XArrow = AddComponent<UCylinderComp>();
+    XArrow->SetupAttachment(ZArrow);
+    XArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, -90.0f, 0.0f), FVector(1, 1, 1)));
+    XArrow->SetCustomColor(FVector4(1.0f, 0.0f, 0.0f, 1.0f));
+    CylinderComponents.Add(XArrow);
 
-	// y
-	UCylinderComp* YArrow = AddComponent<UCylinderComp>();
-	YArrow->SetupAttachment(ZArrow);
-	YArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(90.0f, 0.0f, 0.0f), FVector(1, 1, 1)));
-	YArrow->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
-	CylinderComponents.Add(YArrow);
-	RootComponent = ZArrow;
+    // y
+    UCylinderComp* YArrow = AddComponent<UCylinderComp>();
+    YArrow->SetupAttachment(ZArrow);
+    YArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(90.0f, 0.0f, 0.0f), FVector(1, 1, 1)));
+    YArrow->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
+    CylinderComponents.Add(YArrow);
+    RootComponent = ZArrow;
 
-	UEngine::Get().GetWorld()->AddZIgnoreComponent(ZArrow);
-	UEngine::Get().GetWorld()->AddZIgnoreComponent(XArrow);
-	UEngine::Get().GetWorld()->AddZIgnoreComponent(YArrow);
+    UEngine::Get().GetWorld()->AddZIgnoreComponent(ZArrow);
+    UEngine::Get().GetWorld()->AddZIgnoreComponent(XArrow);
+    UEngine::Get().GetWorld()->AddZIgnoreComponent(YArrow);
 
-	SetActive(false);
+    SetActive(false);
 }
 
 void AGizmoHandle::Tick(float DeltaTime)
 {
-	AActor* SelectedActor = FEditorManager::Get().GetSelectedActor();
-	if (SelectedActor != nullptr && bIsActive)
-	{
-		FTransform GizmoTr = RootComponent->GetComponentTransform();
-		GizmoTr.SetPosition(SelectedActor->GetActorTransform().GetPosition());
-		SetActorTransform(GizmoTr);
-	}
+    AActor* SelectedActor = FEditorManager::Get().GetSelectedActor();
+    if (SelectedActor != nullptr && bIsActive)
+    {
+        FTransform GizmoTr = RootComponent->GetComponentTransform();
+        GizmoTr.SetPosition(SelectedActor->GetActorTransform().GetPosition());
+        SetActorTransform(GizmoTr);
+    }
 
-	SetScaleByDistance();
+    SetScaleByDistance();
 
-	AActor::Tick(DeltaTime);
+    AActor::Tick(DeltaTime);
 
-	if (SelectedAxis != ESelectedAxis::None)
-	{
-		if (AActor* Actor = FEditorManager::Get().GetSelectedActor())
-		{
-			// ∏∂øÏΩ∫¿« ƒøº≠ ¿ßƒ°∏¶ ∞°¡Æø¿±‚
-			POINT pt;
-			GetCursorPos(&pt);
-			ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
+    if (SelectedAxis != ESelectedAxis::None)
+    {
+        if (AActor* Actor = FEditorManager::Get().GetSelectedActor())
+        {
+            // ÎßàÏö∞Ïä§Ïùò Ïª§ÏÑú ÏúÑÏπòÎ•º Í∞ÄÏ†∏Ïò§Í∏∞
+            POINT pt;
+            GetCursorPos(&pt);
+            ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
 
-			RECT Rect;
-			GetClientRect(UEngine::Get().GetWindowHandle(), &Rect);
-			int ScreenWidth = Rect.right - Rect.left;
-			int ScreenHeight = Rect.bottom - Rect.top;
+            RECT Rect;
+            GetClientRect(UEngine::Get().GetWindowHandle(), &Rect);
+            int ScreenWidth = Rect.right - Rect.left;
+            int ScreenHeight = Rect.bottom - Rect.top;
 
-			// ƒøº≠ ¿ßƒ°∏¶ NDC∑Œ ∫Ø∞Ê
 			float PosX = 2.0f * pt.x / ScreenWidth - 1.0f;
 			float PosY = -2.0f * pt.y / ScreenHeight + 1.0f;
 
-			// Projection ∞¯∞£¿∏∑Œ ∫Ø»Ø
 			FVector4 RayOrigin{ PosX, PosY, 0.0f, 1.0f };
 			FVector4 RayEnd{ PosX, PosY, 1.0f, 1.0f };
 
-			// View ∞¯∞£¿∏∑Œ ∫Ø»Ø
 			FMatrix InvProjMat = UEngine::Get().GetRenderer()->GetProjectionMatrix().Inverse();
 			RayOrigin = InvProjMat.TransformVector4(RayOrigin);
 			RayOrigin.W = 1;
 			RayEnd = InvProjMat.TransformVector4(RayEnd);
-			RayEnd *= 1000.0f;  // «¡∑ØΩ∫≈“¿« Far ∞™¿Ã ¿˚øÎ¿Ã æ»µ≈º≠ ºˆµø¿∏∑Œ ∞ˆ«‘
+			RayEnd *= 1000.0f;  
 			RayEnd.W = 1;
 
-			// ∏∂øÏΩ∫ ∆˜¿Œ≈Õ¿« ø˘µÂ ¿ßƒ°øÕ πÊ«‚
 			FMatrix InvViewMat = FEditorManager::Get().GetCamera()->GetViewMatrix().Inverse();
 			RayOrigin = InvViewMat.TransformVector4(RayOrigin);
 			RayOrigin /= RayOrigin.W = 1;
@@ -91,116 +90,113 @@ void AGizmoHandle::Tick(float DeltaTime)
 			RayEnd /= RayEnd.W = 1;
 			FVector RayDir = (RayEnd - RayOrigin).GetSafeNormal();
 
-			// æ◊≈ÕøÕ¿« ∞≈∏Æ
 			float Distance = FVector::Distance(RayOrigin, Actor->GetActorTransform().GetPosition());
 
-			// Ray πÊ«‚¿∏∑Œ Distance∏∏≈≠ ¿Á∞ËªÍ
 			FVector Result = RayOrigin + RayDir * Distance;
 
-			FTransform AT = Actor->GetActorTransform();
+            FTransform AT = Actor->GetActorTransform();
 
 			DoTransform(AT, Result, Actor);
-
 		}
 	}
 
-	if (APlayerInput::Get().GetKeyDown(EKeyCode::Space))
-	{
-		int type = static_cast<int>(GizmoType);
-		type = (type + 1) % static_cast<int>(EGizmoType::Max);
-		GizmoType = static_cast<EGizmoType>(type);
-	}
+    if (APlayerInput::Get().GetKeyDown(EKeyCode::Space))
+    {
+        int type = static_cast<int>(GizmoType);
+        type = (type + 1) % static_cast<int>(EGizmoType::Max);
+        GizmoType = static_cast<EGizmoType>(type);
+    }
 
 }
 
 void AGizmoHandle::SetScaleByDistance()
 {
-	FTransform MyTransform = GetActorTransform();
+    FTransform MyTransform = GetActorTransform();
 
-	// æ◊≈Õ¿« ø˘µÂ ¿ßƒ°
-	FVector actorWorldPos = MyTransform.GetPosition();
+    // Ïï°ÌÑ∞Ïùò ÏõîÎìú ÏúÑÏπò
+    FVector actorWorldPos = MyTransform.GetPosition();
 
-	FTransform CameraTransform = FEditorManager::Get().GetCamera()->GetActorTransform();
+    FTransform CameraTransform = FEditorManager::Get().GetCamera()->GetActorTransform();
 
-	// ƒ´∏ﬁ∂Û¿« ø˘µÂ ¿ßƒ°
-	FVector cameraWorldPos = CameraTransform.GetPosition();
+    // Ïπ¥Î©îÎùºÏùò ÏõîÎìú ÏúÑÏπò
+    FVector cameraWorldPos = CameraTransform.GetPosition();
 
-	// ∞≈∏Æ ∞ËªÍ
-	float distance = (actorWorldPos - cameraWorldPos).Length();
+    // Í±∞Î¶¨ Í≥ÑÏÇ∞
+    float distance = (actorWorldPos - cameraWorldPos).Length();
 
-	float baseScale = 1.0f;    // ±‚∫ª Ω∫ƒ…¿œ
-	float scaleFactor = distance * 0.1f; // ∞≈∏Æø° ∫Ò∑ «œø© Ω∫ƒ…¿œ ¡ı∞°
+    float baseScale = 1.0f;    // Í∏∞Î≥∏ Ïä§ÏºÄÏùº
+    float scaleFactor = distance * 0.1f; // Í±∞Î¶¨Ïóê ÎπÑÎ°ÄÌïòÏó¨ Ïä§ÏºÄÏùº Ï¶ùÍ∞Ä
 
-	// float minScale = 1.0f;     // √÷º“ Ω∫ƒ…¿œ
-	// float maxScale = 1.0f;     // √÷¥Î Ω∫ƒ…¿œ
-	// float scaleFactor = clamp(1.0f / distance, minScale, maxScale);
+    // float minScale = 1.0f;     // ÏµúÏÜå Ïä§ÏºÄÏùº
+    // float maxScale = 1.0f;     // ÏµúÎåÄ Ïä§ÏºÄÏùº
+    // float scaleFactor = clamp(1.0f / distance, minScale, maxScale);
 
-	MyTransform.SetScale(scaleFactor, scaleFactor, scaleFactor);
+    MyTransform.SetScale(scaleFactor, scaleFactor, scaleFactor);
 }
 
 void AGizmoHandle::SetActive(bool bActive)
 {
-	bIsActive = bActive;
-	for (auto& Cylinder : CylinderComponents)
-	{
-		Cylinder->SetCanBeRendered(bActive);
-	}
+    bIsActive = bActive;
+    for (auto& Cylinder : CylinderComponents)
+    {
+        Cylinder->SetCanBeRendered(bActive);
+    }
 }
 
 const char* AGizmoHandle::GetTypeName()
 {
-	return "GizmoHandle";
+    return "GizmoHandle";
 }
 
 void AGizmoHandle::DoTransform(FTransform& AT, FVector Result, AActor* Actor)
 {
-	const FVector& AP = AT.GetPosition();
+    const FVector& AP = AT.GetPosition();
 
-	if (SelectedAxis == ESelectedAxis::X)
-	{
-		switch (GizmoType)
-		{
-		case EGizmoType::Translate:
-			AT.SetPosition({ Result.X, AP.Y, AP.Z });
-			break;
-		case EGizmoType::Rotate:
-			AT.RotatePitch(Result.X);
-			break;
-		case EGizmoType::Scale:
-			AT.AddScale({ Result.X * .1f, 0, AP.Z * .1f });
-			break;
-		}
-	}
-	else if (SelectedAxis == ESelectedAxis::Y)
-	{
-		switch (GizmoType)
-		{
-		case EGizmoType::Translate:
-			AT.SetPosition({ AP.X, Result.Y, AP.Z });
-			break;
-		case EGizmoType::Rotate:
-			AT.RotateRoll(Result.Y);
-			break;
-		case EGizmoType::Scale:
-			AT.AddScale({ 0, Result.Y * .1f, 0 });
-			break;
-		}
-	}
-	else if (SelectedAxis == ESelectedAxis::Z)
-	{
-		switch (GizmoType)
-		{
-		case EGizmoType::Translate:
-			AT.SetPosition({ AP.X, AP.Y, Result.Z });
-			break;
-		case EGizmoType::Rotate:
-			AT.RotatePitch(-Result.Z);
-			break;
-		case EGizmoType::Scale:
-			AT.AddScale({ 0, 0, Result.Z * .1f });
-			break;
-		}
-	}
-	Actor->SetActorTransform(AT);
+    if (SelectedAxis == ESelectedAxis::X)
+    {
+        switch (GizmoType)
+        {
+        case EGizmoType::Translate:
+            AT.SetPosition({ Result.X, AP.Y, AP.Z });
+            break;
+        case EGizmoType::Rotate:
+            AT.RotatePitch(Result.X);
+            break;
+        case EGizmoType::Scale:
+            AT.AddScale({ Result.X * .1f, 0, AP.Z * .1f });
+            break;
+        }
+    }
+    else if (SelectedAxis == ESelectedAxis::Y)
+    {
+        switch (GizmoType)
+        {
+        case EGizmoType::Translate:
+            AT.SetPosition({ AP.X, Result.Y, AP.Z });
+            break;
+        case EGizmoType::Rotate:
+            AT.RotateRoll(Result.Y);
+            break;
+        case EGizmoType::Scale:
+            AT.AddScale({ 0, Result.Y * .1f, 0 });
+            break;
+        }
+    }
+    else if (SelectedAxis == ESelectedAxis::Z)
+    {
+        switch (GizmoType)
+        {
+        case EGizmoType::Translate:
+            AT.SetPosition({ AP.X, AP.Y, Result.Z });
+            break;
+        case EGizmoType::Rotate:
+            AT.RotatePitch(-Result.Z);
+            break;
+        case EGizmoType::Scale:
+            AT.AddScale({ 0, 0, Result.Z * .1f });
+            break;
+        }
+    }
+    Actor->SetActorTransform(AT);
 }
 
