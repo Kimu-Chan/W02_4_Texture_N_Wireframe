@@ -17,21 +17,21 @@ void FBufferCache::Init()
 
 }
 
-BufferInfo FBufferCache::GetBufferInfo(EPrimitiveType Type)
+VertexBufferInfo FBufferCache::GetBufferInfo(EPrimitiveType Type)
 {
-    if (!Cache.Contains(Type))
+    if (!VertexBufferCache.Contains(Type))
     {
-        auto bufferInfo = CreateVertexBufferInfo(Type);
-		Cache.Add(Type, bufferInfo);
+        auto bufferInfo = CreateBufferInfo(Type);
+		VertexBufferCache.Add(Type, bufferInfo);
     }
 
-    return Cache[Type];
+    return VertexBufferCache[Type];
 }
 
-BufferInfo FBufferCache::CreateVertexBufferInfo(EPrimitiveType Type)
+VertexBufferInfo FBufferCache::CreateBufferInfo(EPrimitiveType Type)
 {
-    ID3D11Buffer* Buffer = nullptr;
-    int Size = 0;
+    ID3D11Buffer* VertexBuffer = nullptr;
+    int VerticeSize = 0;
     D3D_PRIMITIVE_TOPOLOGY Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
     FVertexSimple* Vertices = nullptr;
 
@@ -39,40 +39,40 @@ BufferInfo FBufferCache::CreateVertexBufferInfo(EPrimitiveType Type)
     switch (Type)
     {
     case EPrimitiveType::EPT_Line:
-        Size = std::size(LineVertices);
+        VerticeSize = std::size(LineVertices);
         Vertices = LineVertices;
         Topology = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
         break;
     case EPrimitiveType::EPT_Triangle:
-        Size = std::size(TriangleVertices);
+        VerticeSize = std::size(TriangleVertices);
         Vertices = TriangleVertices;
         break;
     case EPrimitiveType::EPT_Cube:
-        Size = std::size(CubeVertices);
+        VerticeSize = std::size(CubeVertices);
         Vertices = CubeVertices;
         break;
     case EPrimitiveType::EPT_Sphere:
-        Size = std::size(SphereVertices);
+        VerticeSize = std::size(SphereVertices);
         Vertices = SphereVertices;
         break;
     case EPrimitiveType::EPT_Cylinder:
     {
 		PrimitiveVertices.Add(EPrimitiveType::EPT_Cylinder, CreateCylinderVertices());
-		Size = PrimitiveVertices[EPrimitiveType::EPT_Cylinder].Num();
+		VerticeSize = PrimitiveVertices[EPrimitiveType::EPT_Cylinder].Num();
         Vertices = PrimitiveVertices[EPrimitiveType::EPT_Cylinder].GetData();
         break;
     }
     case EPrimitiveType::EPT_Cone:
     {
         PrimitiveVertices.Add(EPrimitiveType::EPT_Cone, CreateConeVertices());
-        Size = PrimitiveVertices[EPrimitiveType::EPT_Cone].Num();
+        VerticeSize = PrimitiveVertices[EPrimitiveType::EPT_Cone].Num();
         Vertices = PrimitiveVertices[EPrimitiveType::EPT_Cone].GetData();
         break;
     }
     }
-    Buffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(Vertices, sizeof(FVertexSimple) * Size);
+    VertexBuffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(Vertices, sizeof(FVertexSimple) * VerticeSize);
 
-    return BufferInfo(Buffer, Size, Topology, Vertices);
+    return VertexBufferInfo(VertexBuffer, VerticeSize, Topology, Vertices);
 }
 
 
@@ -83,7 +83,6 @@ TArray<FVertexSimple> FBufferCache::CreateConeVertices()
     int segments = 36;
     float radius = 1.f;
     float height = 1.f;
-
 
 	// Cone bottom
     for (int i = 0; i < segments; ++i)

@@ -62,4 +62,6 @@ struct alignas(16) FMatrix
 	FMatrix GetTransformMatrix() const;
 	FMatrix GetRotationMatrix() const;
 	FMatrix GetScaleMatrix() const;
+
+	float GetMaxScaleFactor() const;
 };

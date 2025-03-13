@@ -6,6 +6,10 @@
 #include "CoreUObject/Components/PrimitiveComponent.h"
 #include "Gizmo/GizmoHandle.h"
 #include "Static/EditorManager.h"
+#include "Camera.h"
+#include "Core/Math/Ray.h"
+#include "World.h"
+#include "Static/EditorManager.h"
 
 APicker::APicker()
 {
@@ -40,72 +44,22 @@ void APicker::LateTick(float DeltaTime)
 
     if (APlayerInput::Get().GetMouseDown(false))
     {
-        POINT pt;
-        GetCursorPos(&pt);
-        ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
-
-
-        float ratioX = UEngine::Get().GetInitializedScreenWidth() / (float)UEngine::Get().GetScreenWidth();
-        float ratioY = UEngine::Get().GetInitializedScreenHeight() / (float)UEngine::Get().GetScreenHeight();
-        pt.x = pt.x * ratioX;
-        pt.y = pt.y * ratioY;
-
-        FVector4 color = UEngine::Get().GetRenderer()->GetPixel(FVector(pt.x, pt.y, 0));
-
-        uint32_t UUID = DecodeUUID(color);
-
-        UActorComponent* PickedComponent = UEngine::Get().GetObjectByUUID<UActorComponent>(UUID);
-
-        if (PickedComponent != nullptr)
+        if (FEditorManager::Get().GetSelectedActor() != nullptr)
         {
-            AActor* PickedActor = PickedComponent->GetOwner();
-
-            if (PickedActor == nullptr) return;
-            if (PickedComponent->GetOwner()->IsGizmoActor() == false)
-            {
-                if (PickedActor == FEditorManager::Get().GetSelectedActor())
-                {
-                    FEditorManager::Get().SelectActor(nullptr);
-                }
-                else
-                {
-                    FEditorManager::Get().SelectActor(PickedActor);
-                }
-            }
+            // 오브젝트 선택된 상태 -> 박스 내부의 기즈모를 선택할 수 없으니 컬러픽 시도
+            PickByColor();
+		}
+        else
+        {
+            PickByRay();
         }
-        UE_LOG("Pick - UUID: %d", UUID);
     }
 
+
+    // 기즈모 핸들링
     if (APlayerInput::Get().IsPressedMouse(false))
     {
-        POINT pt;
-        GetCursorPos(&pt);
-        ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
-        FVector4 color = UEngine::Get().GetRenderer()->GetPixel(FVector(pt.x, pt.y, 0));
-        uint32_t UUID = DecodeUUID(color);
-
-        UActorComponent* PickedComponent = UEngine::Get().GetObjectByUUID<UActorComponent>(UUID);\
-            if (PickedComponent != nullptr)
-            {
-                if (AGizmoHandle* Gizmo = dynamic_cast<AGizmoHandle*>(PickedComponent->GetOwner()))
-                {
-                    if (Gizmo->GetSelectedAxis() != ESelectedAxis::None) return;
-                    UCylinderComp* CylinderComp = static_cast<UCylinderComp*>(PickedComponent);
-                    FVector4 CompColor = CylinderComp->GetCustomColor();
-                    if (1.0f - FMath::Abs(CompColor.X) < KINDA_SMALL_NUMBER) // Red - X��
-                    {
-                        Gizmo->SetSelectedAxis(ESelectedAxis::X);
-                    }
-                    else if (1.0f - FMath::Abs(CompColor.Y) < KINDA_SMALL_NUMBER) // Green - Y��
-                    {
-                        Gizmo->SetSelectedAxis(ESelectedAxis::Y);
-                    }
-                    else  // Blue - Z��
-                    {
-                        Gizmo->SetSelectedAxis(ESelectedAxis::Z);
-                    }
-                }
-            }
+		HandleGizmo();
     }
     else
     {
@@ -119,4 +73,96 @@ void APicker::LateTick(float DeltaTime)
 const char* APicker::GetTypeName()
 {
     return "Picker";
+}
+
+void APicker::PickByColor()
+{
+    POINT pt;
+    GetCursorPos(&pt);
+    ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
+
+    float ratioX = UEngine::Get().GetInitializedScreenWidth() / (float)UEngine::Get().GetScreenWidth();
+    float ratioY = UEngine::Get().GetInitializedScreenHeight() / (float)UEngine::Get().GetScreenHeight();
+    pt.x = pt.x * ratioX;
+    pt.y = pt.y * ratioY;
+
+    FVector4 color = UEngine::Get().GetRenderer()->GetPixel(FVector(pt.x, pt.y, 0));
+
+    uint32_t UUID = DecodeUUID(color);
+
+    UActorComponent* PickedComponent = UEngine::Get().GetObjectByUUID<UActorComponent>(UUID);
+
+    if (PickedComponent != nullptr)
+    {
+        AActor* PickedActor = PickedComponent->GetOwner();
+
+        if (PickedActor == nullptr) return;
+        if (PickedComponent->GetOwner()->IsGizmoActor() == false)
+        {
+            if (PickedActor == FEditorManager::Get().GetSelectedActor())
+            {
+                FEditorManager::Get().SelectActor(nullptr);
+            }
+            else
+            {
+                FEditorManager::Get().SelectActor(PickedActor);
+            }
+        }
+    }
+    UE_LOG("Pick - UUID: %d", UUID);
+}
+
+void APicker::PickByRay()
+{
+    // 충돌 검출
+	USceneComponent* FirstHitComponent = nullptr;
+
+    if (GetWorld()->LineTrace(FRay::GetRayByMousePoint(FEditorManager::Get().GetCamera()), &FirstHitComponent))
+    {
+        AActor* HitActor = FirstHitComponent->GetOwner();
+        if (HitActor != nullptr && HitActor->IsGizmoActor() == false)
+        {
+            if (HitActor == FEditorManager::Get().GetSelectedActor())
+            {
+                FEditorManager::Get().SelectActor(nullptr);
+            }
+            else
+            {
+                FEditorManager::Get().SelectActor(HitActor);
+            }
+        }
+    }
+    
+}
+
+void APicker::HandleGizmo()
+{
+    POINT pt;
+    GetCursorPos(&pt);
+    ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
+    FVector4 color = UEngine::Get().GetRenderer()->GetPixel(FVector(pt.x, pt.y, 0));
+    uint32_t UUID = DecodeUUID(color);
+
+    UActorComponent* PickedComponent = UEngine::Get().GetObjectByUUID<UActorComponent>(UUID);
+    if (PickedComponent != nullptr)
+    {
+        if (AGizmoHandle* Gizmo = dynamic_cast<AGizmoHandle*>(PickedComponent->GetOwner()))
+        {
+            if (Gizmo->GetSelectedAxis() != ESelectedAxis::None) return;
+            UCylinderComp* CylinderComp = static_cast<UCylinderComp*>(PickedComponent);
+            FVector4 CompColor = CylinderComp->GetCustomColor();
+            if (1.0f - FMath::Abs(CompColor.X) < KINDA_SMALL_NUMBER) // Red - X��
+            {
+                Gizmo->SetSelectedAxis(ESelectedAxis::X);
+            }
+            else if (1.0f - FMath::Abs(CompColor.Y) < KINDA_SMALL_NUMBER) // Green - Y��
+            {
+                Gizmo->SetSelectedAxis(ESelectedAxis::Y);
+            }
+            else  // Blue - Z��
+            {
+                Gizmo->SetSelectedAxis(ESelectedAxis::Z);
+            }
+        }
+    }
 }

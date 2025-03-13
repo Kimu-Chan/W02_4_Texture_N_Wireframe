@@ -206,9 +206,9 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp)
         return;
     }
 
-    BufferInfo Info = BufferCache->GetBufferInfo(PrimitiveComp->GetType());
+    VertexBufferInfo Info = BufferCache->GetBufferInfo(PrimitiveComp->GetType());
 
-    if (Info.GetBuffer() == nullptr)
+    if (Info.GetVertexBuffer() == nullptr)
     {
         return;
     }
@@ -227,7 +227,7 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp)
 
     UpdateConstant(UpdateInfo);
 
-    RenderPrimitiveInternal(Info.GetBuffer(), Info.GetSize());
+    RenderPrimitiveInternal(Info.GetVertexBuffer(), Info.GetSize());
 
 }
 
@@ -274,6 +274,8 @@ void URenderer::RenderBox(const FBox& Box, const FVector4& Color) const
     };
 
     ID3D11Buffer* VertexBuffer = CreateVertexBuffer(BoxVertices, sizeof(FVertexSimple) * 8);
+
+
 
     D3D11_SUBRESOURCE_DATA initData = {};
     initData.pSysMem = BoxVertices;
@@ -803,8 +805,8 @@ void URenderer::GetPrimitiveLocalBounds(EPrimitiveType Type, FVector& OutMin, FV
 		return;
 	}
 
-    BufferInfo Info = BufferCache->GetBufferInfo(Type);
-    if (Info.GetBuffer() == nullptr)
+    VertexBufferInfo Info = BufferCache->GetBufferInfo(Type);
+    if (Info.GetVertexBuffer() == nullptr)
     {
         return;
     }

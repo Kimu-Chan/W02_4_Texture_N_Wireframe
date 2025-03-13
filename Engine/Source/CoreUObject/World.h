@@ -11,6 +11,8 @@
 
 #include "Engine/GameFrameWork/Arrow.h"
 #include "Engine/GameFrameWork/Picker.h"
+#include "Math/Ray.h"
+
 
 class AActor;
 
@@ -54,7 +56,7 @@ private:
 
 public:
 	// BoundingBox & Linetrace
-	bool LineTrace(const FVector& Start, const FVector& End, USceneComponent** FirstHitComponent) const;
+	bool LineTrace(const FRay& Ray, USceneComponent** FirstHitComponent) const;
 	void AddBoundingBox(FBox* Box) { BoundingBoxes.Add(Box); }
 	void RemoveBoundingBox(FBox* Box) { BoundingBoxes.Remove(Box); }
 
