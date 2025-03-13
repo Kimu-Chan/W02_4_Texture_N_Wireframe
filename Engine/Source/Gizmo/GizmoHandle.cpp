@@ -9,13 +9,16 @@
 
 AGizmoHandle::AGizmoHandle()
 {
-    bIsGizmo = true;
-    // !NOTE : Z방향으로 서있음
-    // z
-    UCylinderComp* ZArrow = AddComponent<UCylinderComp>();
-    ZArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), FVector(1, 1, 1)));
-    ZArrow->SetCustomColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
-    CylinderComponents.Add(ZArrow);
+	bIsGizmo = true;
+	bUseBoundingBox = false;
+	bRenderBoundingBox = false;
+
+	// !NOTE : Z방향으로 서있음
+	// z
+	UCylinderComp* ZArrow = AddComponent<UCylinderComp>();
+	ZArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), FVector(1, 1, 1)));
+	ZArrow->SetCustomColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
+	CylinderComponents.Add(ZArrow);
 
     // x
     UCylinderComp* XArrow = AddComponent<UCylinderComp>();

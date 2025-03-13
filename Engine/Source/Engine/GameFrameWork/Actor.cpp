@@ -19,6 +19,13 @@ void AActor::BeginPlay()
 		if (UPrimitiveComponent* PrimitiveComponent = dynamic_cast<UPrimitiveComponent*>(Component))
 		{
 			PrimitiveComponent->RegisterComponentWithWorld(World);
+
+			if (bUseBoundingBox)
+			{
+				PrimitiveComponent->InitBoundingBox();
+				PrimitiveComponent->SetBoundingBoxRenderable(bRenderBoundingBox);
+			}
+
 		}
 	}
 }
@@ -67,12 +74,25 @@ void AActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Components.Empty();
 }
 
+void AActor::SetBoundingBoxRenderable(bool bRenderable)
+{
+	for (UActorComponent* Component : Components)
+	{
+		if (UPrimitiveComponent* PrimitiveComponent = dynamic_cast<UPrimitiveComponent*>(Component))
+		{
+			PrimitiveComponent->SetBoundingBoxRenderable(bRenderable);
+		}
+	}
+}
+
 void AActor::Pick()
 {
 	if (RootComponent)
 	{
 		bIsPicked = true;
 		RootComponent->Pick(true);
+
+		SetBoundingBoxRenderable(true);
 	}
 }
 
@@ -82,6 +102,9 @@ void AActor::UnPick()
 	{
 		bIsPicked = false;
 		RootComponent->Pick(false);
+
+		SetBoundingBoxRenderable(false);
+
 	}
 }
 

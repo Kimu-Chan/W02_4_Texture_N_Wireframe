@@ -4,6 +4,8 @@
 AAxis::AAxis()
 {
     bIsGizmo = true;
+    bUseBoundingBox = false;
+    bRenderBoundingBox = false;
 
     ULineComp* LineX = AddComponent<ULineComp>();
     FTransform XTransform = LineX->GetComponentTransform();

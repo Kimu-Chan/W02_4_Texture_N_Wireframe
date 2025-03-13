@@ -334,7 +334,7 @@ void URenderer::UpdateConstant(const ConstantUpdateInfo& UpdateInfo) const
     FMatrix MVP =
         FMatrix::Transpose(ProjectionMatrix) *
         FMatrix::Transpose(ViewMatrix) *
-        FMatrix::Transpose(UpdateInfo.Transform.GetMatrix());    // 상수 버퍼를 CPU 메모리에 매핑
+        FMatrix::Transpose(UpdateInfo.TransformMatrix);    // 상수 버퍼를 CPU 메모리에 매핑
 
     // D3D11_MAP_WRITE_DISCARD는 이전 내용을 무시하고 새로운 데이터로 덮어쓰기 위해 사용
     DeviceContext->Map(ConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &ConstantBufferMSR);
@@ -798,6 +798,11 @@ void URenderer::OnUpdateWindowSize(int Width, int Height)
 
 void URenderer::GetPrimitiveLocalBounds(EPrimitiveType Type, FVector& OutMin, FVector& OutMax)
 {
+	if (Type == EPrimitiveType::EPT_None)
+	{
+		return;
+	}
+
     BufferInfo Info = BufferCache->GetBufferInfo(Type);
     if (Info.GetBuffer() == nullptr)
     {

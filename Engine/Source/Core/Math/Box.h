@@ -15,6 +15,8 @@ public:
 
 	FVector InitialMin;
 	FVector InitialMax;
+	bool bCanBeRendered = false;
+
 	bool IsValid() const
 	{
 		return Min.X < Max.X && Min.Y < Max.Y && Min.Z < Max.Z;

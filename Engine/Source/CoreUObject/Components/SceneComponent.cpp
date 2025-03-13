@@ -34,7 +34,10 @@ void USceneComponent::SetRelativeTransform(const FTransform& InTransform)
     // 로컬 트랜스폼 갱신
     RelativeTransform = InTransform;
     FVector Rot = RelativeTransform.GetRotation().GetEuler();
-
+    if (BoundingBox)
+    {
+        BoundingBox->Update(InTransform.GetMatrix());
+    }
 }
 
 void USceneComponent::Pick(bool bPicked)
