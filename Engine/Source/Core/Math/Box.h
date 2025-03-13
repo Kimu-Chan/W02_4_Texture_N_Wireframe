@@ -22,7 +22,7 @@ public:
 	USceneComponent* Owner = nullptr;
 	bool bCanBeRendered = false;
 
-	bool IsValid() const
+	bool IsValidBox() const
 	{
 		return Min.X < Max.X && Min.Y < Max.Y && Min.Z < Max.Z;
 	}

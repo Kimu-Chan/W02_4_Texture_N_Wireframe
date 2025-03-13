@@ -137,7 +137,7 @@ void UWorld::RenderBoundingBoxes(URenderer& Renderer)
 {
     for (FBox* Box : BoundingBoxes)
     {
-        if (Box && Box->bCanBeRendered && Box->IsValid())
+        if (Box && Box->bCanBeRendered && Box->IsValidBox())
             Renderer.RenderBox(*Box);
     }
 }
@@ -280,7 +280,7 @@ bool UWorld::LineTrace(const FRay& Ray, USceneComponent** FirstHitComponent) con
 {
 	for (FBox* Box : BoundingBoxes)
 	{
-		if (Box && Box->IsValid() && Box->IntersectRay(Ray))
+		if (Box && Box->IsValidBox() && Box->IntersectRay(Ray))
 		{
 			*FirstHitComponent = Box->GetOwner();
 			return true;
