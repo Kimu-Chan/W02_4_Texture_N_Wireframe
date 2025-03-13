@@ -6,15 +6,32 @@ cbuffer constants : register(b0)
     uint bUseVertexColor;
 }
 
-cbuffer UUIDColor : register(b1){
+cbuffer UUIDColor : register(b1)
+{
     float4 UUIDColor;
 }
 
-cbuffer Depth : register(b2){
+cbuffer Depth : register(b2)
+{
     int depth;
     int nearPlane;
     int farPlane;
 }
+
+cbuffer CbChangeOnResizeAndFov : register(b3)
+{
+    matrix ProjectionMatrix;
+};
+
+cbuffer CbChangeEveryFrame : register(b4)
+{
+    matrix ViewMatrix;
+};
+
+cbuffer CbChangeEveryObject : register(b5)
+{
+    matrix WorldMatrix;
+};
 
 struct VS_INPUT
 {
@@ -38,9 +55,10 @@ struct PS_OUTPUT
 PS_INPUT mainVS(VS_INPUT input)
 {
     PS_INPUT output;
-
-    output.position = mul(input.position, MVP);
-    // output.depthPosition = output.position;
+    output.position = input.position;
+    output.position = mul(output.position, WorldMatrix);
+    output.position = mul(output.position, ViewMatrix);
+    output.position = mul(output.position, ProjectionMatrix);
 
     output.color = bUseVertexColor == 1 ? input.color : CustomColor;
     return output;
@@ -56,7 +74,7 @@ PS_OUTPUT mainPS(PS_INPUT input) : SV_TARGET
 
     // 색상 설정 (예: 흰색)
     output.color = input.color;
-    output.depth = saturate(depth);
+    // output.depth = saturate(depth);
     // output.color = float4(depth, depth, depth, 1.0f);
     
     return output;

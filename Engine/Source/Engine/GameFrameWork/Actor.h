@@ -46,7 +46,7 @@ private:
 	virtual void OnActorPicked();
 	virtual void OnActorUnPicked();
 
-	uint32 Depth;
+	uint32 Depth = 0;
 	bool bIsPicked = false;
 
 public:

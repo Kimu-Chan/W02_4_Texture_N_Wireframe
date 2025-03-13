@@ -26,6 +26,7 @@ void UPrimitiveComponent::UpdateConstantDepth(const URenderer& Renderer, const i
 
 void UPrimitiveComponent::Render()
 {
+    /*
     URenderer* Renderer = UEngine::Get().GetRenderer();
     if (Renderer == nullptr || !bCanBeRendered)
     {
@@ -35,8 +36,8 @@ void UPrimitiveComponent::Render()
     {
         if (bIsPicked)
         {
-            /*bUseVertexColor = false;
-            SetCustomColor(FVector4(1.0f, 0.647f, 0.0f, 1.0f));*/
+            // bUseVertexColor = false;
+            // SetCustomColor(FVector4(1.0f, 0.647f, 0.0f, 1.0f));
         }
         else
         {
@@ -44,6 +45,7 @@ void UPrimitiveComponent::Render()
         }
     }
     Renderer->RenderPrimitive(this);
+    */
 }
 
 void UPrimitiveComponent::RegisterComponentWithWorld(UWorld* World)

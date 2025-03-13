@@ -79,6 +79,8 @@ void UWorld::Render()
         
     RenderMainTexture(*Renderer);
 
+    // TODO: Render Gizmo here
+
         
     // DisplayPickingTexture(*Renderer);
 
@@ -114,25 +116,18 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 {
     Renderer.PrepareMain();
     Renderer.PrepareMainShader();
-    for (auto& RenderComponent : RenderComponents)
+
+    // Do Render
+    for (auto& Actor : Actors)
     {
-        if (RenderComponent->GetOwner()->GetDepth() > 0)
+        if (UPrimitiveComponent* Primitive = dynamic_cast<UPrimitiveComponent*>(Actor->GetRootComponent()))
         {
-            continue;
+            Renderer.RenderPrimitive(Primitive);
         }
-        uint32 depth = RenderComponent->GetOwner()->GetDepth();
-        // RenderComponent->UpdateConstantDepth(Renderer, depth);
-        RenderComponent->Render();
     }
 
-    /* TODO: Z 관련 렌더는 기즈모를 가장 앞에 렌더하기 위한 것으로, 다른 방법으로 해결 가능
-    Renderer.PrepareZIgnore();
-    for (auto& RenderComponent: ZIgnoreRenderComponents)
-    {
-        uint32 depth = RenderComponent->GetOwner()->GetDepth();
-        RenderComponent->Render();
-    }
-    */
+    // DEBUG
+    // DisplayPickingTexture(Renderer);
 }
 
 void UWorld::DisplayPickingTexture(URenderer& Renderer)

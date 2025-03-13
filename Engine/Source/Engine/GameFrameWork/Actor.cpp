@@ -6,9 +6,7 @@
 #include "Debugging/DebugConsole.h"
 #include "Static/EditorManager.h"
 
-AActor::AActor() : Depth{ 0 }
-{
-}
+AActor::AActor() {}
 
 void AActor::BeginPlay()
 {

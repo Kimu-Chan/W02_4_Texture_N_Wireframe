@@ -3,12 +3,12 @@
 #include "Engine/Engine.h"
 #include "CoreUObject/Components/SceneComponent.h"
 #include "Primitive/PrimitiveVertices.h"
-#include "Core/Math/Plane.h"
 
 
 class UPrimitiveComponent : public USceneComponent
 {
 	using Super = USceneComponent;
+	
 public:
 	UPrimitiveComponent() = default;
 	virtual ~UPrimitiveComponent() = default;
@@ -17,7 +17,8 @@ public:
 	virtual void TickComponent(float DeltaTime) override;
 	void UpdateConstantPicking(const URenderer& Renderer, FVector4 UUIDColor) const;
 	void UpdateConstantDepth(const URenderer& Renderer, int Depth) const;
-	virtual void Render();
+
+	void Render();
 
 	virtual EPrimitiveType GetType() { return EPrimitiveType::EPT_None; }
 

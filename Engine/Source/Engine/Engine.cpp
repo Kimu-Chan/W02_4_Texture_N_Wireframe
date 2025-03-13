@@ -207,8 +207,6 @@ void UEngine::InitRenderer()
 {
     Renderer = std::make_unique<URenderer>();
     Renderer->Create(WindowHandle);
-    Renderer->CreateShader();
-    Renderer->CreateConstantBuffer();
 }
 
 void UEngine::InitWorld()

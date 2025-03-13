@@ -62,12 +62,12 @@ private:
 
 public:
 	/** Renderer를 초기화 합니다. */
-	void Create(HWND hWindow);
+	HRESULT Create(HWND hWindow);
 
 	/** Renderer에 사용된 모든 리소스를 해제합니다. */
 	void Release();
 
-	void CreateShader();
+	HRESULT CreateShader();
 
 	void ReleaseShader();
 
@@ -122,19 +122,19 @@ public:
 
 protected:
 	/** Direct3D Device 및 SwapChain을 생성합니다. */
-	void CreateDeviceAndSwapChain(HWND hWindow);
+	HRESULT CreateDeviceAndSwapChain(HWND hWindow);
 
 	/** Direct3D Device 및 SwapChain을 해제합니다.  */
 	void ReleaseDeviceAndSwapChain();
 
 	/** 프레임 버퍼를 생성합니다. */
-	void CreateFrameBuffer();
+	HRESULT CreateFrameBuffer();
 
 	/** 뎁스 스텐실 버퍼를 생성합니다. */
-	void CreateDepthStencilBuffer();
+	HRESULT CreateDepthStencilBuffer();
 
 	/** 뎁스 스텐실 상태를 생성합니다. */
-	void CreateDepthStencilState();
+	HRESULT CreateDepthStencilState();
 	
 	/** 프레임 버퍼를 해제합니다. */
 	void ReleaseFrameBuffer();
@@ -143,10 +143,12 @@ protected:
 	void ReleaseDepthStencilBuffer();
 	
 	/** 레스터라이즈 상태를 생성합니다. */
-	void CreateRasterizerState();
+	HRESULT CreateRasterizerState();
 
 	/** 레스터라이저 상태를 해제합니다. */
 	void ReleaseRasterizerState();
+
+	void BindBuffersToShaders();
 
 	void CreateBufferCache();
 
@@ -183,18 +185,17 @@ protected:
 	// Depth Stenil Buffer
 	ID3D11Texture2D* DepthStencilBuffer = nullptr;          // DepthStencil버퍼 역할을 하는 텍스쳐
 	ID3D11DepthStencilView* DepthStencilView = nullptr;     // DepthStencil버퍼를 렌더 타겟으로 사용하는 뷰
-	ID3D11DepthStencilState* DepthStencilState = nullptr;   // DepthStencil 상태(깊이 테스트, 스텐실 테스트 등 정의)
-	ID3D11DepthStencilState* GizmoDepthStencilState = nullptr; // 기즈모용 스텐실 스테이트. Z버퍼 테스트 하지않고 항상 앞에렌더
+	ID3D11DepthStencilState* CompareDepthStencilState = nullptr;   // DepthStencil 상태(깊이 테스트, 스텐실 테스트 등 정의)
+	ID3D11DepthStencilState* NoCompareDepthStencilState = nullptr; // 기즈모용 스텐실 스테이트. Z버퍼 테스트 하지않고 항상 앞에렌더
 	
 	// Buffer Cache
 
 	std::unique_ptr<FBufferCache> BufferCache;
 
-	FMatrix ViewMatrix;
-	FMatrix ProjectionMatrix;
-
 	D3D_PRIMITIVE_TOPOLOGY CurrentTopology = D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED;
 
+	FMatrix ProjectionMatrixCached;
+	FMatrix ViewMatrix;
 	
 #pragma region picking
 protected:
@@ -211,7 +212,7 @@ protected:
 public:
 	//피킹용 함수들	
 	void ReleasePickingFrameBuffer();
-	void CreatePickingTexture(HWND hWnd);
+	HRESULT CreatePickingTexture(HWND hWnd);
 	void PrepareZIgnore();
 	void PreparePicking();
 	void PreparePickingShader() const;
@@ -224,6 +225,6 @@ public:
 	FVector4 GetPixel(FVector MPos);
 
 	void RenderPickingTexture();
-	FMatrix GetProjectionMatrix() const { return ProjectionMatrix; }
+	FMatrix GetProjectionMatrix() const { return ProjectionMatrixCached; }
 #pragma endregion picking
 };
