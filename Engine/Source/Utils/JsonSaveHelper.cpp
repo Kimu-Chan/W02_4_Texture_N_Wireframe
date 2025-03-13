@@ -1,12 +1,11 @@
 #include "pch.h" 
 #include "JsonSaveHelper.h"
 #include "Engine/EngineStatics.h"
-#include "Debug/DebugConsole.h"
+#include "Debugging/DebugConsole.h"
 #include "SimpleJSON/Json.hpp"
 
 using json::JSON;
 
-// SceneName - 확장자 제외
 UWorldInfo* JsonSaveHelper::LoadScene(std::string SceneName)
 {
     std::ifstream Input(SceneName + ".scene");

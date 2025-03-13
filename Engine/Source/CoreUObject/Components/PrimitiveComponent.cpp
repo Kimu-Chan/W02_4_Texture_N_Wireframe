@@ -10,7 +10,6 @@ void UPrimitiveComponent::BeginPlay()
 {
     Super::BeginPlay();
     InitBoundingBox();
-    GetOwner()->GetWorld()->AddBoundingBox(&BoundingBox);
 }
 
 void UPrimitiveComponent::Tick(float DeltaTime)
@@ -55,9 +54,32 @@ void UPrimitiveComponent::RegisterComponentWithWorld(UWorld* World)
     World->AddRenderComponent(this);
 }
 
+void UPrimitiveComponent::SetBoundingBoxRenderable(bool bRender)
+{
+    if (BoundingBox)
+    {
+		BoundingBox->bCanBeRendered = bRender;
+    }
+}
+
 void UPrimitiveComponent::InitBoundingBox()
 {
     Super::InitBoundingBox();
+
+    FVector Min;
+    FVector Max;
+    UEngine::Get().GetRenderer()->GetPrimitiveLocalBounds(Type, Min, Max);
+
+    BoundingBox = std::make_shared<FBox>();
+    BoundingBox->Init(Min, Max);
+
+    if (AActor* Owner = GetOwner())
+    {
+        if (UWorld* World = Owner->GetWorld())
+        {
+			World->AddBoundingBox(BoundingBox.get());
+        }
+    }
 }
 
 void UPrimitiveComponent::UpdateBoundingBox()

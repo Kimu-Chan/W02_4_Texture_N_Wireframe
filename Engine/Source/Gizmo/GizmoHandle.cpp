@@ -10,7 +10,10 @@
 AGizmoHandle::AGizmoHandle()
 {
 	bIsGizmo = true;
-	// !NOTE : Z¹æÇâÀ¸·Î ¼­ÀÖÀ½
+	bUseBoundingBox = false;
+	bRenderBoundingBox = false;
+
+	// !NOTE : Zï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	// z
 	UCylinderComp* ZArrow = AddComponent<UCylinderComp>();
 	ZArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), FVector(1, 1, 1)));
@@ -57,7 +60,7 @@ void AGizmoHandle::Tick(float DeltaTime)
 	{
 		if (AActor* Actor = FEditorManager::Get().GetSelectedActor())
 		{
-			// ¸¶¿ì½ºÀÇ Ä¿¼­ À§Ä¡¸¦ °¡Á®¿À±â
+			// ï¿½ï¿½ï¿½ì½ºï¿½ï¿½ Ä¿ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			POINT pt;
 			GetCursorPos(&pt);
 			ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
@@ -67,23 +70,23 @@ void AGizmoHandle::Tick(float DeltaTime)
 			int ScreenWidth = Rect.right - Rect.left;
 			int ScreenHeight = Rect.bottom - Rect.top;
 
-			// Ä¿¼­ À§Ä¡¸¦ NDC·Î º¯°æ
+			// Ä¿ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ NDCï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			float PosX = 2.0f * pt.x / ScreenWidth - 1.0f;
 			float PosY = -2.0f * pt.y / ScreenHeight + 1.0f;
 
-			// Projection °ø°£À¸·Î º¯È¯
+			// Projection ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
 			FVector4 RayOrigin{ PosX, PosY, 0.0f, 1.0f };
 			FVector4 RayEnd{ PosX, PosY, 1.0f, 1.0f };
 
-			// View °ø°£À¸·Î º¯È¯
+			// View ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
 			FMatrix InvProjMat = UEngine::Get().GetRenderer()->GetProjectionMatrix().Inverse();
 			RayOrigin = InvProjMat.TransformVector4(RayOrigin);
 			RayOrigin.W = 1;
 			RayEnd = InvProjMat.TransformVector4(RayEnd);
-			RayEnd *= 1000.0f;  // ÇÁ·¯½ºÅÒÀÇ Far °ªÀÌ Àû¿ëÀÌ ¾ÈµÅ¼­ ¼öµ¿À¸·Î °öÇÔ
+			RayEnd *= 1000.0f;  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Far ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ÈµÅ¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			RayEnd.W = 1;
 
-			// ¸¶¿ì½º Æ÷ÀÎÅÍÀÇ ¿ùµå À§Ä¡¿Í ¹æÇâ
+			// ï¿½ï¿½ï¿½ì½º ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			FMatrix InvViewMat = FEditorManager::Get().GetCamera()->GetViewMatrix().Inverse();
 			RayOrigin = InvViewMat.TransformVector4(RayOrigin);
 			RayOrigin /= RayOrigin.W = 1;
@@ -91,10 +94,10 @@ void AGizmoHandle::Tick(float DeltaTime)
 			RayEnd /= RayEnd.W = 1;
 			FVector RayDir = (RayEnd - RayOrigin).GetSafeNormal();
 
-			// ¾×ÅÍ¿ÍÀÇ °Å¸®
+			// ï¿½ï¿½ï¿½Í¿ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½
 			float Distance = FVector::Distance(RayOrigin, Actor->GetActorTransform().GetPosition());
 
-			// Ray ¹æÇâÀ¸·Î Distance¸¸Å­ Àç°è»ê
+			// Ray ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Distanceï¿½ï¿½Å­ ï¿½ï¿½ï¿½ï¿½
 			FVector Result = RayOrigin + RayDir * Distance;
 
 			FTransform AT = Actor->GetActorTransform();
@@ -117,22 +120,22 @@ void AGizmoHandle::SetScaleByDistance()
 {
 	FTransform MyTransform = GetActorTransform();
 
-	// ¾×ÅÍÀÇ ¿ùµå À§Ä¡
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡
 	FVector actorWorldPos = MyTransform.GetPosition();
 
 	FTransform CameraTransform = FEditorManager::Get().GetCamera()->GetActorTransform();
 
-	// Ä«¸Þ¶óÀÇ ¿ùµå À§Ä¡
+	// Ä«ï¿½Þ¶ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡
 	FVector cameraWorldPos = CameraTransform.GetPosition();
 
-	// °Å¸® °è»ê
+	// ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½
 	float distance = (actorWorldPos - cameraWorldPos).Length();
 
-	float baseScale = 1.0f;    // ±âº» ½ºÄÉÀÏ
-	float scaleFactor = distance * 0.1f; // °Å¸®¿¡ ºñ·ÊÇÏ¿© ½ºÄÉÀÏ Áõ°¡
+	float baseScale = 1.0f;    // ï¿½âº» ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	float scaleFactor = distance * 0.1f; // ï¿½Å¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-	// float minScale = 1.0f;     // ÃÖ¼Ò ½ºÄÉÀÏ
-	// float maxScale = 1.0f;     // ÃÖ´ë ½ºÄÉÀÏ
+	// float minScale = 1.0f;     // ï¿½Ö¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// float maxScale = 1.0f;     // ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	// float scaleFactor = clamp(1.0f / distance, minScale, maxScale);
 
 	MyTransform.SetScale(scaleFactor, scaleFactor, scaleFactor);

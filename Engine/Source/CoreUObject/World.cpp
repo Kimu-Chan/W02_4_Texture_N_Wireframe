@@ -137,7 +137,7 @@ void UWorld::RenderBoundingBoxes(URenderer& Renderer)
 {
     for (FBox* Box : BoundingBoxes)
     {
-        if (Box && Box->IsValid())
+        if (Box && Box->bCanBeRendered && Box->IsValid())
             Renderer.RenderBox(*Box);
     }
 }
