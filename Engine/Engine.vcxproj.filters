@@ -1,294 +1,294 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="..\..\Source\Launch\Launch.cpp">
+    <ClCompile Include="Source\Launch\Launch.cpp">
       <Filter>Source Files\Launch</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Core\Container\String.cpp">
+    <ClCompile Include="Source\Core\Container\String.cpp">
       <Filter>Source Files\Core\Container</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Core\Math\Matrix.cpp">
+    <ClCompile Include="Source\Core\Math\Matrix.cpp">
       <Filter>Source Files\Core\Math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Core\Math\Plane.cpp">
+    <ClCompile Include="Source\Core\Math\Plane.cpp">
       <Filter>Source Files\Core\Math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Core\Math\Vector.cpp">
+    <ClCompile Include="Source\Core\Math\Vector.cpp">
       <Filter>Source Files\Core\Math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Core\HAL\PlatformMemory.cpp">
+    <ClCompile Include="Source\Core\HAL\PlatformMemory.cpp">
       <Filter>Source Files\Core\HAL</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Core\Input\PlayerController.cpp">
+    <ClCompile Include="Source\Core\Input\PlayerController.cpp">
       <Filter>Source Files\Core\Input</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Core\Input\PlayerInput.cpp">
+    <ClCompile Include="Source\Core\Input\PlayerInput.cpp">
       <Filter>Source Files\Core\Input</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Core\Rendering\BufferCache.cpp">
+    <ClCompile Include="Source\Core\Rendering\BufferCache.cpp">
       <Filter>Source Files\Core\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Core\Rendering\UI.cpp">
+    <ClCompile Include="Source\Core\Rendering\UI.cpp">
       <Filter>Source Files\Core\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Core\Rendering\URenderer.cpp">
+    <ClCompile Include="Source\Core\Rendering\URenderer.cpp">
       <Filter>Source Files\Core\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Engine\Engine.cpp">
+    <ClCompile Include="Source\Engine\Engine.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Engine\EngineStatics.cpp">
+    <ClCompile Include="Source\Engine\EngineStatics.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\ThirdParty\ImGui\imgui.cpp">
+    <ClCompile Include="Source\ThirdParty\ImGui\imgui.cpp">
       <Filter>ThirdParty\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\ThirdParty\ImGui\imgui_demo.cpp">
+    <ClCompile Include="Source\ThirdParty\ImGui\imgui_demo.cpp">
       <Filter>ThirdParty\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\ThirdParty\ImGui\imgui_draw.cpp">
+    <ClCompile Include="Source\ThirdParty\ImGui\imgui_draw.cpp">
       <Filter>ThirdParty\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\ThirdParty\ImGui\imgui_impl_dx11.cpp">
+    <ClCompile Include="Source\ThirdParty\ImGui\imgui_impl_dx11.cpp">
       <Filter>ThirdParty\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\ThirdParty\ImGui\imgui_impl_win32.cpp">
+    <ClCompile Include="Source\ThirdParty\ImGui\imgui_impl_win32.cpp">
       <Filter>ThirdParty\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\ThirdParty\ImGui\imgui_tables.cpp">
+    <ClCompile Include="Source\ThirdParty\ImGui\imgui_tables.cpp">
       <Filter>ThirdParty\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\ThirdParty\ImGui\imgui_widgets.cpp">
+    <ClCompile Include="Source\ThirdParty\ImGui\imgui_widgets.cpp">
       <Filter>ThirdParty\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Primitive\PrimitiveVertices.cpp">
+    <ClCompile Include="Source\Primitive\PrimitiveVertices.cpp">
       <Filter>Source Files\Primitive</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Debug\DebugConsole.cpp">
+    <ClCompile Include="Source\Debug\DebugConsole.cpp">
       <Filter>Source Files\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Engine\GameFrameWork\Actor.cpp">
+    <ClCompile Include="Source\Engine\GameFrameWork\Actor.cpp">
       <Filter>Source Files\Engine\GameFrameWork</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Engine\GameFrameWork\Camera.cpp">
+    <ClCompile Include="Source\Engine\GameFrameWork\Camera.cpp">
       <Filter>Source Files\Engine\GameFrameWork</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\CoreUObject\Components\ActorComponent.cpp">
+    <ClCompile Include="Source\CoreUObject\Components\ActorComponent.cpp">
       <Filter>Source Files\CoreUObject\Components</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\CoreUObject\Components\PrimitiveComponent.cpp">
+    <ClCompile Include="Source\CoreUObject\Components\PrimitiveComponent.cpp">
       <Filter>Source Files\CoreUObject\Components</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\CoreUObject\Components\SceneComponent.cpp">
+    <ClCompile Include="Source\CoreUObject\Components\SceneComponent.cpp">
       <Filter>Source Files\CoreUObject\Components</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\CoreUObject\Object.cpp">
+    <ClCompile Include="Source\CoreUObject\Object.cpp">
       <Filter>Source Files\CoreUObject</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\CoreUObject\ObjectFactory.cpp">
+    <ClCompile Include="Source\CoreUObject\ObjectFactory.cpp">
       <Filter>Source Files\CoreUObject</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\CoreUObject\World.cpp">
+    <ClCompile Include="Source\CoreUObject\World.cpp">
       <Filter>Source Files\CoreUObject</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Static\EditorManager.cpp">
+    <ClCompile Include="Source\Static\EditorManager.cpp">
       <Filter>Source Files\Static</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Utils\JsonSaveHelper.cpp">
+    <ClCompile Include="Source\Utils\JsonSaveHelper.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Engine\GameFrameWork\Arrow.cpp">
+    <ClCompile Include="Source\Engine\GameFrameWork\Arrow.cpp">
       <Filter>Source Files\Engine\GameFrameWork</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Engine\GameFrameWork\Cone.cpp">
+    <ClCompile Include="Source\Engine\GameFrameWork\Cone.cpp">
       <Filter>Source Files\Engine\GameFrameWork</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Engine\GameFrameWork\Cube.cpp">
+    <ClCompile Include="Source\Engine\GameFrameWork\Cube.cpp">
       <Filter>Source Files\Engine\GameFrameWork</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Engine\GameFrameWork\Cylinder.cpp">
+    <ClCompile Include="Source\Engine\GameFrameWork\Cylinder.cpp">
       <Filter>Source Files\Engine\GameFrameWork</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Engine\GameFrameWork\Picker.cpp">
+    <ClCompile Include="Source\Engine\GameFrameWork\Picker.cpp">
       <Filter>Source Files\Engine\GameFrameWork</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Engine\GameFrameWork\Sphere.cpp">
+    <ClCompile Include="Source\Engine\GameFrameWork\Sphere.cpp">
       <Filter>Source Files\Engine\GameFrameWork</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Gizmo\Axis.cpp">
+    <ClCompile Include="Source\Gizmo\Axis.cpp">
       <Filter>Source Files\Gizmo</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Gizmo\GizmoHandle.cpp">
+    <ClCompile Include="Source\Gizmo\GizmoHandle.cpp">
       <Filter>Source Files\Gizmo</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\pch.cpp">
+    <ClCompile Include="Source\pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\EnginePch.cpp">
+    <ClCompile Include="Source\EnginePch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Source\Core\HAL\PlatformType.h">
+    <ClInclude Include="Source\Core\HAL\PlatformType.h">
       <Filter>Header Files\Core\HAL</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Core\HAL\PlatformMemory.h">
+    <ClInclude Include="Source\Core\HAL\PlatformMemory.h">
       <Filter>Header Files\Core\HAL</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Core\Container\Array.h">
+    <ClInclude Include="Source\Core\Container\Array.h">
       <Filter>Header Files\Core\Container</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Core\Container\CString.h">
+    <ClInclude Include="Source\Core\Container\CString.h">
       <Filter>Header Files\Core\Container</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Core\Container\Map.h">
+    <ClInclude Include="Source\Core\Container\Map.h">
       <Filter>Header Files\Core\Container</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Core\Container\Pair.h">
+    <ClInclude Include="Source\Core\Container\Pair.h">
       <Filter>Header Files\Core\Container</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Core\Container\Set.h">
+    <ClInclude Include="Source\Core\Container\Set.h">
       <Filter>Header Files\Core\Container</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Core\Container\String.h">
+    <ClInclude Include="Source\Core\Container\String.h">
       <Filter>Header Files\Core\Container</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Core\Math\MathUtility.h">
+    <ClInclude Include="Source\Core\Math\MathUtility.h">
       <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Core\Math\Matrix.h">
+    <ClInclude Include="Source\Core\Math\Matrix.h">
       <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Core\Math\Plane.h">
+    <ClInclude Include="Source\Core\Math\Plane.h">
       <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Core\Math\Transform.h">
+    <ClInclude Include="Source\Core\Math\Transform.h">
       <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Core\Math\Vector.h">
+    <ClInclude Include="Source\Core\Math\Vector.h">
       <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\ThirdParty\SimpleJSON\json.hpp">
+    <ClInclude Include="Source\ThirdParty\SimpleJSON\json.hpp">
       <Filter>ThirdParty\SimpleJSON</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Core\HAL\ContainerAllocator.h">
+    <ClInclude Include="Source\Core\HAL\ContainerAllocator.h">
       <Filter>Header Files\Core\HAL</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Core\AbstractClass\Singleton.h">
+    <ClInclude Include="Source\Core\AbstractClass\Singleton.h">
       <Filter>Header Files\Core\AbstractClass</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Core\Input\PlayerController.h">
+    <ClInclude Include="Source\Core\Input\PlayerController.h">
       <Filter>Header Files\Core\Input</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Core\Input\PlayerInput.h">
+    <ClInclude Include="Source\Core\Input\PlayerInput.h">
       <Filter>Header Files\Core\Input</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Core\Rendering\BufferCache.h">
+    <ClInclude Include="Source\Core\Rendering\BufferCache.h">
       <Filter>Header Files\Core\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Core\Rendering\UI.h">
+    <ClInclude Include="Source\Core\Rendering\UI.h">
       <Filter>Header Files\Core\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Core\Rendering\URenderer.h">
+    <ClInclude Include="Source\Core\Rendering\URenderer.h">
       <Filter>Header Files\Core\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Engine\Engine.h">
+    <ClInclude Include="Source\Engine\Engine.h">
       <Filter>Header Files\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Engine\EngineStatics.h">
+    <ClInclude Include="Source\Engine\EngineStatics.h">
       <Filter>Header Files\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Engine\EngineTypes.h">
+    <ClInclude Include="Source\Engine\EngineTypes.h">
       <Filter>Header Files\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\ThirdParty\ImGui\imconfig.h">
+    <ClInclude Include="Source\ThirdParty\ImGui\imconfig.h">
       <Filter>ThirdParty\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\ThirdParty\ImGui\imgui.h">
+    <ClInclude Include="Source\ThirdParty\ImGui\imgui.h">
       <Filter>ThirdParty\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\ThirdParty\ImGui\imgui_impl_dx11.h">
+    <ClInclude Include="Source\ThirdParty\ImGui\imgui_impl_dx11.h">
       <Filter>ThirdParty\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\ThirdParty\ImGui\imgui_impl_win32.h">
+    <ClInclude Include="Source\ThirdParty\ImGui\imgui_impl_win32.h">
       <Filter>ThirdParty\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\ThirdParty\ImGui\imgui_internal.h">
+    <ClInclude Include="Source\ThirdParty\ImGui\imgui_internal.h">
       <Filter>ThirdParty\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\ThirdParty\ImGui\imstb_rectpack.h">
+    <ClInclude Include="Source\ThirdParty\ImGui\imstb_rectpack.h">
       <Filter>ThirdParty\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\ThirdParty\ImGui\imstb_textedit.h">
+    <ClInclude Include="Source\ThirdParty\ImGui\imstb_textedit.h">
       <Filter>ThirdParty\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\ThirdParty\ImGui\imstb_truetype.h">
+    <ClInclude Include="Source\ThirdParty\ImGui\imstb_truetype.h">
       <Filter>ThirdParty\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Primitive\PrimitiveVertices.h">
+    <ClInclude Include="Source\Primitive\PrimitiveVertices.h">
       <Filter>Header Files\Primitive</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Debug\DebugConsole.h">
+    <ClInclude Include="Source\Debug\DebugConsole.h">
       <Filter>Header Files\Debug</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Engine\GameFrameWork\Actor.h">
+    <ClInclude Include="Source\Engine\GameFrameWork\Actor.h">
       <Filter>Header Files\Engine\GameFrameWork</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Engine\GameFrameWork\Camera.h">
+    <ClInclude Include="Source\Engine\GameFrameWork\Camera.h">
       <Filter>Header Files\Engine\GameFrameWork</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\CoreUObject\Components\ActorComponent.h">
+    <ClInclude Include="Source\CoreUObject\Components\ActorComponent.h">
       <Filter>Header Files\CoreUObject\Components</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\CoreUObject\Components\PrimitiveComponent.h">
+    <ClInclude Include="Source\CoreUObject\Components\PrimitiveComponent.h">
       <Filter>Header Files\CoreUObject\Components</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\CoreUObject\Components\SceneComponent.h">
+    <ClInclude Include="Source\CoreUObject\Components\SceneComponent.h">
       <Filter>Header Files\CoreUObject\Components</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\CoreUObject\Object.h">
+    <ClInclude Include="Source\CoreUObject\Object.h">
       <Filter>Header Files\CoreUObject</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\CoreUObject\ObjectFactory.h">
+    <ClInclude Include="Source\CoreUObject\ObjectFactory.h">
       <Filter>Header Files\CoreUObject</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\CoreUObject\World.h">
+    <ClInclude Include="Source\CoreUObject\World.h">
       <Filter>Header Files\CoreUObject</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Static\EditorManager.h">
+    <ClInclude Include="Source\Static\EditorManager.h">
       <Filter>Header Files\Static</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Utils\JsonSaveHelper.h">
+    <ClInclude Include="Source\Utils\JsonSaveHelper.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Engine\GameFrameWork\Arrow.h">
+    <ClInclude Include="Source\Engine\GameFrameWork\Arrow.h">
       <Filter>Header Files\Engine\GameFrameWork</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Engine\GameFrameWork\Cone.h">
+    <ClInclude Include="Source\Engine\GameFrameWork\Cone.h">
       <Filter>Header Files\Engine\GameFrameWork</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Engine\GameFrameWork\Cube.h">
+    <ClInclude Include="Source\Engine\GameFrameWork\Cube.h">
       <Filter>Header Files\Engine\GameFrameWork</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Engine\GameFrameWork\Cylinder.h">
+    <ClInclude Include="Source\Engine\GameFrameWork\Cylinder.h">
       <Filter>Header Files\Engine\GameFrameWork</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Engine\GameFrameWork\Picker.h">
+    <ClInclude Include="Source\Engine\GameFrameWork\Picker.h">
       <Filter>Header Files\Engine\GameFrameWork</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Engine\GameFrameWork\Sphere.h">
+    <ClInclude Include="Source\Engine\GameFrameWork\Sphere.h">
       <Filter>Header Files\Engine\GameFrameWork</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Gizmo\Axis.h">
+    <ClInclude Include="Source\Gizmo\Axis.h">
       <Filter>Header Files\Gizmo</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Gizmo\GizmoHandle.h">
+    <ClInclude Include="Source\Gizmo\GizmoHandle.h">
       <Filter>Header Files\Gizmo</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\EnginePch.h">
+    <ClInclude Include="Source\EnginePch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\pch.h">
+    <ClInclude Include="Source\pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -409,7 +409,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\..\Shaders\ShaderW0.hlsl">
+    <FxCompile Include="Shaders\ShaderW0.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>
