@@ -126,6 +126,10 @@ public:
 	) const;
 
 public:
+#if IS_WIDECHAR
+	FORCEINLINE std::string ToString() const;
+#endif
+	
 	/** TCHAR* 로 반환하는 연산자 */
 	FORCEINLINE const TCHAR* operator*() const;
 
@@ -147,6 +151,14 @@ FORCEINLINE bool FString::IsEmpty() const
 {
 	return PrivateString.empty();
 }
+
+#if IS_WIDECHAR
+FORCEINLINE std::string FString::ToString() const
+{
+	std::wstring WideStr(PrivateString);
+	return std::string(WideStr.begin(), WideStr.end());
+}
+#endif
 
 FORCEINLINE const TCHAR* FString::operator*() const
 {
