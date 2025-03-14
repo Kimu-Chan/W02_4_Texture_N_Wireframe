@@ -1,8 +1,9 @@
-#include "pch.h" 
+﻿#include "pch.h" 
 #include "SceneComponent.h"
 #include "PrimitiveComponent.h"
 #include "Debugging/DebugConsole.h"
 
+REGISTER_CLASS(USceneComponent);
 void USceneComponent::BeginPlay()
 {
     Super::BeginPlay();

@@ -1,10 +1,14 @@
 ﻿#pragma once
 
 #include "Core/HAL/PlatformType.h"
+#include "AbstractClass/UClass.h"
 
-// TODO: RTTI 구현하면 enable_shared_from_this 제거
-class UObject : public std::enable_shared_from_this<UObject>
+class UObject : public UClass
 {
+public:
+	UCLASS(UObject, UClass);
+
+private:
 	friend class FObjectFactory;
 
 	uint32 UUID = 0;
@@ -17,4 +21,11 @@ public:
 public:
 	uint32 GetUUID() const { return UUID; }
 	uint32 GetInternalIndex() const { return InternalIndex; }
+
+public:
+	template<typename T>
+	bool IsA()
+	{
+		return GetClass()->IsA<T>();
+	}
 };

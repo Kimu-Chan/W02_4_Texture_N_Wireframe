@@ -1,7 +1,8 @@
-#include "pch.h" 
+﻿#include "pch.h" 
 #include "Cone.h"
 #include "CoreUObject/Components/PrimitiveComponent.h"
 
+REGISTER_CLASS(ACone);
 ACone::ACone()
 {
     bCanEverTick = true;

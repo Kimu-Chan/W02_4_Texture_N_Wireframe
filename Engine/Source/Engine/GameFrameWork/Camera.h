@@ -17,7 +17,7 @@ namespace ECameraProjectionMode
 
 class ACamera : public AActor
 {
-
+    UCLASS(ACamera, AActor);
     using Super = AActor;
     
 public:

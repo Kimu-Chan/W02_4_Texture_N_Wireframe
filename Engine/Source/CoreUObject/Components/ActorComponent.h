@@ -5,6 +5,7 @@
 
 class UActorComponent : public UObject
 {
+	UCLASS(UActorComponent, UObject);
 public:
 	UActorComponent() = default;
 

@@ -8,6 +8,7 @@
 
 class UPrimitiveComponent : public USceneComponent
 {
+	UCLASS(UPrimitiveComponent, USceneComponent);
 	using Super = USceneComponent;
 public:
 	UPrimitiveComponent() = default;
@@ -63,6 +64,7 @@ protected:
 
 class UCubeComp : public UPrimitiveComponent
 {
+	UCLASS(UCubeComp, UPrimitiveComponent);
 	using Super = UPrimitiveComponent;
 public:
 	UCubeComp()
@@ -72,8 +74,11 @@ public:
 	}
 	virtual ~UCubeComp() = default;
 };
+REGISTER_CLASS(UCubeComp);
+
 class USphereComp : public UPrimitiveComponent
 {
+	UCLASS(USphereComp, UPrimitiveComponent);
 	using Super = UPrimitiveComponent;
 public:
 	USphereComp()
@@ -83,9 +88,11 @@ public:
 	}
 	virtual ~USphereComp() = default;
 };
+REGISTER_CLASS(USphereComp);
 
 class UTriangleComp : public UPrimitiveComponent
 {
+	UCLASS(UTriangleComp, UPrimitiveComponent);
 	using Super = UPrimitiveComponent;
 public:
 	UTriangleComp()
@@ -95,9 +102,11 @@ public:
 	}
 	virtual ~UTriangleComp() = default;
 };
+REGISTER_CLASS(UTriangleComp);
 
 class ULineComp : public UPrimitiveComponent
 {
+	UCLASS(ULineComp, UPrimitiveComponent);
 	using Super = UPrimitiveComponent;
 
 public:
@@ -108,9 +117,11 @@ public:
 	}
 	virtual ~ULineComp() = default;
 };
+REGISTER_CLASS(ULineComp);
 
 class UCylinderComp : public UPrimitiveComponent
 {
+	UCLASS(UCylinderComp, UPrimitiveComponent);
 	using Super = UPrimitiveComponent;
 
 public:
@@ -121,9 +132,11 @@ public:
 	}
 	virtual ~UCylinderComp() = default;
 };
+REGISTER_CLASS(UCylinderComp);
 
 class UConeComp : public UPrimitiveComponent
 {
+	UCLASS(UConeComp, UPrimitiveComponent);
 	using Super = UPrimitiveComponent;
 public:
 	UConeComp()
@@ -135,3 +148,4 @@ public:
 
 protected:
 };
+REGISTER_CLASS(UConeComp);

@@ -18,6 +18,8 @@ class AActor;
 
 class UWorld :public UObject
 {
+	UCLASS(UWorld, UObject);
+	using Super = UObject;
 public:
 	UWorld() = default;
 	virtual ~UWorld() = default;

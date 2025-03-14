@@ -1,7 +1,8 @@
-#include "pch.h" 
+﻿#include "pch.h" 
 #include "Cube.h"
 #include "CoreUObject/Components/PrimitiveComponent.h"
 
+REGISTER_CLASS(ACube);
 ACube::ACube()
 {
     bCanEverTick = true;

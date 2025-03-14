@@ -8,6 +8,7 @@
 */ 
 class AAxis : public AActor
 {
+	UCLASS(AAxis, AActor);
 	using Super = AActor;
 public:
 	AAxis();

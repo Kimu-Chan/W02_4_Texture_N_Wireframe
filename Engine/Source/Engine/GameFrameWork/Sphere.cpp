@@ -1,7 +1,8 @@
-#include "pch.h" 
+﻿#include "pch.h" 
 #include "Sphere.h"
 #include "CoreUObject/Components/PrimitiveComponent.h"
 
+REGISTER_CLASS(ASphere);
 ASphere::ASphere()
 {
     bCanEverTick = true;

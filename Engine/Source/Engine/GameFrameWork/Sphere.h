@@ -4,6 +4,7 @@
 
 class ASphere : public AActor
 {
+	UCLASS(ASphere, AActor);
 	using Super = AActor;
 public:
 	ASphere();

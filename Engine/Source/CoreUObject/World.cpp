@@ -1,4 +1,4 @@
-#include "pch.h" 
+﻿#include "pch.h" 
 #include "World.h"
 #include "Core/Input/PlayerInput.h"
 #include "CoreUObject/Components/PrimitiveComponent.h"
@@ -14,6 +14,8 @@
 #include "Engine/GameFrameWork/Sphere.h"
 
 
+
+REGISTER_CLASS(UWorld);
 void UWorld::BeginPlay()
 {
     for (const auto& Actor : Actors)

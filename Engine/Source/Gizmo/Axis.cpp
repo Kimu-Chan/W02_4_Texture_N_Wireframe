@@ -1,4 +1,4 @@
-#include "pch.h" 
+﻿#include "pch.h" 
 #include "Axis.h"
 
 AAxis::AAxis()
@@ -51,7 +51,6 @@ AAxis::AAxis()
         Euler.Y,
         Euler.Z
     );
-
 } 
 
 void AAxis::BeginPlay()
