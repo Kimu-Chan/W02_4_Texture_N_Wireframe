@@ -1,4 +1,4 @@
-#include "pch.h" 
+﻿#include "pch.h" 
 #include "Actor.h"
 #include "CoreUObject/World.h"
 #include "CoreUObject/Components/SceneComponent.h"
@@ -6,6 +6,7 @@
 #include "Debugging/DebugConsole.h"
 #include "Static/EditorManager.h"
 
+REGISTER_CLASS(AActor);
 AActor::AActor() : Depth{ 0 }
 {
 }

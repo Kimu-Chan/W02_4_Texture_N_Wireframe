@@ -4,6 +4,7 @@
 
 class ACube : public AActor
 {
+	UCLASS(ACube, AActor);
 	using Super = AActor;
 public:
 	ACube();

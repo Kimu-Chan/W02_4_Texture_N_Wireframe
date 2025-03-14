@@ -1,11 +1,11 @@
-#include "pch.h" 
+﻿#include "pch.h" 
 #include "PrimitiveComponent.h"
 #include "CoreUObject/World.h"
 #include "Engine/GameFrameWork/Actor.h"
 #include "World.h"
 
 
-
+REGISTER_CLASS(UPrimitiveComponent);
 void UPrimitiveComponent::BeginPlay()
 {
     Super::BeginPlay();

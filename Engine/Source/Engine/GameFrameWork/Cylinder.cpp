@@ -1,7 +1,9 @@
-#include "pch.h" 
+﻿#include "pch.h" 
 #include "Cylinder.h"
 #include "CoreUObject/Components/PrimitiveComponent.h"
 
+
+REGISTER_CLASS(ACylinder);
 ACylinder::ACylinder()
 {
     bCanEverTick = true;

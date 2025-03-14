@@ -13,6 +13,7 @@ class UWorld;
 
 class AActor : public UObject
 {
+	UCLASS(AActor, UObject);
 	friend class FEditorManager;
 public:
 	AActor();

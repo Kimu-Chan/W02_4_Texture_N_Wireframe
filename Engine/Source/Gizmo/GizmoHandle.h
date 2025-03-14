@@ -20,6 +20,8 @@ enum class EGizmoType : uint8
 
 class AGizmoHandle : public AActor
 {
+	UCLASS(AGizmoHandle, AActor);
+	using Super = AActor;
 public:
 	AGizmoHandle();
 

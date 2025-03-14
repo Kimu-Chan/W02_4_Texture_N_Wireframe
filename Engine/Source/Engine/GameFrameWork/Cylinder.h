@@ -4,6 +4,7 @@
 
 class ACylinder : public AActor
 {
+	UCLASS(ACylinder, AActor);
     using Super = AActor;
 public:
     ACylinder();

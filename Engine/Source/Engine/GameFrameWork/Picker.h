@@ -4,6 +4,7 @@
 
 class APicker : public AActor
 {
+	UCLASS(APicker, AActor);
     using Super = AActor;
 public:
     APicker();

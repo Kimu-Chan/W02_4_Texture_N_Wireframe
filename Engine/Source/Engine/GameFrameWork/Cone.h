@@ -4,6 +4,7 @@
 
 class ACone : public AActor
 {
+	UCLASS(ACone, AActor);
     using Super = AActor;
 public:
     ACone();

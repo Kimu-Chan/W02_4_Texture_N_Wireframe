@@ -133,6 +133,7 @@
     <ClCompile Include="Source\Core\Math\Ray.cpp">
       <Filter>Source Files\Core\Math</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Core\AbstractClass\UClass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Core\HAL\PlatformType.h">
@@ -306,6 +307,7 @@
     <ClInclude Include="Source\Core\Rendering\RendererDefine.h">
       <Filter>Header Files\Core\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Core\AbstractClass\UClass.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">

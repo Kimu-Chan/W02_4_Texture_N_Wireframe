@@ -153,6 +153,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Core\AbstractClass\UClass.h" />
     <ClInclude Include="Source\Core\Rendering\RendererDefine.h" />
     <ClInclude Include="Source\CoreUObject\Components\ActorComponent.h" />
     <ClInclude Include="Source\CoreUObject\Components\PrimitiveComponent.h" />
@@ -218,6 +219,7 @@
     <ClCompile Include="Source\CoreUObject\Object.cpp" />
     <ClCompile Include="Source\CoreUObject\ObjectFactory.cpp" />
     <ClCompile Include="Source\CoreUObject\World.cpp" />
+    <ClCompile Include="Source\Core\AbstractClass\UClass.cpp" />
     <ClCompile Include="Source\Core\Container\String.cpp" />
     <ClCompile Include="Source\Core\HAL\PlatformMemory.cpp" />
     <ClCompile Include="Source\Core\Input\PlayerController.cpp" />

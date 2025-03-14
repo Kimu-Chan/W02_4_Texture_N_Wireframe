@@ -1,9 +1,10 @@
-#include "pch.h" 
+﻿#include "pch.h" 
 #include "Camera.h"
 #include "Core/Rendering/URenderer.h"
 #include "CoreUObject/Components/PrimitiveComponent.h"
 
 
+REGISTER_CLASS(ACamera);
 ACamera::ACamera()
 {
     bIsGizmo = true;

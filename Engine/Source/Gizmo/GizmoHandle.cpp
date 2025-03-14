@@ -1,4 +1,4 @@
-#include "pch.h" 
+﻿#include "pch.h" 
 #include "GizmoHandle.h"
 
 #include "Engine/GameFrameWork/Camera.h"
@@ -7,6 +7,7 @@
 #include "Core/Input/PlayerInput.h"
 #include "Static/EditorManager.h"
 
+REGISTER_CLASS(AGizmoHandle);
 AGizmoHandle::AGizmoHandle()
 {
 	bIsGizmo = true;

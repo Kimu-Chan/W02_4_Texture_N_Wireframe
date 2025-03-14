@@ -11,6 +11,7 @@
 #include "World.h"
 #include "Static/EditorManager.h"
 
+REGISTER_CLASS(APicker);
 APicker::APicker()
 {
     bIsGizmo = true;
@@ -153,8 +154,9 @@ void APicker::HandleGizmo()
     UActorComponent* PickedComponent = UEngine::Get().GetObjectByUUID<UActorComponent>(UUID);
     if (PickedComponent != nullptr)
     {
-        if (AGizmoHandle* Gizmo = dynamic_cast<AGizmoHandle*>(PickedComponent->GetOwner()))
+        if (PickedComponent->GetOwner() && PickedComponent->GetOwner()->IsA<AGizmoHandle>())
         {
+			AGizmoHandle* Gizmo = static_cast<AGizmoHandle*>(PickedComponent->GetOwner());
             if (Gizmo->GetSelectedAxis() != ESelectedAxis::None) return;
             UCylinderComp* CylinderComp = static_cast<UCylinderComp*>(PickedComponent);
             FVector4 CompColor = CylinderComp->GetCustomColor();
