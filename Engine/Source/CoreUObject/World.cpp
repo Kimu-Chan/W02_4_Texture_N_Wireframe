@@ -1,5 +1,7 @@
 ﻿#include "pch.h" 
 #include "World.h"
+
+#include "WorldGrid.h"
 #include "Core/Input/PlayerInput.h"
 #include "CoreUObject/Components/PrimitiveComponent.h"
 #include "Gizmo/GizmoHandle.h"
@@ -78,10 +80,16 @@ void UWorld::Render()
     {
         RenderPickingTexture(*Renderer);
     }
+
+    /**
+     * Axis는 Grid에 가려지면 안되므로 Grid 먼저 렌더.
+     * Axis는 아래의 RenderMainTexture 함수에서 렌더됨.
+     */
+    RenderWorldGrid(*Renderer);
         
     RenderMainTexture(*Renderer);
 	RenderBoundingBoxes(*Renderer);
-        
+
     // DisplayPickingTexture(*Renderer);
 
 }
@@ -142,6 +150,11 @@ void UWorld::RenderBoundingBoxes(URenderer& Renderer)
         if (Box && Box->bCanBeRendered && Box->IsValidBox())
             Renderer.RenderBox(*Box);
     }
+}
+
+void UWorld::RenderWorldGrid(URenderer& Renderer)
+{
+    Renderer.RenderWorldGrid();
 }
 
 void UWorld::DisplayPickingTexture(URenderer& Renderer)

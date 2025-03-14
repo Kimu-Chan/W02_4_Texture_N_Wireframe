@@ -28,6 +28,7 @@ public:// UIWindows
 	void RenderCameraSettings();
 	void RenderRenderMode();
 	void RenderPropertyWindow();
+	void RenderGridGap();
 
 private:
 	// Mouse 전용

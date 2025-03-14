@@ -46,6 +46,11 @@ private:
 		bool bUseVertexColor;
 	};
 
+	struct FVertexGrid
+	{
+		FVector Location;
+	};
+
 public:
 	/** Renderer를 초기화 합니다. */
 	void Create(HWND hWindow);
@@ -65,7 +70,7 @@ public:
 	void SwapBuffer() const;
 
 	/** 렌더링 파이프라인을 준비 합니다. */
-	void Prepare();
+	void PrepareRender();
 
 	/** 셰이더를 준비 합니다. */
 	void PrepareShader() const;
@@ -81,6 +86,10 @@ public:
 
 	void RenderBox(const class FBox& Box, const FVector4& Color = FVector4(1.0f, 1.0f, 1.0f, 1.0f));
 
+	void PrepareWorldGrid();
+	
+	void RenderWorldGrid();
+	
     /**
      * 정점 데이터로 Vertex Buffer를 생성합니다.
      * @param Vertices 버퍼로 변환할 정점 데이터 배열의 포인터
@@ -114,7 +123,8 @@ public:
 
 	void SetRenderMode(ERenderType Type);
 
-
+	// World Grid
+	HRESULT GenerateWorldGridVertices(int32 WorldGridCellPerSide);
 
 protected:
 	/** Direct3D Device 및 SwapChain을 생성합니다. */
@@ -174,6 +184,12 @@ protected:
 	ID3D11InputLayout* SimpleInputLayout = nullptr;         // Vertex 셰이더 입력 레이아웃 정의
 	unsigned int Stride = 0;                                // Vertex 버퍼의 각 요소 크기
 
+	ID3D11VertexShader* GridVertexShader = nullptr;         // World Gird 용 버텍스 쉐이더
+	ID3D11PixelShader* GridPixelShader = nullptr;           // World Grid 용 픽셀 쉐이더
+	
+	ID3D11InputLayout* GridInputLayout = nullptr;           // World Grid 용 인풋 레이아웃
+	uint32 GridStride = 0;
+	
 	// Depth Stenil Buffer
 	ID3D11Texture2D* DepthStencilBuffer = nullptr;          // DepthStencil버퍼 역할을 하는 텍스쳐
 	ID3D11DepthStencilView* DepthStencilView = nullptr;     // DepthStencil버퍼를 렌더 타겟으로 사용하는 뷰
@@ -191,6 +207,9 @@ protected:
 
 	D3D_PRIMITIVE_TOPOLOGY CurrentTopology = D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED;
 
+	// World Grid
+	uint32 GridVertexNum = 0;
+	ID3D11Buffer* GridVertexBuffer = nullptr;
 	
 #pragma region picking
 protected:

@@ -40,6 +40,7 @@ public:
 	void DisplayPickingTexture(URenderer& Renderer);
 	void RenderMainTexture(URenderer& Renderer);
 	void RenderBoundingBoxes(URenderer& Renderer);
+	void RenderWorldGrid(URenderer& Renderer);
 
 	void ClearWorld();
 	void LoadWorld(const char* SceneName);
@@ -61,7 +62,7 @@ public:
 	bool LineTrace(const FRay& Ray, USceneComponent** FirstHitComponent) const;
 	void AddBoundingBox(FBox* Box) { BoundingBoxes.Add(Box); }
 	void RemoveBoundingBox(FBox* Box) { BoundingBoxes.Remove(Box); }
-
+	
 public:
 	FString SceneName;
 	uint32 Version = 1;
@@ -73,7 +74,6 @@ protected:
 	TArray<AActor*> PendingDestroyActors; // TODO: 추후에 TQueue로 변경
 	TSet<UPrimitiveComponent*> RenderComponents;
 	TSet<class FBox*> BoundingBoxes;
-
 };
 
 template <typename T>
