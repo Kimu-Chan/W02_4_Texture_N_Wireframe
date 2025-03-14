@@ -533,9 +533,9 @@ void URenderer::CreateDepthStencilState()
     Device->CreateDepthStencilState(&DepthStencilDesc, &DepthStencilState);
 
     D3D11_DEPTH_STENCIL_DESC IgnoreDepthStencilDesc = {};
-    DepthStencilDesc.DepthEnable = TRUE;
-    DepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-    DepthStencilDesc.DepthFunc = D3D11_COMPARISON_ALWAYS;
+    IgnoreDepthStencilDesc.DepthEnable = TRUE;
+    IgnoreDepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+    IgnoreDepthStencilDesc.DepthFunc = D3D11_COMPARISON_ALWAYS;
     Device->CreateDepthStencilState(&IgnoreDepthStencilDesc, &IgnoreDepthStencilState);
 }
 

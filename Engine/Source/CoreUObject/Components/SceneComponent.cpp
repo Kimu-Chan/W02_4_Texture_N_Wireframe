@@ -2,6 +2,10 @@
 #include "SceneComponent.h"
 #include "PrimitiveComponent.h"
 #include "Debugging/DebugConsole.h"
+#include "Core/Math/Vector.h"
+#include "Core/Math/Matrix.h"
+#include "Core/Math/Box.h"
+
 
 REGISTER_CLASS(USceneComponent);
 void USceneComponent::BeginPlay()
@@ -37,7 +41,7 @@ void USceneComponent::SetRelativeTransform(const FTransform& InTransform)
     FVector Rot = RelativeTransform.GetRotation().GetEuler();
     if (BoundingBox)
     {
-        BoundingBox->Update(InTransform.GetMatrix());
+        BoundingBox->Update(GetWorldTransform().GetMatrix());
     }
 }
 
