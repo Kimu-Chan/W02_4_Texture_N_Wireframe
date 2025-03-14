@@ -9,7 +9,6 @@ REGISTER_CLASS(UPrimitiveComponent);
 void UPrimitiveComponent::BeginPlay()
 {
     Super::BeginPlay();
-    InitBoundingBox();
 }
 
 void UPrimitiveComponent::Tick(float DeltaTime)
@@ -84,5 +83,5 @@ void UPrimitiveComponent::InitBoundingBox()
 
 void UPrimitiveComponent::UpdateBoundingBox()
 {
-    Super::InitBoundingBox();
+    Super::UpdateBoundingBox();
 }
