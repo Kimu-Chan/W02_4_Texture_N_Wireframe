@@ -105,7 +105,7 @@ private:
     float WorldGridGap = 1.f;
 
     /**
-     * 초기 값 400에 대한 설명:
+     * 초기 값 402에 대한 설명:
      *   정사각 모양의 월드 그리드는 크기가 제한되어있고, 카메라를 따라다니면서 WorldGripGap 값 만큼 스냅하며 xy 평면을 이동.
      *   만약 그리드의 크기가 충분히 크다면, 그리드의 끝은 카메라의 Far clip에 잘려서 보이지 않게 됨.
      *   하지만 그리드가 작다면, 그리드의 끝이 보임.
@@ -115,7 +115,7 @@ private:
      *   UI에서 WorldGridGap 값은 최소 0.5로 제한되어있기 때문에 한 모서리에 위치한 그리드의 간격은 적어도 400이어야
      *   그리드의 크기가 2000이 되며, 그리드의 끝이 카메라의 Far clip에 잘리게 됨.
      */
-    int32 WorldGridCellPerSide = 400;
+    int32 WorldGridCellPerSide = 402;
     
 public:
     // TArray<std::shared_ptr<UObject>> GObjects;
