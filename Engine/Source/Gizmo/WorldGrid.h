@@ -13,7 +13,4 @@ public:
     virtual void Tick(float DeltaTime);
 
 private:
-    float GridGap;
-    int GridCellsPerSide; // 항상 짝수 값으로
-    int GridVertexNum;
 };

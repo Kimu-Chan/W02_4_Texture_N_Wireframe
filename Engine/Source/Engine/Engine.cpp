@@ -211,6 +211,8 @@ void UEngine::InitRenderer()
     Renderer->Create(WindowHandle);
     Renderer->CreateShader();
     Renderer->CreateConstantBuffer();
+
+    Renderer->GenerateWorldGridVertices(WorldGridCellPerSide);
 }
 
 void UEngine::InitWorld()
@@ -225,6 +227,7 @@ void UEngine::InitWorld()
     
     World->SpawnActor<AAxis>();
     World->SpawnActor<APicker>();
+    WorldGrid = World->SpawnActor<AWorldGrid>();
 
     World->BeginPlay();
 }

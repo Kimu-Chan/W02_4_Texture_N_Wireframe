@@ -664,9 +664,52 @@ void URenderer::InitMatrix()
     ProjectionMatrix = FMatrix::Identity;
 }
 
-void URenderer::GenerateWorldGridVertices()
+HRESULT URenderer::GenerateWorldGridVertices(int32 WorldGridCellPerSide)
 {
+    HRESULT hr = S_OK;
     
+    GridVertexNum = ((WorldGridCellPerSide + 1) * 2) * 2;
+    float GridGap = 1.f; // WorldGrid Actor의 Scale을 통해 Gap 조정 가능. 현재는 아래 식의 이해를 돕기 위해 변수로 따로 분리함.
+
+    int32 GridMin = (WorldGridCellPerSide * GridGap / 2) * -1;
+    int32 GridMax = WorldGridCellPerSide * GridGap + GridMin;
+    
+    TArray<FLineVertex> GridVertexData(GridVertexNum);
+    for (int i = 0; i <= WorldGridCellPerSide * 4; i += 4)
+    {
+        float Offset = GridMin + GridGap * i / 4;
+        FLineVertex LineVertex;
+        LineVertex.Location = FVector(Offset, 0.f, GridMin);
+        GridVertexData[i] = LineVertex;
+
+        LineVertex.Location = FVector(Offset, 0.f, GridMax);
+        GridVertexData[i + 1] = LineVertex;
+
+        LineVertex.Location = FVector(GridMin, 0.f, Offset);
+        GridVertexData[i + 2] = LineVertex;
+
+        LineVertex.Location = FVector(GridMax, 0.f, Offset);
+        GridVertexData[i + 3] = LineVertex;
+    }
+    
+    D3D11_BUFFER_DESC GridVertexBufferDesc = {};
+    ZeroMemory(&GridVertexBufferDesc, sizeof(D3D11_BUFFER_DESC));
+    GridVertexBufferDesc.ByteWidth = sizeof(FLineVertex) * GridVertexNum;
+    GridVertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+    GridVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    GridVertexBufferDesc.CPUAccessFlags = 0;
+    GridVertexBufferDesc.MiscFlags = 0;
+    GridVertexBufferDesc.StructureByteStride = 0;
+    
+    D3D11_SUBRESOURCE_DATA GridVertexInitData;
+    ZeroMemory(&GridVertexInitData, sizeof(GridVertexInitData));
+    GridVertexInitData.pSysMem = GridVertexData.GetData();
+    
+    hr = Device->CreateBuffer(&GridVertexBufferDesc, &GridVertexInitData, &GridVertexBuffer);
+    if (FAILED(hr))
+        return hr;
+
+    return S_OK;
 }
 
 void URenderer::SetRenderMode(ERenderType Type)
