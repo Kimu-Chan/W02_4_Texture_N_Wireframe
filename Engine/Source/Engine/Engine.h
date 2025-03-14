@@ -67,6 +67,12 @@ public:
     ObjectType* GetObjectByUUID(uint32 InUUID) const;
     UObject* GetObjectByUUID(uint32 InUUID) const;
 
+    // World Grid
+    float GetWorldGridGap() const { return WorldGridGap; }
+    int32 GetWorldGridCellPerSide() const { return WorldGridCellPerSide; }
+
+    void SetWorldGridGap(float InWorldGridGap) { WorldGridGap = InWorldGridGap; }
+
 private:
     bool bIsExit = false;
     EScreenMode ScreenMode = EScreenMode::Windowed;
@@ -90,7 +96,16 @@ private:
 
 private:
     class UWorld* World;
+    
+    ////////
+    // World Grid
+    ////////
+    AActor* WorldGrid = nullptr;
 
+    float WorldGridGap = 1.f;
+
+    int32 WorldGridCellPerSide = 10; // 항상 짝수값으로
+    
 public:
     // TArray<std::shared_ptr<UObject>> GObjects;
     TMap<uint32, std::shared_ptr<UObject>> GObjects;

@@ -59,7 +59,7 @@ public:
 	bool LineTrace(const FRay& Ray, USceneComponent** FirstHitComponent) const;
 	void AddBoundingBox(FBox* Box) { BoundingBoxes.Add(Box); }
 	void RemoveBoundingBox(FBox* Box) { BoundingBoxes.Remove(Box); }
-
+	
 public:
 	FString SceneName;
 	uint32 Version = 1;
@@ -71,9 +71,6 @@ protected:
 	TArray<AActor*> PendingDestroyActors; // TODO: 추후에 TQueue로 변경
 	TSet<UPrimitiveComponent*> RenderComponents;
 	TSet<class FBox*> BoundingBoxes;
-
-private:
-	AActor* WorldGrid = nullptr;
 };
 
 template <typename T>

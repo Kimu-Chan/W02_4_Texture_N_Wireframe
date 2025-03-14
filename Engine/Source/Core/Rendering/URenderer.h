@@ -124,7 +124,8 @@ public:
 
 	void SetRenderMode(ERenderType Type);
 
-
+	// World Grid
+	HRESULT GenerateWorldGridVertices(int32 WorldGridCellPerSide);
 
 protected:
 	/** Direct3D Device 및 SwapChain을 생성합니다. */
@@ -157,8 +158,6 @@ protected:
 	void CreateBufferCache();
 
 	void InitMatrix();
-
-	void GenerateWorldGridVertices();
 
 protected:
 	// Direct3D 11 장치(Device)와 장치 컨텍스트(Device Context) 및 스왑 체인(Swap Chain)을 관리하기 위한 포인터들
@@ -209,6 +208,9 @@ protected:
 
 	D3D_PRIMITIVE_TOPOLOGY CurrentTopology = D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED;
 
+	// World Grid
+	uint32 GridVertexNum = 0;
+	ID3D11Buffer* GridVertexBuffer = nullptr;
 	
 #pragma region picking
 protected:
