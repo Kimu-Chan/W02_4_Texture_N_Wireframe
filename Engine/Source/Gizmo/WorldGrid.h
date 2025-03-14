@@ -9,6 +9,7 @@ class AWorldGrid : public AActor
 {
 public:
     AWorldGrid();
+    virtual ~AWorldGrid() = default;
     
     virtual void Tick(float DeltaTime);
 
