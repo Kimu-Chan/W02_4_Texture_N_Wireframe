@@ -10,11 +10,11 @@
 
 struct Box;
 
-struct VertexBufferInfo
+struct FVertexBufferInfo
 {
 public:
-	VertexBufferInfo() = default;
-	VertexBufferInfo(ID3D11Buffer* InVertexBuffer, int InVertexBufferSize, D3D_PRIMITIVE_TOPOLOGY InTopology, const FVertexSimple* InVertices)
+	FVertexBufferInfo() = default;
+	FVertexBufferInfo(ID3D11Buffer* InVertexBuffer, int InVertexBufferSize, D3D_PRIMITIVE_TOPOLOGY InTopology, const FVertexSimple* InVertices)
 	{
 		VertexBuffer = InVertexBuffer;
 		VertexBufferSize = InVertexBufferSize;
@@ -53,11 +53,11 @@ private:
 	int VertexBufferSize;
 };
 
-struct IndexBufferInfo
+struct FIndexBufferInfo
 {
 public:
-	IndexBufferInfo() = default;
-	IndexBufferInfo(ID3D11Buffer* InIndexBuffer, int InIndexBufferSize)
+	FIndexBufferInfo() = default;
+	FIndexBufferInfo(ID3D11Buffer* InIndexBuffer, int InIndexBufferSize)
 	{
 		IndexBuffer = InIndexBuffer;
 		IndexBufferSize = InIndexBufferSize;
@@ -73,7 +73,8 @@ public:
 class FBufferCache
 {
 private:
-	TMap <EPrimitiveType, VertexBufferInfo> VertexBufferCache;
+	TMap <EPrimitiveType, FVertexBufferInfo> VertexBufferCache;
+	TMap <EPrimitiveType, FIndexBufferInfo> IndexBufferCache;
 	TMap <EPrimitiveType, TArray<FVertexSimple>> PrimitiveVertices;
 
 public:
@@ -81,13 +82,16 @@ public:
 	~FBufferCache();
 
 	void Init();
-	VertexBufferInfo GetBufferInfo(EPrimitiveType Type);
+	FVertexBufferInfo GetVertexBufferInfo(EPrimitiveType Type);
+	FIndexBufferInfo GetIndexBufferInfo(EPrimitiveType Type);
 
 public:
 	TArray<FVertexSimple> CreateConeVertices();
 	TArray<FVertexSimple> CreateCylinderVertices();
 
 private :
-	VertexBufferInfo CreateBufferInfo(EPrimitiveType Type);
+	FVertexBufferInfo CreateVertexBufferInfo(EPrimitiveType Type);
+	FIndexBufferInfo CreateIndexBufferInfo(EPrimitiveType Type);
+	TArray<UINT> CreateDefaultIndices(int Size);
 };
 

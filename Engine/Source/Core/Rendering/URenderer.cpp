@@ -1,11 +1,11 @@
-#include "pch.h" 
+﻿#include "pch.h" 
 #include "URenderer.h"
 #include "Core/Rendering/BufferCache.h"
 #include "Static/EditorManager.h"
 #include "Core/Math/Transform.h"
 #include "Engine/GameFrameWork/Camera.h"
 #include "CoreUObject/Components/PrimitiveComponent.h"
-#include "Core/Math/Box.h"
+
 
 void URenderer::Create(HWND hWindow)
 {
@@ -160,7 +160,7 @@ void URenderer::SwapBuffer() const
     SwapChain->Present(1, 0); // SyncInterval: VSync Enable
 }
 
-void URenderer::Prepare() const
+void URenderer::Prepare()
 {
     // Clear Screen
     DeviceContext->ClearRenderTargetView(FrameBufferRTV, ClearColor);
@@ -171,7 +171,19 @@ void URenderer::Prepare() const
 
     // Rasterization할 Viewport를 설정 
     DeviceContext->RSSetViewports(1, &ViewportInfo);
-    DeviceContext->RSSetState(RasterizerState);
+
+
+    switch (CurrentRasterizerStateType)
+    {
+    case ERenderType::ERS_Solid:
+        CurrentRasterizerState = &RasterizerState_Solid;
+        break;
+    case ERenderType::ERS_Wireframe:
+        CurrentRasterizerState = &RasterizerState_Wireframe;
+        break;
+    }
+
+    DeviceContext->RSSetState(*CurrentRasterizerState);
 
     /**
      * OutputMerger 설정
@@ -206,17 +218,18 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp)
         return;
     }
 
-    VertexBufferInfo Info = BufferCache->GetBufferInfo(PrimitiveComp->GetType());
+    // 버텍스
+    FVertexBufferInfo VertexInfo = BufferCache->GetVertexBufferInfo(PrimitiveComp->GetType());
 
-    if (Info.GetVertexBuffer() == nullptr)
+    if (VertexInfo.GetVertexBuffer() == nullptr)
     {
         return;
     }
 
-    //if (CurrentTopology != Info.GetTopology())
+    auto Topology = VertexInfo.GetTopology();
     {
-        DeviceContext->IASetPrimitiveTopology(Info.GetTopology());
-        CurrentTopology = Info.GetTopology();
+        DeviceContext->IASetPrimitiveTopology(Topology);
+        CurrentTopology = Topology;
     }
 
     ConstantUpdateInfo UpdateInfo{ 
@@ -227,19 +240,35 @@ void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp)
 
     UpdateConstant(UpdateInfo);
 
-    RenderPrimitiveInternal(Info.GetVertexBuffer(), Info.GetSize());
+    // 인덱스
+	FIndexBufferInfo IndexInfo = BufferCache->GetIndexBufferInfo(PrimitiveComp->GetType());
+
+	ID3D11Buffer* VertexBuffer = VertexInfo.GetVertexBuffer();
+	ID3D11Buffer* IndexBuffer = IndexInfo.GetIndexBuffer();
+
+	int Size = IndexBuffer ? IndexInfo.GetSize() : VertexInfo.GetSize();
+
+    RenderPrimitiveInternal(VertexBuffer, IndexBuffer, Size);
 
 }
 
-void URenderer::RenderPrimitiveInternal(ID3D11Buffer* pBuffer, UINT numVertices) const
+void URenderer::RenderPrimitiveInternal(ID3D11Buffer* VertexBuffer, ID3D11Buffer* IndexBuffer, UINT Size) const
 {
     UINT Offset = 0;
-    DeviceContext->IASetVertexBuffers(0, 1, &pBuffer, &Stride, &Offset);
+    DeviceContext->IASetVertexBuffers(0, 1, &VertexBuffer, &Stride, &Offset);
 
-    DeviceContext->Draw(numVertices, 0);
+    if (!IndexBuffer)
+    {
+        DeviceContext->Draw(Size, 0);
+    }
+    else
+	{
+		DeviceContext->IASetIndexBuffer(IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+		DeviceContext->DrawIndexed(Size, 0, 0);
+	}
 }
 
-void URenderer::RenderBox(const FBox& Box, const FVector4& Color) const
+void URenderer::RenderBox(const FBox& Box, const FVector4& Color)
 {
     // 월드변환이 이미 돼있다
     ConstantUpdateInfo UpdateInfo
@@ -250,6 +279,7 @@ void URenderer::RenderBox(const FBox& Box, const FVector4& Color) const
     };
 
     UpdateConstant(UpdateInfo);
+
     DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 
     // Box의 Min, Max를 이용해 버텍스 배열 생성
@@ -265,45 +295,31 @@ void URenderer::RenderBox(const FBox& Box, const FVector4& Color) const
         {Box.Max.X, Box.Max.Y, Box.Max.Z, 1.0f, 1.0f, 1.0f, 1.0f},
     };
 
-    std::vector<UINT> Indices =
-    {
-        0, 2, 2, 3, 3, 1, 1, 0, // 앞면
-        4, 6, 6, 7, 7, 5, 5, 4, // 뒷면
-        // 상단과 하단 연결
-        0, 4, 2, 6, 3, 7, 1, 5  // 상단과 하단을 연결하는 선
-    };
-
-    ID3D11Buffer* VertexBuffer = CreateVertexBuffer(BoxVertices, sizeof(FVertexSimple) * 8);
+	if (DynamicVertexBuffer == nullptr)
+        DynamicVertexBuffer = CreateDynamicVertexBuffer(sizeof(FVertexSimple) * 8);
 
 
-
-    D3D11_SUBRESOURCE_DATA initData = {};
-    initData.pSysMem = BoxVertices;
     UINT Stride = sizeof(FVertexSimple);
     UINT Offset = 0;
 
-    // !NOTE : 임시 -> 나중에 버퍼는 캐시해야됨
-    ID3D11Buffer* IndexBuffer = nullptr;
-    D3D11_BUFFER_DESC bufferDesc = {};
-    bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-    bufferDesc.ByteWidth = sizeof(UINT) * Indices.size();
-    bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-    initData.pSysMem = Indices.data();
+	D3D11_MAPPED_SUBRESOURCE MappedResource;
+	HRESULT hr = DeviceContext->Map(DynamicVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
 
-    Device->CreateBuffer(&bufferDesc, &initData, &IndexBuffer);
+	memcpy(MappedResource.pData, BoxVertices, sizeof(FVertexSimple) * 8);
 
-    DeviceContext->IASetVertexBuffers(0, 1, &VertexBuffer, &Stride, &Offset);
+	DeviceContext->Unmap(DynamicVertexBuffer, 0);
+
+	FIndexBufferInfo IndexBufferInfo = BufferCache->GetIndexBufferInfo(EPrimitiveType::EPT_Cube);
+	ID3D11Buffer* IndexBuffer = IndexBufferInfo.GetIndexBuffer();
+
+    DeviceContext->IASetVertexBuffers(0, 1, &DynamicVertexBuffer, &Stride, &Offset);
     DeviceContext->IASetIndexBuffer(IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
     DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 
-    DeviceContext->DrawIndexed(Indices.size(), 0, 0);
-    if (IndexBuffer)
-        IndexBuffer->Release();
-    if (VertexBuffer)
-        VertexBuffer->Release();
+    DeviceContext->DrawIndexed(IndexBufferInfo.GetSize(), 0, 0);
 }
 
-ID3D11Buffer* URenderer::CreateVertexBuffer(const FVertexSimple* Vertices, UINT ByteWidth) const
+ID3D11Buffer* URenderer::CreateImmutableVertexBuffer(const FVertexSimple* Vertices, UINT ByteWidth) const
 {
     D3D11_BUFFER_DESC VertexBufferDesc = {};
     VertexBufferDesc.ByteWidth = ByteWidth;
@@ -320,6 +336,41 @@ ID3D11Buffer* URenderer::CreateVertexBuffer(const FVertexSimple* Vertices, UINT 
         return nullptr;
     }
     return VertexBuffer;
+}
+
+ID3D11Buffer* URenderer::CreateDynamicVertexBuffer(UINT ByteWidth)
+{
+	D3D11_BUFFER_DESC VertexBufferDesc = {};
+	VertexBufferDesc.ByteWidth = ByteWidth;
+	VertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	VertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	VertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+    ID3D11Buffer* VertexBuffer = nullptr;
+	const HRESULT Result = Device->CreateBuffer(&VertexBufferDesc, nullptr, &VertexBuffer);
+	if (FAILED(Result))
+	{
+		return nullptr;
+	}
+	return VertexBuffer;
+}
+
+ID3D11Buffer* URenderer::CreateIndexBuffer(const UINT* Indices, UINT ByteWidth) const
+{
+	D3D11_BUFFER_DESC IndexBufferDesc = {};
+	IndexBufferDesc.ByteWidth = ByteWidth;
+	IndexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	IndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	D3D11_SUBRESOURCE_DATA IndexBufferSRD = {};
+	IndexBufferSRD.pSysMem = Indices;
+
+	ID3D11Buffer* IndexBuffer;
+	const HRESULT Result = Device->CreateBuffer(&IndexBufferDesc, &IndexBufferSRD, &IndexBuffer);
+	if (FAILED(Result))
+	{
+		return nullptr;
+	}
+	return IndexBuffer;
 }
 
 void URenderer::ReleaseVertexBuffer(ID3D11Buffer* pBuffer) const
@@ -546,16 +597,27 @@ void URenderer::CreateRasterizerState()
     RasterizerDesc.CullMode = D3D11_CULL_BACK;  // 백 페이스 컬링
     RasterizerDesc.FrontCounterClockwise = FALSE;
 
-    Device->CreateRasterizerState(&RasterizerDesc, &RasterizerState);
+    Device->CreateRasterizerState(&RasterizerDesc, &RasterizerState_Solid);
+
+    RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
+	RasterizerDesc.CullMode = D3D11_CULL_NONE;
+
+	Device->CreateRasterizerState(&RasterizerDesc, &RasterizerState_Wireframe);
 }
 
 void URenderer::ReleaseRasterizerState()
 {
-    if (RasterizerState)
+    if (RasterizerState_Solid)
     {
-        RasterizerState->Release();
-        RasterizerState = nullptr;
+        RasterizerState_Solid->Release();
+        RasterizerState_Solid = nullptr;
     }
+
+	if (RasterizerState_Wireframe)
+	{
+		RasterizerState_Wireframe->Release();
+		RasterizerState_Wireframe = nullptr;
+	}
 }
 
 void URenderer::CreateBufferCache()
@@ -568,6 +630,11 @@ void URenderer::InitMatrix()
     WorldMatrix = FMatrix::Identity;
     ViewMatrix = FMatrix::Identity;
     ProjectionMatrix = FMatrix::Identity;
+}
+
+void URenderer::SetRenderMode(ERenderType Type)
+{
+	CurrentRasterizerStateType = Type;
 }
 
 void URenderer::ReleasePickingFrameBuffer()
@@ -805,7 +872,7 @@ void URenderer::GetPrimitiveLocalBounds(EPrimitiveType Type, FVector& OutMin, FV
 		return;
 	}
 
-    VertexBufferInfo Info = BufferCache->GetBufferInfo(Type);
+    FVertexBufferInfo Info = BufferCache->GetVertexBufferInfo(Type);
     if (Info.GetVertexBuffer() == nullptr)
     {
         return;
