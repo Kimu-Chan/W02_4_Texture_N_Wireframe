@@ -122,6 +122,7 @@ void UI::RenderControlPanel()
     RenderPrimitiveSelection();
     RenderCameraSettings();
     RenderRenderMode();
+    RenderGridGap();
     ImGui::End();
 }
 
@@ -380,5 +381,17 @@ void UI::RenderPropertyWindow()
         }
     }
     ImGui::End();
+}
+
+void UI::RenderGridGap()
+{
+    ImGui::Text("World Grid");
+
+    float GridGap = UEngine::Get().GetWorldGridGap();
+    
+    if (ImGui::DragFloat("Grid Gap", &GridGap, 0.01f, 0.5f, 10.f))
+    {
+        UEngine::Get().SetWorldGridGap(GridGap);
+    }
 }
 

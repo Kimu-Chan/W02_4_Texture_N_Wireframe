@@ -200,7 +200,7 @@ void URenderer::SwapBuffer() const
     SwapChain->Present(1, 0); // SyncInterval: VSync Enable
 }
 
-void URenderer::Prepare()
+void URenderer::PrepareRender()
 {
     // Clear Screen
     DeviceContext->ClearRenderTargetView(FrameBufferRTV, ClearColor);
@@ -359,9 +359,8 @@ void URenderer::RenderBox(const FBox& Box, const FVector4& Color)
     DeviceContext->DrawIndexed(IndexBufferInfo.GetSize(), 0, 0);
 }
 
-void URenderer::RenderWorldGrid()
+void URenderer::PrepareWorldGrid()
 {
-    // prepare
     UINT Offset = 0;
     DeviceContext->IASetVertexBuffers(0, 1, &GridVertexBuffer, &GridStride, &Offset);
     
@@ -373,6 +372,11 @@ void URenderer::RenderWorldGrid()
     DeviceContext->IASetInputLayout(GridInputLayout);
     DeviceContext->VSSetShader(GridVertexShader, nullptr, 0);
     DeviceContext->PSSetShader(GridPixelShader, nullptr, 0);
+}
+
+void URenderer::RenderWorldGrid()
+{
+    PrepareWorldGrid();
     
     AActor* CameraActor = FEditorManager::Get().GetCamera();
     if (CameraActor == nullptr)
