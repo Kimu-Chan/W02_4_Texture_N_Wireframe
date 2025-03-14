@@ -1,4 +1,4 @@
-#include "pch.h" 
+﻿#include "pch.h" 
 #include "Engine.h"
 
 #include "WorldGrid.h"
@@ -11,6 +11,7 @@
 #include "Debugging/DebugConsole.h"
 #include "GameFrameWork/Camera.h"
 #include "GameFrameWork/Sphere.h"
+#include "Core/Rendering/TextureLoader.h"
 
 class AArrow;
 class APicker;
@@ -84,11 +85,12 @@ void UEngine::Initialize(HINSTANCE hInstance, const WCHAR* InWindowTitle, const 
 
     InitWorld();
 
+    InitTextureLoader();
+
     InitializedScreenWidth = ScreenWidth;
     InitializedScreenHeight = ScreenHeight;
     
-    ui.Initialize(WindowHandle, *Renderer, ScreenWidth, ScreenHeight);
-    
+    ui.Initialize(WindowHandle, *Renderer, ScreenWidth, ScreenHeight);    
     UE_LOG("Engine Initialized!");
 }
 
@@ -232,6 +234,20 @@ void UEngine::InitWorld()
     World->BeginPlay();
 }
 
+void UEngine::InitTextureLoader()
+{
+    // TextureLoader 생성
+    TextureLoaderInstance = new TextureLoader(Renderer->GetDevice(), Renderer->GetDeviceContext());
+
+	// Texture Load
+    LoadTexture(L"ASCII", L"ASCII.png", 16, 16);
+
+	const TextureInfo* TextureInfo = GetTextureInfo(L"ASCII");
+
+    int b = 0;
+    
+}
+
 void UEngine::ShutdownWindow()
 {
     DestroyWindow(WindowHandle);
@@ -264,6 +280,24 @@ UObject* UEngine::GetObjectByUUID(uint32 InUUID) const
     if (const auto Obj = GObjects.Find(InUUID))
     {
         return Obj->get();
+    }
+    return nullptr;
+}
+
+bool UEngine::LoadTexture(const std::wstring& Name, const std::wstring& FileName, int32 Rows, int32 Columns)
+{
+	if (TextureLoaderInstance)
+	{
+		return TextureLoaderInstance->LoadTexture(Name, FileName, Rows, Columns);
+	}
+    return false;
+}
+
+const TextureInfo* UEngine::GetTextureInfo(const std::wstring& Name) const
+{
+    if (TextureLoaderInstance)
+    {
+		return TextureLoaderInstance->GetTextureInfo(Name);
     }
     return nullptr;
 }
