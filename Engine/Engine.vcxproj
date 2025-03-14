@@ -284,6 +284,7 @@
     <ClCompile Include="Source\Utils\JsonSaveHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\ShaderLine.hlsl" />
     <FxCompile Include="Shaders\ShaderW0.hlsl">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">mainVS</EntryPointName>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">mainVS</EntryPointName>
