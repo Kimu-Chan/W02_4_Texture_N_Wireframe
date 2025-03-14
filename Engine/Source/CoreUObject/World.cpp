@@ -83,6 +83,8 @@ void UWorld::Render()
         
     RenderMainTexture(*Renderer);
 	RenderBoundingBoxes(*Renderer);
+
+    RenderWorldGrid(*Renderer);
         
     // DisplayPickingTexture(*Renderer);
 
@@ -144,6 +146,11 @@ void UWorld::RenderBoundingBoxes(URenderer& Renderer)
         if (Box && Box->bCanBeRendered && Box->IsValidBox())
             Renderer.RenderBox(*Box);
     }
+}
+
+void UWorld::RenderWorldGrid(URenderer& Renderer)
+{
+    Renderer.RenderWorldGrid();
 }
 
 void UWorld::DisplayPickingTexture(URenderer& Renderer)

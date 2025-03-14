@@ -87,16 +87,16 @@ void URenderer::CreateShader()
 
     
     ////////
-    // Line
+    // Grid
     ////////
     // Compile Shader //
-    ID3DBlob* LineVertexCSO;
-    ID3DBlob* LinePixelCSO;
-    D3DCompileFromFile(L"Shaders/ShaderLine.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &LineVertexCSO, &ErrorMsg);
-    Device->CreateVertexShader(LineVertexCSO->GetBufferPointer(), LineVertexCSO->GetBufferSize(), nullptr, &LineVertexShader);
+    ID3DBlob* GridVertexCSO;
+    ID3DBlob* GridPixelCSO;
+    D3DCompileFromFile(L"Shaders/ShaderGrid.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &GridVertexCSO, &ErrorMsg);
+    Device->CreateVertexShader(GridVertexCSO->GetBufferPointer(), GridVertexCSO->GetBufferSize(), nullptr, &GridVertexShader);
     
-    D3DCompileFromFile(L"Shaders/ShaderLine.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &LinePixelCSO, &ErrorMsg);
-    Device->CreatePixelShader(LinePixelCSO->GetBufferPointer(), LinePixelCSO->GetBufferSize(), nullptr, &LinePixelShader);
+    D3DCompileFromFile(L"Shaders/ShaderGrid.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &GridPixelCSO, &ErrorMsg);
+    Device->CreatePixelShader(GridPixelCSO->GetBufferPointer(), GridPixelCSO->GetBufferSize(), nullptr, &GridPixelShader);
 
     if (ErrorMsg)
     {
@@ -105,17 +105,17 @@ void URenderer::CreateShader()
     }
     
     // Input Layout //
-    D3D11_INPUT_ELEMENT_DESC LineLayout[] =
+    D3D11_INPUT_ELEMENT_DESC GridLayout[] =
     {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
 
-    Device->CreateInputLayout(LineLayout, ARRAYSIZE(LineLayout), LineVertexCSO->GetBufferPointer(), LineVertexCSO->GetBufferSize(), &LineInputLayout);
+    Device->CreateInputLayout(GridLayout, ARRAYSIZE(GridLayout), GridVertexCSO->GetBufferPointer(), GridVertexCSO->GetBufferSize(), &GridInputLayout);
 
-    LineVertexCSO->Release();
-    LinePixelCSO->Release();
+    GridVertexCSO->Release();
+    GridPixelCSO->Release();
 
-    LineStride = sizeof(FLineVertex);
+    GridStride = sizeof(FVertexGrid);
 }
 
 void URenderer::ReleaseShader()
@@ -349,6 +349,45 @@ void URenderer::RenderBox(const FBox& Box, const FVector4& Color)
     DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 
     DeviceContext->DrawIndexed(IndexBufferInfo.GetSize(), 0, 0);
+}
+
+void URenderer::RenderWorldGrid()
+{
+    // prepare
+    UINT Offset = 0;
+    DeviceContext->IASetVertexBuffers(0, 1, &GridVertexBuffer, &GridStride, &Offset);
+
+    DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+    DeviceContext->IASetInputLayout(GridInputLayout);
+    DeviceContext->VSSetShader(GridVertexShader, nullptr, 0);
+    DeviceContext->PSSetShader(GridPixelShader, nullptr, 0);
+    // TODO: 뎁스 스텐실 스테이트, 렌더 타겟 등?
+
+    // TODO: 상수 버퍼 업데이트
+    AActor* CameraActor = FEditorManager::Get().GetCamera();
+    if (CameraActor == nullptr)
+    {
+        return;
+    }
+
+    FTransform CameraTransform = CameraActor->GetActorTransform();
+    
+    UEngine::Get().GetWorldGridGap();
+
+    ConstantUpdateInfo UpdateInfo
+    {
+        FMatrix::Identity,
+        FVector4(0.8f, 0.8f, 0.8f, 1.0f),
+        false,
+    };
+
+    UpdateConstant(UpdateInfo);
+
+    
+
+    // restore
+    DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    // 나머지는 PrepareMainShader에서 작업중이므로, 생략
 }
 
 ID3D11Buffer* URenderer::CreateImmutableVertexBuffer(const FVertexSimple* Vertices, UINT ByteWidth) const
@@ -674,11 +713,11 @@ HRESULT URenderer::GenerateWorldGridVertices(int32 WorldGridCellPerSide)
     int32 GridMin = (WorldGridCellPerSide * GridGap / 2) * -1;
     int32 GridMax = WorldGridCellPerSide * GridGap + GridMin;
     
-    TArray<FLineVertex> GridVertexData(GridVertexNum);
+    TArray<FVertexGrid> GridVertexData(GridVertexNum);
     for (int i = 0; i <= WorldGridCellPerSide * 4; i += 4)
     {
         float Offset = GridMin + GridGap * i / 4;
-        FLineVertex LineVertex;
+        FVertexGrid LineVertex;
         LineVertex.Location = FVector(Offset, 0.f, GridMin);
         GridVertexData[i] = LineVertex;
 
@@ -694,7 +733,7 @@ HRESULT URenderer::GenerateWorldGridVertices(int32 WorldGridCellPerSide)
     
     D3D11_BUFFER_DESC GridVertexBufferDesc = {};
     ZeroMemory(&GridVertexBufferDesc, sizeof(D3D11_BUFFER_DESC));
-    GridVertexBufferDesc.ByteWidth = sizeof(FLineVertex) * GridVertexNum;
+    GridVertexBufferDesc.ByteWidth = sizeof(FVertexGrid) * GridVertexNum;
     GridVertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
     GridVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     GridVertexBufferDesc.CPUAccessFlags = 0;

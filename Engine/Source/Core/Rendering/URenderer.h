@@ -46,14 +46,9 @@ private:
 		bool bUseVertexColor;
 	};
 
-	struct FLineVertex
+	struct FVertexGrid
 	{
 		FVector Location;
-	};
-
-	struct alignas(16) FGridOffset
-	{
-		FMatrix OffsetMatrix;
 	};
 
 public:
@@ -91,6 +86,8 @@ public:
 
 	void RenderBox(const class FBox& Box, const FVector4& Color = FVector4(1.0f, 1.0f, 1.0f, 1.0f));
 
+	void RenderWorldGrid();
+	
     /**
      * 정점 데이터로 Vertex Buffer를 생성합니다.
      * @param Vertices 버퍼로 변환할 정점 데이터 배열의 포인터
@@ -185,11 +182,11 @@ protected:
 	ID3D11InputLayout* SimpleInputLayout = nullptr;         // Vertex 셰이더 입력 레이아웃 정의
 	unsigned int Stride = 0;                                // Vertex 버퍼의 각 요소 크기
 
-	ID3D11VertexShader* LineVertexShader = nullptr;         // Line 및 World Gird 용 버텍스 쉐이더
-	ID3D11PixelShader* LinePixelShader = nullptr;           // Line 및 World Grid 용 픽셀 쉐이더
+	ID3D11VertexShader* GridVertexShader = nullptr;         // World Gird 용 버텍스 쉐이더
+	ID3D11PixelShader* GridPixelShader = nullptr;           // World Grid 용 픽셀 쉐이더
 	
-	ID3D11InputLayout* LineInputLayout = nullptr;          // Line 및 World Grid 용 인풋 레이아웃
-	uint32 LineStride = 0;
+	ID3D11InputLayout* GridInputLayout = nullptr;           // World Grid 용 인풋 레이아웃
+	uint32 GridStride = 0;
 	
 	// Depth Stenil Buffer
 	ID3D11Texture2D* DepthStencilBuffer = nullptr;          // DepthStencil버퍼 역할을 하는 텍스쳐

@@ -1,4 +1,4 @@
-// ShaderW0.hlsl
+
 cbuffer constants : register(b0)
 {
     matrix MVP;
@@ -9,7 +9,6 @@ cbuffer constants : register(b0)
 struct VS_INPUT
 {
     float4 position : POSITION; // Input position from vertex buffer
-    float4 color : COLOR;       // Input color from vertex buffer
 };
 
 struct PS_INPUT
@@ -31,7 +30,7 @@ PS_INPUT mainVS(VS_INPUT input)
 
     output.position = mul(input.position, MVP);
 
-    output.color = bUseVertexColor == 1 ? input.color : CustomColor;
+    output.color = CustomColor;
     return output;
 }
 

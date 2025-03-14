@@ -40,6 +40,7 @@ public:
 	void DisplayPickingTexture(URenderer& Renderer);
 	void RenderMainTexture(URenderer& Renderer);
 	void RenderBoundingBoxes(URenderer& Renderer);
+	void RenderWorldGrid(URenderer& Renderer);
 
 	void ClearWorld();
 	void LoadWorld(const char* SceneName);
