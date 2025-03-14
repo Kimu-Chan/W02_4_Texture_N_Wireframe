@@ -133,12 +133,17 @@
     <ClCompile Include="Source\Core\Math\Ray.cpp">
       <Filter>Source Files\Core\Math</Filter>
     </ClCompile>
-        <ClCompile Include="Source\Editor\Windows\ConsoleWindow.cpp">
-      <Filter>Source Files\Editor\Windows</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Core\AbstractClass\UClass.cpp" />
     <ClCompile Include="Source\Editor\Windows\ConsoleWindow.cpp">
       <Filter>Source Files\Editor\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\Windows\ConsoleWindow.cpp">
+      <Filter>Source Files\Editor\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Gizmo\WorldGrid.cpp">
+      <Filter>Source Files\Gizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\AbstractClass\UClass.cpp">
+      <Filter>Source Files\Core\AbstractClass</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -313,7 +318,6 @@
     <ClInclude Include="Source\Core\Rendering\RendererDefine.h">
       <Filter>Header Files\Core\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Core\AbstractClass\UClass.h" />
     <ClInclude Include="Source\Editor\EditorDesigner.h">
       <Filter>Header Files\Editor</Filter>
     </ClInclude>
@@ -340,6 +344,12 @@
     </ClInclude>
     <ClInclude Include="Source\Core\Template\RemoveReference.h">
       <Filter>Header Files\Core\Template</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Gizmo\WorldGrid.h">
+      <Filter>Header Files\Gizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\AbstractClass\UClass.h">
+      <Filter>Header Files\Core\AbstractClass</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -475,13 +485,18 @@
     <Filter Include="Header Files\Core\Template">
       <UniqueIdentifier>{b6f932b5-19a4-43ae-a5b4-4f5019ab9818}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Core\AbstractClass">
+      <UniqueIdentifier>{1fe7518d-444d-4a50-aef1-69411eb26684}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\ShaderW0.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Shaders\ShaderLine.hlsl">
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\ShaderGrid.hlsl">
       <Filter>Shaders</Filter>
-    </FxCompile>
+    </None>
   </ItemGroup>
 </Project>
