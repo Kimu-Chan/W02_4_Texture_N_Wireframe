@@ -1,4 +1,4 @@
-#include "pch.h" 
+﻿#include "pch.h" 
 #include "Picker.h"
 #include "Core/HAL/PlatformType.h"
 #include "Core/Input/PlayerInput.h"
@@ -44,15 +44,11 @@ void APicker::LateTick(float DeltaTime)
 
     if (APlayerInput::Get().GetMouseDown(false))
     {
-        if (FEditorManager::Get().GetSelectedActor() != nullptr)
-        {
-            // 오브젝트 선택된 상태 -> 박스 내부의 기즈모를 선택할 수 없으니 컬러픽 시도
-            PickByColor();
-		}
-        else
+        if (!PickByColor())
         {
             PickByRay();
         }
+
     }
 
 
@@ -75,8 +71,9 @@ const char* APicker::GetTypeName()
     return "Picker";
 }
 
-void APicker::PickByColor()
+bool APicker::PickByColor()
 {
+    bool bIsPicked = false;
     POINT pt;
     GetCursorPos(&pt);
     ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
@@ -94,9 +91,11 @@ void APicker::PickByColor()
 
     if (PickedComponent != nullptr)
     {
+        bIsPicked = true;
         AActor* PickedActor = PickedComponent->GetOwner();
 
-        if (PickedActor == nullptr) return;
+        // 액터없는 컴포넌트가 검출될 수 있나? -> return false
+        if (PickedActor == nullptr) return false;
         if (PickedComponent->GetOwner()->IsGizmoActor() == false)
         {
             if (PickedActor == FEditorManager::Get().GetSelectedActor())
@@ -110,15 +109,21 @@ void APicker::PickByColor()
         }
     }
     UE_LOG("Pick - UUID: %d", UUID);
+    return bIsPicked;
 }
 
-void APicker::PickByRay()
+bool APicker::PickByRay()
 {
+    bool bIsPicked = false;
     // 충돌 검출
 	USceneComponent* FirstHitComponent = nullptr;
 
     if (GetWorld()->LineTrace(FRay::GetRayByMousePoint(FEditorManager::Get().GetCamera()), &FirstHitComponent))
     {
+        bIsPicked = true;
+        if (FirstHitComponent == nullptr)
+            return false;
+
         AActor* HitActor = FirstHitComponent->GetOwner();
         if (HitActor != nullptr && HitActor->IsGizmoActor() == false)
         {
@@ -132,6 +137,8 @@ void APicker::PickByRay()
             }
         }
     }
+
+    return bIsPicked;
     
 }
 

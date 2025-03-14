@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Actor.h"
 
@@ -17,7 +17,7 @@ public:
     virtual const char* GetTypeName() override;
 
 protected:
-    void PickByColor();
-    void PickByRay();
+    bool PickByColor();
+    bool PickByRay();
     void HandleGizmo();
 };

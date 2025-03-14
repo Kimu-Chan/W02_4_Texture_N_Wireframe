@@ -1,4 +1,4 @@
-#include "pch.h" 
+﻿#include "pch.h" 
 #include "UI.h"
 #include "Core/HAL/PlatformMemory.h"
 #include "URenderer.h"
@@ -121,7 +121,7 @@ void UI::RenderControlPanel()
     RenderMemoryUsage();
     RenderPrimitiveSelection();
     RenderCameraSettings();
-    
+    RenderRenderMode();
     ImGui::End();
 }
 
@@ -302,6 +302,24 @@ void UI::RenderCameraSettings()
     ImGui::Text("Camera GetForward(): (%.2f %.2f %.2f)", Forward.X, Forward.Y, Forward.Z);
     ImGui::Text("Camera GetUp(): (%.2f %.2f %.2f)", Up.X, Up.Y, Up.Z);
     ImGui::Text("Camera GetRight(): (%.2f %.2f %.2f)", Right.X, Right.Y, Right.Z);
+}
+
+void UI::RenderRenderMode()
+{
+	const char* items[] = { "Solid", "Wireframe" };
+	ImGui::Combo("Render Mode", &currentItem, items, IM_ARRAYSIZE(items));
+	if (ImGui::Button("Apply"))
+	{
+		URenderer* Renderer = UEngine::Get().GetRenderer();
+		if (currentItem == 0)
+		{
+			Renderer->SetRenderMode(ERenderType::ERS_Solid);
+		}
+		else if (currentItem == 1)
+		{
+			Renderer->SetRenderMode(ERenderType::ERS_Wireframe);
+		}
+	}
 }
 
 void UI::RenderPropertyWindow()

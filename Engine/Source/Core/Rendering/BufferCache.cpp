@@ -1,4 +1,4 @@
-#include "pch.h" 
+﻿#include "pch.h" 
 #include "BufferCache.h"
 #include "Engine/Engine.h"
 #include "Primitive/PrimitiveVertices.h"
@@ -17,18 +17,29 @@ void FBufferCache::Init()
 
 }
 
-VertexBufferInfo FBufferCache::GetBufferInfo(EPrimitiveType Type)
+FVertexBufferInfo FBufferCache::GetVertexBufferInfo(EPrimitiveType Type)
 {
     if (!VertexBufferCache.Contains(Type))
     {
-        auto bufferInfo = CreateBufferInfo(Type);
+        auto bufferInfo = CreateVertexBufferInfo(Type);
 		VertexBufferCache.Add(Type, bufferInfo);
     }
 
     return VertexBufferCache[Type];
 }
 
-VertexBufferInfo FBufferCache::CreateBufferInfo(EPrimitiveType Type)
+FIndexBufferInfo FBufferCache::GetIndexBufferInfo(EPrimitiveType Type)
+{
+    if (!IndexBufferCache.Contains(Type))
+    {
+		auto bufferInfo = CreateIndexBufferInfo(Type);
+		IndexBufferCache.Add(Type, bufferInfo);
+    }
+
+	return IndexBufferCache[Type];
+}
+
+FVertexBufferInfo FBufferCache::CreateVertexBufferInfo(EPrimitiveType Type)
 {
     ID3D11Buffer* VertexBuffer = nullptr;
     int VerticeSize = 0;
@@ -70,9 +81,56 @@ VertexBufferInfo FBufferCache::CreateBufferInfo(EPrimitiveType Type)
         break;
     }
     }
-    VertexBuffer = UEngine::Get().GetRenderer()->CreateVertexBuffer(Vertices, sizeof(FVertexSimple) * VerticeSize);
+    VertexBuffer = UEngine::Get().GetRenderer()->CreateImmutableVertexBuffer(Vertices, sizeof(FVertexSimple) * VerticeSize);
 
-    return VertexBufferInfo(VertexBuffer, VerticeSize, Topology, Vertices);
+    return FVertexBufferInfo(VertexBuffer, VerticeSize, Topology, Vertices);
+}
+
+FIndexBufferInfo FBufferCache::CreateIndexBufferInfo(EPrimitiveType Type)
+{
+	ID3D11Buffer* IndexBuffer = nullptr;
+	UINT* Indices = nullptr;
+    int Size = 0;
+
+    switch (Type)
+    {
+
+    case EPrimitiveType::EPT_Cube:
+    {
+        static std::vector<UINT> IndiceArr =
+        {
+            // 앞면
+            0, 1, 2, 2, 1, 3,
+            // 뒷면
+            4, 6, 5, 5, 6, 7,
+            // 왼쪽면
+            0, 2, 4, 4, 2, 6,
+            // 오른쪽면
+            1, 5, 3, 3, 5, 7,
+            // 윗면
+            2, 3, 6, 6, 3, 7,
+            // 아랫면
+            0, 4, 1, 1, 4, 5
+        };
+        Indices = IndiceArr.data();
+        Size = IndiceArr.size();
+    }
+
+    }
+
+	IndexBuffer = Indices == nullptr ? nullptr : UEngine::Get().GetRenderer()->CreateIndexBuffer(Indices, sizeof(UINT) * Size);
+    return FIndexBufferInfo(IndexBuffer, Size);
+}
+
+TArray<UINT> FBufferCache::CreateDefaultIndices(int Size)
+{
+    TArray<UINT> Indices;
+	for (int i = 0; i < Size; ++i)
+	{
+		Indices.Add(i);
+	}
+
+    return Indices;
 }
 
 

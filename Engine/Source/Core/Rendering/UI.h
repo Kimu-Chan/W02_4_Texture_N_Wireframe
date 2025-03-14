@@ -26,6 +26,7 @@ public:// UIWindows
 	void RenderMemoryUsage();
 	void RenderPrimitiveSelection();
 	void RenderCameraSettings();
+	void RenderRenderMode();
 	void RenderPropertyWindow();
 
 private:
