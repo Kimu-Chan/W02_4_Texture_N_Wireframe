@@ -46,6 +46,16 @@ private:
 		bool bUseVertexColor;
 	};
 
+	struct FLineVertex
+	{
+		FVector Location;
+	};
+
+	struct alignas(16) FGridOffset
+	{
+		FMatrix OffsetMatrix;
+	};
+
 public:
 	/** Renderer를 초기화 합니다. */
 	void Create(HWND hWindow);
@@ -148,6 +158,8 @@ protected:
 
 	void InitMatrix();
 
+	void GenerateWorldGridVertices();
+
 protected:
 	// Direct3D 11 장치(Device)와 장치 컨텍스트(Device Context) 및 스왑 체인(Swap Chain)을 관리하기 위한 포인터들
 	ID3D11Device* Device = nullptr;                         // GPU와 통신하기 위한 Direct3D 장치
@@ -174,6 +186,12 @@ protected:
 	ID3D11InputLayout* SimpleInputLayout = nullptr;         // Vertex 셰이더 입력 레이아웃 정의
 	unsigned int Stride = 0;                                // Vertex 버퍼의 각 요소 크기
 
+	ID3D11VertexShader* LineVertexShader = nullptr;         // Line 및 World Gird 용 버텍스 쉐이더
+	ID3D11PixelShader* LinePixelShader = nullptr;           // Line 및 World Grid 용 픽셀 쉐이더
+	
+	ID3D11InputLayout* LineInputLayout = nullptr;          // Line 및 World Grid 용 인풋 레이아웃
+	uint32 LineStride = 0;
+	
 	// Depth Stenil Buffer
 	ID3D11Texture2D* DepthStencilBuffer = nullptr;          // DepthStencil버퍼 역할을 하는 텍스쳐
 	ID3D11DepthStencilView* DepthStencilView = nullptr;     // DepthStencil버퍼를 렌더 타겟으로 사용하는 뷰

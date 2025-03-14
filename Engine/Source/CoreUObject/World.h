@@ -72,6 +72,8 @@ protected:
 	TSet<UPrimitiveComponent*> RenderComponents;
 	TSet<class FBox*> BoundingBoxes;
 
+private:
+	AActor* WorldGrid = nullptr;
 };
 
 template <typename T>
