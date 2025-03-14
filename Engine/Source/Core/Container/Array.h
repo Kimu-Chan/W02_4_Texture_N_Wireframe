@@ -35,6 +35,8 @@ public:
 	// 이동 생성자
 	TArray(TArray&& Other) noexcept;
 
+	TArray(SIZE_T Count);
+
 	// 복사 할당 연산자
 	TArray& operator=(const TArray& Other);
 
@@ -97,6 +99,11 @@ TArray<T, Allocator>::TArray(): PrivateVector()
 
 template <typename T, typename Allocator>
 TArray<T, Allocator>::TArray(const TArray& Other): PrivateVector(Other.PrivateVector)
+{
+}
+
+template <typename T, typename Allocator>
+TArray<T, Allocator>::TArray(SIZE_T count): PrivateVector(count)
 {
 }
 
