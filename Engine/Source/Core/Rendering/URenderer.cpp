@@ -92,12 +92,19 @@ void URenderer::CreateShader()
     // Compile Shader //
     ID3DBlob* GridVertexCSO;
     ID3DBlob* GridPixelCSO;
-    D3DCompileFromFile(L"Shaders/ShaderGrid.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &GridVertexCSO, &ErrorMsg);
-    Device->CreateVertexShader(GridVertexCSO->GetBufferPointer(), GridVertexCSO->GetBufferSize(), nullptr, &GridVertexShader);
-    
-    D3DCompileFromFile(L"Shaders/ShaderGrid.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &GridPixelCSO, &ErrorMsg);
-    Device->CreatePixelShader(GridPixelCSO->GetBufferPointer(), GridPixelCSO->GetBufferSize(), nullptr, &GridPixelShader);
-
+    HRESULT hr = S_OK;
+    hr = D3DCompileFromFile(L"Shaders/ShaderGrid.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &GridVertexCSO, &ErrorMsg);
+    if (FAILED(hr))
+        return;
+    hr = Device->CreateVertexShader(GridVertexCSO->GetBufferPointer(), GridVertexCSO->GetBufferSize(), nullptr, &GridVertexShader);
+    if (FAILED(hr))
+        return;
+    hr = D3DCompileFromFile(L"Shaders/ShaderGrid.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &GridPixelCSO, &ErrorMsg);
+    if (FAILED(hr))
+        return;
+    hr = Device->CreatePixelShader(GridPixelCSO->GetBufferPointer(), GridPixelCSO->GetBufferSize(), nullptr, &GridPixelShader);
+    if (FAILED(hr))
+        return;
     if (ErrorMsg)
     {
         std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
@@ -110,8 +117,9 @@ void URenderer::CreateShader()
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
 
-    Device->CreateInputLayout(GridLayout, ARRAYSIZE(GridLayout), GridVertexCSO->GetBufferPointer(), GridVertexCSO->GetBufferSize(), &GridInputLayout);
-
+    hr = Device->CreateInputLayout(GridLayout, ARRAYSIZE(GridLayout), GridVertexCSO->GetBufferPointer(), GridVertexCSO->GetBufferSize(), &GridInputLayout);
+    if (FAILED(hr))
+        return;
     GridVertexCSO->Release();
     GridPixelCSO->Release();
 
@@ -356,34 +364,45 @@ void URenderer::RenderWorldGrid()
     // prepare
     UINT Offset = 0;
     DeviceContext->IASetVertexBuffers(0, 1, &GridVertexBuffer, &GridStride, &Offset);
-
+    
+    DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);
+    DeviceContext->OMSetRenderTargets(1, &FrameBufferRTV, DepthStencilView);
+    DeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
+    
     DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
     DeviceContext->IASetInputLayout(GridInputLayout);
     DeviceContext->VSSetShader(GridVertexShader, nullptr, 0);
     DeviceContext->PSSetShader(GridPixelShader, nullptr, 0);
-    // TODO: 뎁스 스텐실 스테이트, 렌더 타겟 등?
-
-    // TODO: 상수 버퍼 업데이트
+    
     AActor* CameraActor = FEditorManager::Get().GetCamera();
     if (CameraActor == nullptr)
     {
         return;
     }
+    
+    float GridGap = UEngine::Get().GetWorldGridGap();
 
     FTransform CameraTransform = CameraActor->GetActorTransform();
-    
-    UEngine::Get().GetWorldGridGap();
+    FVector CameraLocation = CameraTransform.GetPosition();
 
+    int32 StepX = static_cast<int32>(CameraLocation.X / GridGap);
+    int32 StepY = static_cast<int32>(CameraLocation.Y / GridGap);
+
+    FVector GridOffset(StepX * GridGap, StepY * GridGap, 0.f);
+    FVector GridScale(GridGap, GridGap, 1.f);
+
+    FTransform GridTransform(GridOffset, FVector::ZeroVector, GridScale);
+    
     ConstantUpdateInfo UpdateInfo
     {
-        FMatrix::Identity,
-        FVector4(0.8f, 0.8f, 0.8f, 1.0f),
+        GridTransform.GetMatrix(),
+        FVector4(0.2f, 0.2f, 0.2f, 1.0f),
         false,
     };
 
     UpdateConstant(UpdateInfo);
 
-    
+    DeviceContext->Draw(GridVertexNum, 0);
 
     // restore
     DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -718,16 +737,16 @@ HRESULT URenderer::GenerateWorldGridVertices(int32 WorldGridCellPerSide)
     {
         float Offset = GridMin + GridGap * i / 4;
         FVertexGrid LineVertex;
-        LineVertex.Location = FVector(Offset, 0.f, GridMin);
+        LineVertex.Location = FVector(Offset, GridMin, 0.f);
         GridVertexData[i] = LineVertex;
 
-        LineVertex.Location = FVector(Offset, 0.f, GridMax);
+        LineVertex.Location = FVector(Offset, GridMax, 0.f);
         GridVertexData[i + 1] = LineVertex;
 
-        LineVertex.Location = FVector(GridMin, 0.f, Offset);
+        LineVertex.Location = FVector(GridMin, Offset, 0.f);
         GridVertexData[i + 2] = LineVertex;
 
-        LineVertex.Location = FVector(GridMax, 0.f, Offset);
+        LineVertex.Location = FVector(GridMax, Offset, 0.f);
         GridVertexData[i + 3] = LineVertex;
     }
     
@@ -861,10 +880,12 @@ void URenderer::PrepareMain()
     DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);                // DepthStencil 상태 설정. StencilRef: 스텐실 테스트 결과의 레퍼런스
     DeviceContext->OMSetRenderTargets(1, &FrameBufferRTV, DepthStencilView);
     DeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
+    DeviceContext->IASetInputLayout(SimpleInputLayout);
 }
 
 void URenderer::PrepareMainShader()
 {
+    DeviceContext->VSSetShader(SimpleVertexShader, nullptr, 0);
     DeviceContext->PSSetShader(SimplePixelShader, nullptr, 0);
 }
 
