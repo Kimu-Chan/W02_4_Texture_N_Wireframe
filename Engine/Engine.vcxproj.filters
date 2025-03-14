@@ -303,6 +303,9 @@
     <ClInclude Include="Source\Core\Math\Ray.h">
       <Filter>Header Files\Core\Math</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Core\Rendering\RendererDefine.h">
+      <Filter>Header Files\Core\Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">

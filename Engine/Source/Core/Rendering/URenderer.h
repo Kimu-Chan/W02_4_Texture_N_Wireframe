@@ -9,6 +9,7 @@
 #include "Core/Math/Plane.h"
 #include "Primitive/PrimitiveVertices.h"
 #include "Engine/Engine.h"
+#include "RendererDefine.h"
 
 struct FVertexSimple;
 struct FVector4;
@@ -64,7 +65,7 @@ public:
 	void SwapBuffer() const;
 
 	/** 렌더링 파이프라인을 준비 합니다. */
-	void Prepare() const;
+	void Prepare();
 
 	/** 셰이더를 준비 합니다. */
 	void PrepareShader() const;
@@ -76,9 +77,9 @@ public:
 	 * @param pBuffer 렌더링에 사용할 버텍스 버퍼에 대한 포인터
 	 * @param numVertices 버텍스 버퍼에 저장된 버텍스의 총 개수
 	 */
-	void RenderPrimitiveInternal(ID3D11Buffer* pBuffer, UINT numVertices) const;
+	void RenderPrimitiveInternal(ID3D11Buffer* pBuffer, ID3D11Buffer* IndexBuffer, UINT numVertices) const;
 
-	void RenderBox(const class FBox& Box, const FVector4& Color = FVector4(1.0f, 1.0f, 1.0f, 1.0f)) const;
+	void RenderBox(const class FBox& Box, const FVector4& Color = FVector4(1.0f, 1.0f, 1.0f, 1.0f));
 
     /**
      * 정점 데이터로 Vertex Buffer를 생성합니다.
@@ -88,7 +89,9 @@ public:
      *
      * @note 이 함수는 D3D11_USAGE_IMMUTABLE 사용법으로 버퍼를 생성합니다.
      */
-    ID3D11Buffer* CreateVertexBuffer(const FVertexSimple* Vertices, UINT ByteWidth) const;
+    ID3D11Buffer* CreateImmutableVertexBuffer(const FVertexSimple* Vertices, UINT ByteWidth) const;
+	ID3D11Buffer* CreateDynamicVertexBuffer(UINT ByteWidth);
+	ID3D11Buffer* CreateIndexBuffer(const UINT* Indices, UINT ByteWidth) const;
 
 	/** Buffer를 해제합니다. */
 	void ReleaseVertexBuffer(ID3D11Buffer* pBuffer) const;
@@ -108,6 +111,9 @@ public:
 	void OnUpdateWindowSize(int Width, int Height);
 
     void GetPrimitiveLocalBounds(EPrimitiveType Type, FVector& OutMin, FVector& OutMax);
+
+	void SetRenderMode(ERenderType Type);
+
 
 
 protected:
@@ -151,7 +157,11 @@ protected:
 	// 렌더링에 필요한 리소스 및 상태를 관리하기 위한 변수들
 	ID3D11Texture2D* FrameBuffer = nullptr;                 // 화면 출력용 텍스처
 	ID3D11RenderTargetView* FrameBufferRTV = nullptr;       // 텍스처를 렌더 타겟으로 사용하는 뷰
-	ID3D11RasterizerState* RasterizerState = nullptr;       // 래스터라이저 상태(컬링, 채우기 모드 등 정의)
+	ID3D11RasterizerState* RasterizerState_Solid = nullptr; // Solid 레스터라이즈 상태
+	ID3D11RasterizerState* RasterizerState_Wireframe = nullptr; // Wireframe 레스터라이즈 상태
+
+	ID3D11RasterizerState** CurrentRasterizerState = nullptr; // 현재 사용중인 레스터라이즈 상태
+	ERenderType CurrentRasterizerStateType = ERenderType::ERS_Solid; // 현재 사용중인 레스터라이즈 상태 타입
 	ID3D11Buffer* ConstantBuffer = nullptr;                 // 쉐이더에 데이터를 전달하기 위한 상수 버퍼
 
 	FLOAT ClearColor[4] = { 0.025f, 0.025f, 0.025f, 1.0f }; // 화면을 초기화(clear)할 때 사용할 색상 (RGBA)
@@ -173,6 +183,7 @@ protected:
 	// Buffer Cache
 
 	std::unique_ptr<class FBufferCache> BufferCache;
+	ID3D11Buffer* DynamicVertexBuffer = nullptr;
 
 	FMatrix WorldMatrix;
 	FMatrix ViewMatrix;
