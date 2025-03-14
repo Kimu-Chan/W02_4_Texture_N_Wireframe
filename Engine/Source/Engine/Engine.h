@@ -104,7 +104,7 @@ private:
 
     float WorldGridGap = 1.f;
 
-    int32 WorldGridCellPerSide = 100; // 항상 짝수값으로
+    int32 WorldGridCellPerSide = 400; // 항상 짝수값으로
     
 public:
     // TArray<std::shared_ptr<UObject>> GObjects;

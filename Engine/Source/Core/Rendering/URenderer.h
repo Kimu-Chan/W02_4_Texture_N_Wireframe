@@ -70,7 +70,7 @@ public:
 	void SwapBuffer() const;
 
 	/** 렌더링 파이프라인을 준비 합니다. */
-	void Prepare();
+	void PrepareRender();
 
 	/** 셰이더를 준비 합니다. */
 	void PrepareShader() const;
@@ -86,6 +86,8 @@ public:
 
 	void RenderBox(const class FBox& Box, const FVector4& Color = FVector4(1.0f, 1.0f, 1.0f, 1.0f));
 
+	void PrepareWorldGrid();
+	
 	void RenderWorldGrid();
 	
     /**
