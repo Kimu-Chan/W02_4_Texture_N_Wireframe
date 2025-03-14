@@ -31,6 +31,10 @@ public:// UIWindows
 	void RenderGridGap();
 
 private:
+	void PreferenceStyle();
+
+	void CreateUsingFont();
+
 	// Mouse 전용
 	ImVec2 ResizeToScreenByCurrentRatio(const ImVec2& vec2) const
 	{

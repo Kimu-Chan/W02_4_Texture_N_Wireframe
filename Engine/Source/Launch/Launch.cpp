@@ -9,7 +9,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 
         UEngine& Engine = UEngine::Get();
-        Engine.Initialize(hInstance, L"Jungle Engine", L"JungleWindow", 1280, 720);
+        Engine.Initialize(hInstance, L"Jungle Engine", L"JungleWindow", 1920, 1080);
 
         Engine.Run();
 

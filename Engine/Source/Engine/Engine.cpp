@@ -78,7 +78,7 @@ void UEngine::Initialize(HINSTANCE hInstance, const WCHAR* InWindowTitle, const 
     ScreenWidth = InScreenWidth;
     ScreenHeight = InScreenHeight;
 
-    InitWindow(InScreenWidth, InScreenWidth);
+    InitWindow(InScreenWidth, InScreenHeight);
 
     InitRenderer();
 
