@@ -78,12 +78,16 @@ void UWorld::Render()
     {
         RenderPickingTexture(*Renderer);
     }
+
+    /**
+     * Axis는 Grid에 가려지면 안되므로 Grid 먼저 렌더.
+     * Axis는 아래의 RenderMainTexture 함수에서 렌더됨.
+     */
+    RenderWorldGrid(*Renderer);
         
     RenderMainTexture(*Renderer);
 	RenderBoundingBoxes(*Renderer);
 
-    RenderWorldGrid(*Renderer);
-        
     // DisplayPickingTexture(*Renderer);
 
 }
