@@ -1,15 +1,16 @@
-#include "pch.h"
+﻿#include "pch.h"
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include "Container/String.h"
 #include "ConsoleWindow.h"
+#include "Container/String.h"
 #include "HAL/PlatformType.h"
 #include "Editor/EditorDesigner.h"
 #include "CoreUObject/ObjectFactory.h"
 #include "Components/PrimitiveComponent.h"
 #include "Template/Template.h"
+#include "Debugging/DebugConsole.h"
 
 ConsoleWindow::ConsoleWindow()
 {
@@ -30,9 +31,9 @@ ConsoleWindow::ConsoleWindow()
 
     AutoScroll = true;
     ScrollToBottom = false;
-    UE_LOG_("Welcome to Engine !");
+    UE_LOG("Welcome to Engine !");
 
-    bWasOpen = true;
+    bWasOpen = false;
 }
 
 ConsoleWindow::~ConsoleWindow()
@@ -245,7 +246,7 @@ int ConsoleWindow::TextEditCallback(ImGuiInputTextCallbackData* Data)
         if (Candidates.empty())
         {
             // No match
-            UE_LOG_("No match for \"%.*s\"!\n", static_cast<int>(WordEnd - WordStart), WordStart);
+            UE_LOG("No match for \"%.*s\"!\n", static_cast<int>(WordEnd - WordStart), WordStart);
         }
         else if (Candidates.size() == 1)
         {
@@ -280,9 +281,9 @@ int ConsoleWindow::TextEditCallback(ImGuiInputTextCallbackData* Data)
             }
 
             // List matches
-            UE_LOG_("Possible matches:\n");
+            UE_LOG("Possible matches:\n");
             for (const auto& Candidate : Candidates)
-                UE_LOG_("- %s\n", Candidate);
+                UE_LOG("- %s\n", Candidate);
         }
         break;
     }
@@ -338,6 +339,8 @@ void ConsoleWindow::Log(const char* format, ...)
     va_end(args);
 
     Items.emplace_back(buffer);
+
+    Debug::LogItem(buffer);
 }
 
 void ConsoleWindow::ClearLog()
@@ -357,15 +360,15 @@ void ConsoleWindow::ProcessCommand(const FString& cmd)
     }
     else if (cmd == static_cast<FString>("help") || cmd == static_cast<FString>("?"))
     {
-		UE_LOG_("Commands:");
+		UE_LOG("Commands:");
         for (const auto& Command : Commands)
-            UE_LOG_("- %s", *Command);
+            UE_LOG("- %s", *Command);
     }
     else if (cmd == static_cast<FString>("history"))
     {
         int First = static_cast<int>(History.size()) - 10;
         for (int i = First > 0 ? First : 0; i < static_cast<int>(History.size()); i++)
-            UE_LOG_("%3d: %s", i, *History[i]);
+            UE_LOG("%3d: %s", i, *History[i]);
     }
     else if (cmd == static_cast<FString>("stat"))
     {
@@ -404,7 +407,7 @@ void ConsoleWindow::ProcessCommand(const FString& cmd)
                     if (int Count = std::stoi(*countStr); Count > 0)
                     {
                         // 실제 객체 생성을 위한 로직 호출 부분
-                        UE_LOG_("Spawning %d %s(s)...", Count, *shape);
+                        UE_LOG("Spawning %d %s(s)...", Count, *shape);
 						SpawnCount = Count;
 
                         for (int i = 0; i < Count; i++)
@@ -433,26 +436,26 @@ void ConsoleWindow::ProcessCommand(const FString& cmd)
                     else
                     {
 						bNeedSpawn = false;
-                        UE_LOG_("잘못된 개수입니다: %s", *countStr);
+                        UE_LOG("잘못된 개수입니다: %s", *countStr);
                     }
                 }
                 else
                 {
 					bNeedSpawn = false;
-                    UE_LOG_("알 수 없는 객체 타입입니다: '%s'", *shape);
+                    UE_LOG("알 수 없는 객체 타입입니다: '%s'", *shape);
                 }
 
                 //@TODO: Spawn 개수 저장
                 //if (int Count = std::stoi(*countStr); Count > 0)
                 //{
                 //    // 실제 객체 생성을 위한 로직 호출 부분
-                //    UE_LOG_("Spawning %d %s(s)...", Count, *shape);
+                //    UE_LOG("Spawning %d %s(s)...", Count, *shape);
                 //    SpawnCount = Count;
                 //}
                 //else
                 //{
                 //    bNeedSpawn = false;
-                //    UE_LOG_("잘못된 개수입니다: %s", *countStr);
+                //    UE_LOG("잘못된 개수입니다: %s", *countStr);
                 //}
             }
             else
@@ -462,7 +465,7 @@ void ConsoleWindow::ProcessCommand(const FString& cmd)
                 if (args == "cube" || args == "sphere" || args == "triangle")
                 {
                     // 실제 객체 생성을 위한 로직 호출 부분
-                    UE_LOG_("Spawning 1 %s(s)...\n", *args);
+                    UE_LOG("Spawning 1 %s(s)...\n", *args);
                     // 예: SpawnShape(shape, count);
 
                     FVector pos(0, 0, 0);
@@ -488,14 +491,14 @@ void ConsoleWindow::ProcessCommand(const FString& cmd)
                 else
                 {
                     bNeedSpawn = false;
-                    UE_LOG_("알 수 없는 객체 타입입니다: '%s'", *args);
+                    UE_LOG("알 수 없는 객체 타입입니다: '%s'", *args);
                 }
             }
             //@TODO: Spawn 로직 호출
         }
         else
         {
-            UE_LOG_("사용법: spawn <cube|sphere|triangle> <count = 1>");
+            UE_LOG("사용법: spawn <cube|sphere|triangle> <count = 1>");
         }
     }
     else if (cmd.Strnicmp("UE_LOG(", 7) == 0)
@@ -565,7 +568,7 @@ void ConsoleWindow::ProcessCommand(const FString& cmd)
     }
     else
     {
-        UE_LOG_("Unknown command: '%s'", *cmd);
+        UE_LOG("Unknown command: '%s'", *cmd);
     }
 
     // On command input, we scroll to bottom even if AutoScroll==false

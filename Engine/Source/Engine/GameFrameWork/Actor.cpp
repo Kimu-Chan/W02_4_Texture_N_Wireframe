@@ -4,6 +4,7 @@
 #include "CoreUObject/Components/SceneComponent.h"
 #include "CoreUObject/Components/PrimitiveComponent.h"
 #include "Debugging/DebugConsole.h"
+#include "Editor/Windows/ConsoleWindow.h"
 #include "Static/EditorManager.h"
 
 REGISTER_CLASS(AActor);

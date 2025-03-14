@@ -1,7 +1,7 @@
-#pragma once
+﻿#pragma once
 
 //@TODO: UE_LOG()를 사용할 수 있도록 수정
-#define UE_LOG_(format, ...) ConsoleWindow::Log(format, ##__VA_ARGS__)
+#define UE_LOG(format, ...) if (UI::ConsoleWindowInstance) { UI::ConsoleWindowInstance->Log(format, ##__VA_ARGS__); }
 
 #include "Editor/EditorWindow.h"
 #include "Editor/ICommand.h"

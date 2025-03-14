@@ -33,7 +33,6 @@ public:
 				mw->SetValue(42);
 			}
 		}
-
 	*/
 	// 현재 관리되고 있는 윈도우 창을 가져옵니다.
 	std::shared_ptr<UEditorWindow> GetWindow(const FString& WindowId)
@@ -66,6 +65,19 @@ public:
 			Window.Value->Render();
 		}
 	}
+
+	void Toggle()
+	{
+		if (Windows.IsEmpty()) return;
+		for (const TPair<const FString, std::shared_ptr<UEditorWindow>>& Window : Windows)
+		{
+			if (auto Switchable = dynamic_cast<ISwitchable*>(Window.Value.get()))
+			{
+				Switchable->Toggle();
+			}
+		}
+	}
+
 	bool IsClear() const
 	{
 		return bFinishClearWindows;

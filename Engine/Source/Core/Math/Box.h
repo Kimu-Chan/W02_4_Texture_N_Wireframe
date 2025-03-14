@@ -4,6 +4,8 @@
 #include "Ray.h"
 #include <Debugging/DebugConsole.h>
 
+#include "Editor/Windows/ConsoleWindow.h"
+
 class USceneComponent;
 
 struct FBox

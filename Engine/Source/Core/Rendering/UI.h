@@ -7,6 +7,7 @@
 
 class AActor;
 class URenderer;
+class ConsoleWindow;
 
 class UI
 {
@@ -22,7 +23,7 @@ public:
 	void OnUpdateWindowSize(UINT InScreenWidth, UINT InScreenHeight);
 
 public:// UIWindows
-	void RenderControlPanel();
+	void RenderControlPanelWindow();
 	void RenderMemoryUsage();
 	void RenderPrimitiveSelection();
 	void RenderCameraSettings();
@@ -77,11 +78,17 @@ private:
 		}
 	}
 
-	bool bWasWindowSizeUpdated = true;
+	// UI::RenderSomePanel()에서 화면 갱신을 알기 위한 함수
+	bool bWasWindowSizeUpdated = false;
+
+	//note: imgui_demo.cpp의 ImGui::ShowDemoWindow를 위한 불리언
+	bool bShowDemoWindow = false;
 	
 	ImVec2 ScreenSize;
 	ImVec2 InitialScreenSize;
 
 	ImVec2 PreRatio;
 	ImVec2 CurRatio;
+public:
+	static std::shared_ptr<ConsoleWindow> ConsoleWindowInstance;
 };

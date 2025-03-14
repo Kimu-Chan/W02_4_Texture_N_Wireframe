@@ -43,7 +43,7 @@ void APicker::LateTick(float DeltaTime)
 {
     AActor::LateTick(DeltaTime);
 
-    if (APlayerInput::Get().GetMouseDown(false))
+    if (APlayerInput::Get().GetMouseDown(false))    //좌클릭
     {
         if (!PickByColor())
         {
@@ -54,7 +54,7 @@ void APicker::LateTick(float DeltaTime)
 
 
     // 기즈모 핸들링
-    if (APlayerInput::Get().IsPressedMouse(false))
+    if (APlayerInput::Get().IsPressedMouse(false))    //좌클릭
     {
 		HandleGizmo();
     }
@@ -79,10 +79,10 @@ bool APicker::PickByColor()
     GetCursorPos(&pt);
     ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
 
-    float ratioX = UEngine::Get().GetInitializedScreenWidth() / (float)UEngine::Get().GetScreenWidth();
-    float ratioY = UEngine::Get().GetInitializedScreenHeight() / (float)UEngine::Get().GetScreenHeight();
-    pt.x = pt.x * ratioX;
-    pt.y = pt.y * ratioY;
+    //float ratioX = 1920 / (float)UEngine::Get().GetScreenWidth();
+    //float ratioY = 1080 / (float)UEngine::Get().GetScreenHeight();
+    //pt.x = pt.x * ratioX;
+    //pt.y = pt.y * ratioY;
 
     FVector4 color = UEngine::Get().GetRenderer()->GetPixel(FVector(pt.x, pt.y, 0));
 
@@ -160,15 +160,15 @@ void APicker::HandleGizmo()
             if (Gizmo->GetSelectedAxis() != ESelectedAxis::None) return;
             UCylinderComp* CylinderComp = static_cast<UCylinderComp*>(PickedComponent);
             FVector4 CompColor = CylinderComp->GetCustomColor();
-            if (1.0f - FMath::Abs(CompColor.X) < KINDA_SMALL_NUMBER) // Red - X��
+            if (1.0f - FMath::Abs(CompColor.X) < KINDA_SMALL_NUMBER) // Red - X축
             {
                 Gizmo->SetSelectedAxis(ESelectedAxis::X);
             }
-            else if (1.0f - FMath::Abs(CompColor.Y) < KINDA_SMALL_NUMBER) // Green - Y��
+            else if (1.0f - FMath::Abs(CompColor.Y) < KINDA_SMALL_NUMBER) // Green - Y축
             {
                 Gizmo->SetSelectedAxis(ESelectedAxis::Y);
             }
-            else  // Blue - Z��
+            else  // Blue - Z축
             {
                 Gizmo->SetSelectedAxis(ESelectedAxis::Z);
             }

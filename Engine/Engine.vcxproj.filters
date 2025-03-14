@@ -133,6 +133,9 @@
     <ClCompile Include="Source\Core\Math\Ray.cpp">
       <Filter>Source Files\Core\Math</Filter>
     </ClCompile>
+        <ClCompile Include="Source\Editor\Windows\ConsoleWindow.cpp">
+      <Filter>Source Files\Editor\Windows</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Core\AbstractClass\UClass.cpp" />
     <ClCompile Include="Source\Editor\Windows\ConsoleWindow.cpp">
       <Filter>Source Files\Editor\Windows</Filter>

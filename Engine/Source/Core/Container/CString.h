@@ -1,5 +1,7 @@
 ﻿#pragma once
-#include "Debugging/DebugConsole.h"
+//#include "Debugging/DebugConsole.h"
+#include "Editor/Windows/ConsoleWindow.h"
+#include "Rendering/UI.h"
 
 template <typename T>
 struct TCString
@@ -136,7 +138,6 @@ public:
 
 	static int Strnicmp(const CharType* str1, const CharType* str2, std::size_t count)
 	{
-		UE_LOG("Test for %d '%s' '%s'", count, str1, str2);
 		while (count-- && *str1)
 		{
 			if (std::tolower(static_cast<unsigned char>(*str1)) != std::tolower(static_cast<unsigned char>(*str2)))
@@ -147,7 +148,6 @@ public:
 
 			++str1;
 			++str2;
-			UE_LOG("count: %d str1: '%s' str2: '%s'", count, str1, str2);
 		}
 		return 0;
 	}
