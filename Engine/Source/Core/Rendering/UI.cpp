@@ -303,6 +303,8 @@ void UI::RenderCameraSettings()
     ImGui::Text("Camera GetForward(): (%.2f %.2f %.2f)", Forward.X, Forward.Y, Forward.Z);
     ImGui::Text("Camera GetUp(): (%.2f %.2f %.2f)", Up.X, Up.Y, Up.Z);
     ImGui::Text("Camera GetRight(): (%.2f %.2f %.2f)", Right.X, Right.Y, Right.Z);
+
+    ImGui::Separator();
 }
 
 void UI::RenderRenderMode()
@@ -321,6 +323,8 @@ void UI::RenderRenderMode()
 			Renderer->SetRenderMode(ERenderType::ERS_Wireframe);
 		}
 	}
+    
+    ImGui::Separator();
 }
 
 void UI::RenderPropertyWindow()
@@ -387,11 +391,17 @@ void UI::RenderGridGap()
 {
     ImGui::Text("World Grid");
 
+    float MaxVal = 10.f;
+    float MinVal = 0.5f;
+    
     float GridGap = UEngine::Get().GetWorldGridGap();
     
-    if (ImGui::DragFloat("Grid Gap", &GridGap, 0.01f, 0.5f, 10.f))
+    if (ImGui::DragFloat("Grid Gap", &GridGap, 0.01f, MinVal, MaxVal))
     {
+        GridGap = GridGap > MaxVal ? MaxVal : (GridGap < MinVal ? MinVal : GridGap); // Clamp
         UEngine::Get().SetWorldGridGap(GridGap);
     }
+
+    ImGui::Separator();
 }
 
