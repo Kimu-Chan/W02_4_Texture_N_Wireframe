@@ -1,5 +1,7 @@
 ﻿#include "pch.h" 
 #include "World.h"
+
+#include "WorldGrid.h"
 #include "Core/Input/PlayerInput.h"
 #include "CoreUObject/Components/PrimitiveComponent.h"
 #include "Gizmo/GizmoHandle.h"
@@ -18,6 +20,9 @@
 REGISTER_CLASS(UWorld);
 void UWorld::BeginPlay()
 {
+    // WorldGrid는 월드에서 다루며 위치를 계속 업데이트 해주기 위해 월드에서 소유함. 따라서 이곳에서 스폰.
+    WorldGrid = SpawnActor<AWorldGrid>();  
+    
     for (const auto& Actor : Actors)
     {
         Actor->BeginPlay();

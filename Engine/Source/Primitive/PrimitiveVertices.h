@@ -9,7 +9,6 @@ struct FVertexSimple
     float R, G, B, A; // Color
 };
 
-
 extern FVertexSimple LineVertices[2];
 extern FVertexSimple CubeVertices[8];
 extern FVertexSimple SphereVertices[2400];

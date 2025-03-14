@@ -84,6 +84,38 @@ void URenderer::CreateShader()
 
     // unit byte
     Stride = sizeof(FVertexSimple);
+
+    
+    ////////
+    // Line
+    ////////
+    // Compile Shader //
+    ID3DBlob* LineVertexCSO;
+    ID3DBlob* LinePixelCSO;
+    D3DCompileFromFile(L"Shaders/ShaderLine.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &LineVertexCSO, &ErrorMsg);
+    Device->CreateVertexShader(LineVertexCSO->GetBufferPointer(), LineVertexCSO->GetBufferSize(), nullptr, &LineVertexShader);
+    
+    D3DCompileFromFile(L"Shaders/ShaderLine.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &LinePixelCSO, &ErrorMsg);
+    Device->CreatePixelShader(LinePixelCSO->GetBufferPointer(), LinePixelCSO->GetBufferSize(), nullptr, &LinePixelShader);
+
+    if (ErrorMsg)
+    {
+        std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
+        ErrorMsg->Release();
+    }
+    
+    // Input Layout //
+    D3D11_INPUT_ELEMENT_DESC LineLayout[] =
+    {
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    };
+
+    Device->CreateInputLayout(LineLayout, ARRAYSIZE(LineLayout), LineVertexCSO->GetBufferPointer(), LineVertexCSO->GetBufferSize(), &LineInputLayout);
+
+    LineVertexCSO->Release();
+    LinePixelCSO->Release();
+
+    LineStride = sizeof(FLineVertex);
 }
 
 void URenderer::ReleaseShader()
@@ -630,6 +662,11 @@ void URenderer::InitMatrix()
     WorldMatrix = FMatrix::Identity;
     ViewMatrix = FMatrix::Identity;
     ProjectionMatrix = FMatrix::Identity;
+}
+
+void URenderer::GenerateWorldGridVertices()
+{
+    
 }
 
 void URenderer::SetRenderMode(ERenderType Type)

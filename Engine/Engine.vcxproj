@@ -198,6 +198,7 @@
     <ClInclude Include="Source\Engine\GameFrameWork\Sphere.h" />
     <ClInclude Include="Source\Gizmo\Axis.h" />
     <ClInclude Include="Source\Gizmo\GizmoHandle.h" />
+    <ClInclude Include="Source\Gizmo\WorldGrid.h" />
     <ClInclude Include="Source\pch.h" />
     <ClInclude Include="Source\Primitive\PrimitiveVertices.h" />
     <ClInclude Include="Source\Static\EditorManager.h" />
@@ -246,6 +247,7 @@
     <ClCompile Include="Source\Engine\GameFrameWork\Sphere.cpp" />
     <ClCompile Include="Source\Gizmo\Axis.cpp" />
     <ClCompile Include="Source\Gizmo\GizmoHandle.cpp" />
+    <ClCompile Include="Source\Gizmo\WorldGrid.cpp" />
     <ClCompile Include="Source\Launch\Launch.cpp" />
     <ClCompile Include="Source\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
