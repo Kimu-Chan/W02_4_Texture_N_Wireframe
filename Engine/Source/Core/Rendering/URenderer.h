@@ -67,7 +67,7 @@ public:
 	void ReleaseConstantBuffer();
 
 	/** 스왑 체인의 백 버퍼와 프론트 버퍼를 교체하여 화면에 출력 */
-	void SwapBuffer() const;
+	void SwapBuffer();
 
 	/** 렌더링 파이프라인을 준비 합니다. */
 	void PrepareRender();
@@ -126,6 +126,8 @@ public:
 	// World Grid
 	HRESULT GenerateWorldGridVertices(int32 WorldGridCellPerSide);
 
+	bool IsOccluded();
+
 protected:
 	/** Direct3D Device 및 SwapChain을 생성합니다. */
 	void CreateDeviceAndSwapChain(HWND hWindow);
@@ -147,6 +149,12 @@ protected:
 
 	/** 뎁스 스텐실 버퍼를 해제합니다. */
 	void ReleaseDepthStencilBuffer();
+
+	/** 뎁스 스텐실 상태를 해제합니다. */
+	void ReleaseDepthStencilState();
+
+	/** 뎁스 스텐실 버퍼 및 상태를 해제합니다 */
+	void ReleaseDepthStencilResources();
 	
 	/** 레스터라이즈 상태를 생성합니다. */
 	void CreateRasterizerState();
@@ -159,10 +167,14 @@ protected:
 	void InitMatrix();
 
 protected:
+	HWND hWnd = nullptr;                                    // 렌더러가 사용할 윈도우 핸들indow = nullptr;                                 // 렌더러가 사용할 윈도우 핸들
 	// Direct3D 11 장치(Device)와 장치 컨텍스트(Device Context) 및 스왑 체인(Swap Chain)을 관리하기 위한 포인터들
 	ID3D11Device* Device = nullptr;                         // GPU와 통신하기 위한 Direct3D 장치
+	ID3D11Debug* debugDevice = nullptr;						// 디버깅을 위한 디버그 장치
+	ID3D11InfoQueue* infoQueue = nullptr;					// 디버깅을 위한 정보 큐
 	ID3D11DeviceContext* DeviceContext = nullptr;           // GPU 명령 실행을 담당하는 컨텍스트
 	IDXGISwapChain* SwapChain = nullptr;                    // 프레임 버퍼를 교체하는 데 사용되는 스왑 체인
+	bool bSwapChainOccluded = false;                        // 스왑 체인이 가려졌는지 여부
 
 	// 렌더링에 필요한 리소스 및 상태를 관리하기 위한 변수들
 	ID3D11Texture2D* FrameBuffer = nullptr;                 // 화면 출력용 텍스처
@@ -197,7 +209,6 @@ protected:
 	ID3D11DepthStencilState* GizmoDepthStencilState = nullptr; // 기즈모용 스텐실 스테이트. Z버퍼 테스트 하지않고 항상 앞에렌더
 	
 	// Buffer Cache
-
 	std::unique_ptr<class FBufferCache> BufferCache;
 	ID3D11Buffer* DynamicVertexBuffer = nullptr;
 
@@ -225,8 +236,8 @@ protected:
 
 public:
 	//피킹용 함수들	
+	void CreatePickingFrameBuffer();
 	void ReleasePickingFrameBuffer();
-	void CreatePickingTexture(HWND hWnd);
 	void PrepareZIgnore();
 	void PreparePicking();
 	void PreparePickingShader() const;

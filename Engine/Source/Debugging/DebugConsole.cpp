@@ -2,6 +2,8 @@
 #include "Debugging/DebugConsole.h"
 #include <cstdarg>
 #include <algorithm>
+#include <format>
+
 #include "Core/Container/String.h"
 
 #include "ImGui/imgui_internal.h"
@@ -126,4 +128,9 @@ ImVec2 Debug::ResizeToScreen(const ImVec2& vec2, ImVec2 PreRatio, ImVec2 CurRati
     }
     
     return {vec2.x * PreRatio.x / CurRatio.x * min / preMin, vec2.y * PreRatio.y / CurRatio.y * min / preMin};
+}
+
+void Debug::LogItem(const char* buffer)
+{
+	items.emplace_back(buffer);
 }

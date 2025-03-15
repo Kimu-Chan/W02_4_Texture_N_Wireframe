@@ -5,6 +5,8 @@
 #include "Transform.h"
 #include "Ray.h"
 
+#include "Editor/Windows/ConsoleWindow.h"
+
 class USceneComponent;
 
 
