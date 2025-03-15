@@ -1070,6 +1070,11 @@ void URenderer::OnUpdateWindowSize(int Width, int Height)
         ReleaseDepthStencilBuffer();
         CreateDepthStencilBuffer();
     }
+
+    if (ACamera* Camera = FEditorManager::Get().GetCamera())
+    {
+        UpdateProjectionMatrix(Camera);
+    }
 }
 
 void URenderer::GetPrimitiveLocalBounds(EPrimitiveType Type, FVector& OutMin, FVector& OutMax)

@@ -60,8 +60,8 @@ LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 
     case WM_SIZE:
-                UEngine::Get().UpdateWindowSize(LOWORD(lParam), HIWORD(lParam));
-                break;
+        UEngine::Get().UpdateWindowSize(LOWORD(lParam), HIWORD(lParam));
+        break;
     default:
         return DefWindowProc(hWnd, uMsg, wParam, lParam);
     }
@@ -219,7 +219,13 @@ void UEngine::InitWorld()
 {
     World = FObjectFactory::ConstructObject<UWorld>();
 
-    FEditorManager::Get().SetCamera(World->SpawnActor<ACamera>());
+    if (ACamera* Camera = World->SpawnActor<ACamera>())
+    {
+        FEditorManager::Get().SetCamera(Camera);
+
+        // 렌더러가 먼저 초기화 되므로, 카메라가 생성되는 시점인 현재 함수에서 프로젝션 매트릭스 업데이트
+        Renderer->UpdateProjectionMatrix(Camera);
+    }
 
     //// Test
     //AArrow* Arrow = World->SpawnActor<AArrow>();
