@@ -24,12 +24,12 @@ const FTransform USceneComponent::GetWorldTransform()
     if (Parent)
     {
         // 부모 월드 * 내 로컬
-        FMatrix ParentWorld = Parent->GetWorldTransform().GetMatrix();
+        //FMatrix ParentWorld = Parent->GetWorldTransform().GetMatrix();
 
-        FMatrix MyLocal = RelativeTransform.GetMatrix();
+        //FMatrix MyLocal = RelativeTransform.GetMatrix();
 
-        FMatrix NewMatrix = MyLocal * ParentWorld;
-        return NewMatrix.GetTransform();
+        //FMatrix NewMatrix = MyLocal * ParentWorld;
+        return Parent->GetWorldTransform() * RelativeTransform;
     }
 
     return RelativeTransform;
@@ -39,7 +39,6 @@ void USceneComponent::SetRelativeTransform(const FTransform& InTransform)
 {
     // 로컬 트랜스폼 갱신
     RelativeTransform = InTransform;
-    FVector Rot = RelativeTransform.GetRotation().GetEuler();
     UpdateBoundingBox();
 }
 
@@ -68,13 +67,13 @@ void USceneComponent::SetupAttachment(USceneComponent* InParent, bool bUpdateChi
 
 void USceneComponent::ApplyParentWorldTransform(const FTransform& ParentWorldTransform)
 {
-    FMatrix ParentWorld = ParentWorldTransform.GetMatrix();
-    FMatrix MyLocal = RelativeTransform.GetMatrix();
+    //FMatrix ParentWorld = ParentWorldTransform.GetMatrix();
+    //FMatrix MyLocal = RelativeTransform.GetMatrix();
 
-    FMatrix NewMatrix = MyLocal * ParentWorld.Inverse();
+    //FMatrix NewMatrix = MyLocal * ParentWorld.Inverse();
 
     // 로컬 트랜스폼 갱신
-    SetRelativeTransform(NewMatrix.GetTransform());
+    SetRelativeTransform(ParentWorldTransform * RelativeTransform);
     UpdateBoundingBox();
 
 }
