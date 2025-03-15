@@ -247,6 +247,8 @@ void UI::RenderCameraSettings()
     {
         FOV = std::clamp(FOV, 0.01f, 179.99f);
         Camera->SetFieldOfVew(FOV);
+
+        UEngine::Get().GetRenderer()->UpdateProjectionMatrix(Camera);
     }
 
     float NearFar[2] = { Camera->GetNearClip(), Camera->GetFarClip() };
