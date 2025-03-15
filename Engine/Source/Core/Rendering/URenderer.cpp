@@ -145,6 +145,24 @@ void URenderer::ReleaseShader()
         SimpleVertexShader->Release();
         SimpleVertexShader = nullptr;
     }
+
+    if (GridInputLayout)
+    {
+        GridInputLayout->Release();
+        GridInputLayout = nullptr;
+    }
+
+    if (GridVertexShader)
+    {
+        GridVertexShader->Release();
+        GridVertexShader = nullptr;
+    }
+
+    if (GridPixelShader)
+    {
+        GridPixelShader->Release();
+        GridPixelShader = nullptr;
+    }
 }
 
 void URenderer::CreateConstantBuffer()
