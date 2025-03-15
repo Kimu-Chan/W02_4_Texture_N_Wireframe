@@ -151,9 +151,9 @@ public:
 	// InRotate는 Degree 단위
 	void Rotate(const FVector& InRotation)
 	{
-		RotateYaw(InRotation.Z);
-		RotatePitch(InRotation.Y);
 		RotateRoll(InRotation.X);
+		RotatePitch(InRotation.Y);
+		RotateYaw(InRotation.Z);
 	}
 
 	void RotateYaw(float Angle)

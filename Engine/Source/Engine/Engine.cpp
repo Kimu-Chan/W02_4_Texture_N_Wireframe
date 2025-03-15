@@ -12,6 +12,7 @@
 #include "GameFrameWork/Camera.h"
 #include "GameFrameWork/Sphere.h"
 
+
 class AArrow;
 class APicker;
 
@@ -78,14 +79,25 @@ LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 void UEngine::Initialize(HINSTANCE hInstance, const WCHAR* InWindowTitle, const WCHAR* InWindowClassName, int InScreenWidth, int InScreenHeight, EScreenMode InScreenMode)
 {
+    // ini파일 로드
+	EngineConfig = new FEngineConfig();
+	EngineConfig->LoadEngineConfig();
+
+	int width = EngineConfig->GetEngineConfigValue<int>(EEngineConfigValueType::EEC_ScreenWidth);
+	int height = EngineConfig->GetEngineConfigValue<int>(EEngineConfigValueType::EEC_ScreenHeight);
+
     WindowInstance = hInstance;
     WindowTitle = InWindowTitle;
     WindowClassName = InWindowClassName;
-    ScreenWidth = InScreenWidth;
-    ScreenHeight = InScreenHeight;
+    ScreenWidth = width <= 0 ? InScreenWidth : width;
+    ScreenHeight = height <= 0 ? InScreenHeight : height;
+
     ScreenMode = InScreenMode;
 
     InitWindow(ScreenWidth, ScreenHeight);
+
+	EngineConfig->SaveEngineConfig<int>(EEngineConfigValueType::EEC_ScreenWidth, ScreenWidth);
+	EngineConfig->SaveEngineConfig<int>(EEngineConfigValueType::EEC_ScreenHeight, ScreenHeight);
 
 	// Get Client Rect
 	RECT ClientRect;
@@ -245,6 +257,23 @@ void UEngine::InitWorld()
 
         // 렌더러가 먼저 초기화 되므로, 카메라가 생성되는 시점인 현재 함수에서 프로젝션 매트릭스 업데이트
         Renderer->UpdateProjectionMatrix(Camera);
+
+        // 카메라 ini 읽어오기
+		float PosX = EngineConfig->GetEngineConfigValue<float>(EEngineConfigValueType::EEC_EditorCameraPosX, -5.f);
+		float PosY = EngineConfig->GetEngineConfigValue<float>(EEngineConfigValueType::EEC_EditorCameraPosY);
+		float PosZ = EngineConfig->GetEngineConfigValue<float>(EEngineConfigValueType::EEC_EditorCameraPosZ);
+
+		FVector CameraPos = FVector(PosX, PosY, PosZ);
+		float RotX = EngineConfig->GetEngineConfigValue<float>(EEngineConfigValueType::EEC_EditorCameraRotX);
+		float RotY = EngineConfig->GetEngineConfigValue<float>(EEngineConfigValueType::EEC_EditorCameraRotY);
+		float RotZ = EngineConfig->GetEngineConfigValue<float>(EEngineConfigValueType::EEC_EditorCameraRotZ);
+		float RotW = EngineConfig->GetEngineConfigValue<float>(EEngineConfigValueType::EEC_EditorCameraRotW, 1.f);
+
+		FQuat CameraRot = FQuat(RotX, RotY, RotZ, RotW);
+		FTransform CameraTransform = FTransform(CameraPos, CameraRot, FVector(1,1,1));
+
+		Camera->SetActorTransform(CameraTransform);
+		Camera->CameraSpeed = EngineConfig->GetEngineConfigValue<float>(EEngineConfigValueType::EEC_EditorCameraSpeed, 1.f);
     }
 
     //// Test
@@ -266,7 +295,9 @@ void UEngine::ShutdownWindow()
     UnregisterClassW(WindowClassName, WindowInstance);
     WindowInstance = nullptr;
 
-        ui.Shutdown();
+    ui.Shutdown();
+    EngineConfig->SaveAllConfig();
+	delete EngineConfig;
 }
 
 void UEngine::UpdateWindowSize(const uint32 InScreenWidth, const uint32 InScreenHeight)
@@ -284,6 +315,9 @@ void UEngine::UpdateWindowSize(const uint32 InScreenWidth, const uint32 InScreen
         ui.OnUpdateWindowSize(InScreenWidth, InScreenHeight);
     }
 	ResizeWidth = ResizeHeight = 0;
+
+	EngineConfig->SaveEngineConfig<int>(EEngineConfigValueType::EEC_ScreenWidth, ScreenWidth);
+	EngineConfig->SaveEngineConfig<int>(EEngineConfigValueType::EEC_ScreenHeight, ScreenHeight);
 }
 
 UObject* UEngine::GetObjectByUUID(uint32 InUUID) const
