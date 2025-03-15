@@ -86,7 +86,8 @@ T* UWorld::SpawnActor()
 	{
 		Actor->SetWorld(World);
 		Actors.Add(Actor);
-		ActorsToSpawn.Add(Actor);
+		//ActorsToSpawn.Add(Actor);
+		Actor->BeginPlay();
 		return Actor;
 	}
 

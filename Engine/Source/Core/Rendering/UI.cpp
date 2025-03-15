@@ -363,11 +363,11 @@ void UI::RenderRenderMode()
 		URenderer* Renderer = UEngine::Get().GetRenderer();
 		if (currentItem == 0)
 		{
-			Renderer->SetRenderMode(ERenderType::ERS_Solid);
+			Renderer->SetRenderMode(EViewModeIndex::ERS_Solid);
 		}
 		else if (currentItem == 1)
 		{
-			Renderer->SetRenderMode(ERenderType::ERS_Wireframe);
+			Renderer->SetRenderMode(EViewModeIndex::ERS_Wireframe);
 		}
 	}
     

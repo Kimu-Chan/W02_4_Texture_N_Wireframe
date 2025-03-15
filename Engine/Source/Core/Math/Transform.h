@@ -96,9 +96,26 @@ public:
 
 	FMatrix GetMatrix() const 
 	{
-		return FMatrix::GetScaleMatrix(Scale.X, Scale.Y, Scale.Z)
+		/*return FMatrix::GetScaleMatrix(Scale.X, Scale.Y, Scale.Z)
 			* FMatrix::GetRotateMatrix(Rotation)
-			* FMatrix::GetTranslateMatrix(Position.X, Position.Y, Position.Z);
+			* FMatrix::GetTranslateMatrix(Position.X, Position.Y, Position.Z);*/
+
+		FVector X = Rotation.RotateVector(FVector(1, 0, 0));
+		FVector Y = Rotation.RotateVector(FVector(0, 1, 0));
+		FVector Z = Rotation.RotateVector(FVector(0, 0, 1));
+
+		X = X * Scale.X;
+		Y = Y * Scale.Y;
+		Z = Z * Scale.Z;
+
+		FVector T = Position;
+
+		return FMatrix{
+			X.X, X.Y, X.Z, 0,
+			Y.X, Y.Y, Y.Z, 0,
+			Z.X, Z.Y, Z.Z, 0,
+			T.X, T.Y, T.Z, 1
+		};
 	}
 
 	FVector GetForward() const
@@ -134,9 +151,9 @@ public:
 	// InRotate는 Degree 단위
 	void Rotate(const FVector& InRotation)
 	{
-		RotateRoll(InRotation.X);
-		RotatePitch(InRotation.Y);
 		RotateYaw(InRotation.Z);
+		RotatePitch(InRotation.Y);
+		RotateRoll(InRotation.X);
 	}
 
 	void RotateYaw(float Angle)
@@ -157,5 +174,25 @@ public:
 	{
 		FVector Axis = FVector(1, 0, 0).GetSafeNormal();
 		Rotation = FQuat::MultiplyQuaternions(FQuat(Axis, Angle), Rotation);
+	}
+
+	FTransform operator*(const FTransform& InTransform) const
+	{
+
+		//FMatrix TR = FMatrix::GetTranslateMatrix(Position) * FMatrix::GetRotateMatrix(Rotation);
+		//FMatrix InTR = FMatrix::GetTranslateMatrix(InTransform.Position) * FMatrix::GetRotateMatrix(InTransform.Rotation);
+
+		//FMatrix ScaleMat = FMatrix::GetScaleMatrix(Scale) * FMatrix::GetScaleMatrix(InTransform.Scale);
+		//FTransform NewTransform  = (TR * InTR * ScaleMat).GetTransform();
+
+		//return NewTransform;
+		//
+		FTransform NewTransform;
+
+		NewTransform.Position = Position + (Rotation.RotateVector(Scale * InTransform.Position));
+		NewTransform.Rotation = FQuat::MultiplyQuaternions(Rotation, InTransform.Rotation);
+		NewTransform.Scale = Scale * InTransform.Scale;
+
+		return NewTransform; 
 	}
 };

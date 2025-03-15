@@ -1,15 +1,22 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Plane.h"
 #include "Matrix.h"
 
-FQuat FQuat::AxisAngleToQuaternion(const FVector& Axis, float AngleInDegrees) {
+FQuat FQuat::AxisAngleToQuaternion(const FVector& InAxis, float AngleInDegrees) {
+
+    FVector Axis = InAxis;
+    if (FMath::Abs(Axis.Length() - 1.0f) < KINDA_SMALL_NUMBER)
+    {
+        Axis = Axis.GetSafeNormal();
+    }
+
     float AngleInRadians = FMath::DegreesToRadians(AngleInDegrees);
     float HalfAngle = AngleInRadians * 0.5f;
     float s = sinf(HalfAngle);
     return FQuat(
-        Axis.X * s,
-        Axis.Y * s,
-        Axis.Z * s,
+        InAxis.X * s,
+        InAxis.Y * s,
+        InAxis.Z * s,
         cosf(HalfAngle)
     );
 }
@@ -131,4 +138,35 @@ FQuat FQuat::MakeFromRotationMatrix(const FMatrix& M)
     }
 
     return Q;
+}
+
+FQuat FQuat::Conjugate()
+{
+	return FQuat(-X, -Y, -Z, W);
+}
+
+FVector FQuat::RotateVector(const FVector& InVector) const
+{
+	FQuat V(InVector.X, InVector.Y, InVector.Z, 0.0f);
+    FQuat Q = *this;
+	FQuat QConj = Q.Conjugate();
+	FQuat RotatedQuat = MultiplyQuaternions(MultiplyQuaternions(Q, V), QConj);
+
+	return FVector(RotatedQuat.X, RotatedQuat.Y, RotatedQuat.Z);
+}
+
+FQuat FQuat::Normalize()
+{
+	float Magnitude = FMath::Sqrt(X * X + Y * Y + Z * Z + W * W);
+
+    if (Magnitude > KINDA_SMALL_NUMBER)
+    {
+		float InvMagnitude = 1.0f / Magnitude;
+		X *= InvMagnitude;
+		Y *= InvMagnitude;
+		Z *= InvMagnitude;
+		W *= InvMagnitude;
+    }
+
+    return FQuat(0, 0, 0, 1);
 }
