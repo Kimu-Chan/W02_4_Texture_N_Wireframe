@@ -38,7 +38,7 @@ public:
     ECameraProjectionMode::Type ProjectionMode;
     // float AspectRatio;	// 카메라 비율 (이번 프로젝트에서는 사용 안할듯) 
 
-    void SetFieldOfVew(float Fov);
+    void SetFieldOfView(float Fov);
     void SetFar(float Far);
     void SetNear(float Near);
     

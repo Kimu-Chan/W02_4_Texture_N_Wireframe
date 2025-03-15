@@ -130,11 +130,11 @@ public:
     TMap<uint32, std::shared_ptr<UObject>> GObjects;
 
 private:
-	FEngineConfig* EngineConfig;
-    
+    FEngineConfig* EngineConfig;
+
 public:
-	void SaveEngineConfig();
-	void LoadEngineConfig();
+	FEngineConfig* GetEngineConfig() const { return EngineConfig; }
+
 };
 
 template <typename ObjectType> requires std::derived_from<ObjectType, UObject>

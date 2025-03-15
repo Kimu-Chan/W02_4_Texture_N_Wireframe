@@ -17,14 +17,19 @@ void FEngineConfig::LoadEngineConfig()
 {
 	for (auto& SectionMapping : SectionMappings)
 	{
-		ft.GetSection(*SectionMapping.Key);
-		for (auto& ConfigMapping : ConfigMappings)
+		if (SectionMapping.Section == EEngineConfigSectionType::ECS_None)
+			continue;
+
+		INI::Section* Section = ft.GetSection(*SectionMapping.Key);
+
+		TArray<ConfigMapping> ConfigList = GetConfigList(SectionMapping.Section);
+		for (auto& Config : ConfigList)
 		{
-			switch (ConfigMapping.ValueType)
-			{
-				FString Value = ft.GetValue(*ConfigMapping.Key).AsString();
-				EngineConfig[SectionMapping.Section][ConfigMapping.Config] = Value;
-			}
+			FString Value = Section->GetValue(*Config.Key).AsString();
+
+			if (Value.IsEmpty() || Value == "")
+				continue;
+			EngineConfig[SectionMapping.Section][Config.Config] = Value;
 		}
 	}
 }
@@ -33,10 +38,14 @@ void FEngineConfig::SaveAllConfig()
 {
 	for (auto& SectionMapping : SectionMappings)
 	{
-		ft.GetSection(*SectionMapping.Key);
+		INI::Section* Section = ft.GetSection(*SectionMapping.Key);
 		for (auto& ConfigMapping : ConfigMappings)
 		{
-			ft.SetValue(*ConfigMapping.Key, EngineConfig[SectionMapping.Section][ConfigMapping.Config]);
+			FString Value = EngineConfig[SectionMapping.Section][ConfigMapping.Config];
+			if (Value.IsEmpty() || Value == "")
+				continue;
+
+			Section->SetValue(*ConfigMapping.Key, EngineConfig[SectionMapping.Section][ConfigMapping.Config]);
 		}
 	}
 
@@ -53,6 +62,20 @@ EEngineConfigSectionType FEngineConfig::FindSection(const EEngineConfigValueType
 		}
 	}
 	return EEngineConfigSectionType::ECS_None;
+}
+
+TArray<ConfigMapping> FEngineConfig::GetConfigList(const EEngineConfigSectionType& InSectionType) const
+{
+	TArray<ConfigMapping> ConfigList;
+	for (const auto& configMapping : ConfigMappings)
+	{
+		if (configMapping.Section == InSectionType)
+		{
+			ConfigList.Add(configMapping);
+		}
+	}
+
+	return ConfigList;
 }
 
 FString FEngineConfig::GetPath()
