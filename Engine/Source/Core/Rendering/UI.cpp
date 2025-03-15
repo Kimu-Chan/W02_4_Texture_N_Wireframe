@@ -273,6 +273,8 @@ void UI::RenderCameraSettings()
                 Camera->SetNear(NearFar[1] - 0.01f);
             }
         }
+        
+        UEngine::Get().GetRenderer()->UpdateProjectionMatrix(Camera);
     }
     
     FVector CameraPosition = Camera->GetActorTransform().GetPosition();
