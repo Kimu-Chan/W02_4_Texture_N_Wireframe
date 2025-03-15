@@ -142,9 +142,7 @@
     <ClCompile Include="Source\Core\AbstractClass\UClass.cpp">
       <Filter>Source Files\Core\AbstractClass</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Utils\IniParser.cpp">
-      <Filter>Source Files\Utils</Filter>
-    </ClCompile>
+    <ClCompile Include="Source\Engine\EngineConfig.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Core\HAL\PlatformType.h">
@@ -350,9 +348,6 @@
     </ClInclude>
     <ClInclude Include="Source\Core\AbstractClass\UClass.h">
       <Filter>Header Files\Core\AbstractClass</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Utils\IniParser.h">
-      <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\EngineConfig.h">
       <Filter>Header Files\Engine</Filter>

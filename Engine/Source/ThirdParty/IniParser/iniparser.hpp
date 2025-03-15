@@ -147,6 +147,14 @@ namespace INI
         return i; 
     }
 
+    template<> inline
+    std::string t_to_string<FString>(const FString& i)
+    {
+        // TCHAR를 UTF-8 문자열로 변환
+        
+        return *i;
+    }
+
     /// Convert string to anything (int, double, etc)
     template<class T> T string_to_t(const std::string& v)
     {
