@@ -1,6 +1,8 @@
 ﻿#include "pch.h" 
 #include "Axis.h"
 
+#include "World.h"
+
 AAxis::AAxis()
 {
     bIsGizmo = true;
@@ -51,6 +53,10 @@ AAxis::AAxis()
         Euler.Y,
         Euler.Z
     );
+
+    UEngine::Get().GetWorld()->AddZIgnoreComponent(LineX);
+    UEngine::Get().GetWorld()->AddZIgnoreComponent(LineY);
+    UEngine::Get().GetWorld()->AddZIgnoreComponent(LineZ);
 } 
 
 void AAxis::BeginPlay()
