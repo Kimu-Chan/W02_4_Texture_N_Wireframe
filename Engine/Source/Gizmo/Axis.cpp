@@ -3,6 +3,8 @@
 #include "Engine/Engine.h"
 #include "World.h"
 
+#include "World.h"
+
 AAxis::AAxis()
 {
     bIsGizmo = true;

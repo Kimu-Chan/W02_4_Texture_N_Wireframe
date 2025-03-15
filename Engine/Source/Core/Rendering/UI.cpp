@@ -287,37 +287,34 @@ void UI::RenderCameraSettings()
         {
             Camera->ProjectionMode = ECameraProjectionMode::Perspective;
         }
+
+        UEngine::Get().GetRenderer()->UpdateProjectionMatrix(Camera);
     }
 
     float FOV = Camera->GetFieldOfView();
-    if (ImGui::DragFloat("FOV", &FOV, 0.1f))
+    if (ImGui::DragFloat("FOV", &FOV, 0.1f, 20.f, 150.f))
     {
-        FOV = std::clamp(FOV, 0.01f, 179.99f);
+        FOV = FMath::Clamp(FOV, 20.f, 150.f);
         Camera->SetFieldOfVew(FOV);
+
+        UEngine::Get().GetRenderer()->UpdateProjectionMatrix(Camera);
     }
 
-    float NearFar[2] = { Camera->GetNear(), Camera->GetFar() };
-    if (ImGui::DragFloat2("Near, Far", NearFar, 0.1f))
+    float NearFar[2] = { Camera->GetNearClip(), Camera->GetFarClip() };
+    if (ImGui::DragFloat2("Near clip, Far clip", NearFar, 0.1f, 0.01f, 200.f))
     {
-        NearFar[0] = FMath::Max(0.01f, NearFar[0]);
-        NearFar[1] = FMath::Max(0.01f, NearFar[1]);
+        NearFar[0] = FMath::Clamp(NearFar[0], 0.01f, 200.f);
+        NearFar[1] = FMath::Clamp(NearFar[1], 0.01f, 200.f);
 
-        if (NearFar[0] < NearFar[1])
+        if (NearFar[0] > NearFar[1])
         {
-            Camera->SetNear(NearFar[0]);
-            Camera->SetFar(NearFar[1]);
+            std::swap(NearFar[0], NearFar[1]);
         }
-        else
-        {
-            if (abs(NearFar[0] - Camera->GetNear()) < 0.00001f)
-            {
-                Camera->SetFar(NearFar[0] + 0.01f);
-            }
-            else if (abs(NearFar[1] - Camera->GetFar()) < 0.00001f)
-            {
-                Camera->SetNear(NearFar[1] - 0.01f);
-            }
-        }
+
+        Camera->SetNear(NearFar[0]);
+        Camera->SetFar(NearFar[1]);
+        
+        UEngine::Get().GetRenderer()->UpdateProjectionMatrix(Camera);
     }
     
     FVector CameraPosition = Camera->GetActorTransform().GetPosition();

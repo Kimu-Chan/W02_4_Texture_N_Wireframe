@@ -24,8 +24,8 @@ public:
     ACamera();
 
 private:    
-    float Near;
-    float Far;
+    float NearClip;
+    float FarClip;
     // 화면각
     float FieldOfView;
 
@@ -43,8 +43,8 @@ public:
     void SetNear(float Near);
     
     float GetFieldOfView() const;
-    float GetNear() const;
-    float GetFar() const;
+    float GetNearClip() const;
+    float GetFarClip() const;
 
         
     FVector GetForward() const

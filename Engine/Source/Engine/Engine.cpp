@@ -55,15 +55,22 @@ LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_RBUTTONUP:
         APlayerInput::Get().HandleMouseInput(hWnd, lParam, false, true);
         break;
-	case WM_MOUSEWHEEL:
-		APlayerInput::Get().HandleMouseWheel(wParam);
-		break;
+    case WM_MOUSEWHEEL:
+        APlayerInput::Get().HandleMouseWheel(wParam);
+        break;
 
     case WM_SIZE:
         if (wParam == SIZE_MINIMIZED)
+        {
             return 0;
-        UEngine::Get().ResizeWidth = static_cast<int>(LOWORD(lParam));
-		UEngine::Get().ResizeHeight = static_cast<int>(HIWORD(lParam));
+        }
+        {
+            int32 Width = static_cast<int32>(LOWORD(lParam));
+            int32 Height = static_cast<int32>(HIWORD(lParam));
+            UEngine::Get().ResizeWidth = Width;
+            UEngine::Get().ResizeHeight = Height;
+            UEngine::Get().UpdateWindowSize(Width, Height);
+        }
         return 0;
     }
     return DefWindowProc(hWnd, uMsg, wParam, lParam);
@@ -232,7 +239,13 @@ void UEngine::InitWorld()
 {
     World = FObjectFactory::ConstructObject<UWorld>();
 
-    FEditorManager::Get().SetCamera(World->SpawnActor<ACamera>());
+    if (ACamera* Camera = World->SpawnActor<ACamera>())
+    {
+        FEditorManager::Get().SetCamera(Camera);
+
+        // 렌더러가 먼저 초기화 되므로, 카메라가 생성되는 시점인 현재 함수에서 프로젝션 매트릭스 업데이트
+        Renderer->UpdateProjectionMatrix(Camera);
+    }
 
     //// Test
     //AArrow* Arrow = World->SpawnActor<AArrow>();

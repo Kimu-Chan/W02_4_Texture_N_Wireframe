@@ -1,41 +1,76 @@
+// ShaderGrid.hlsl
 
-cbuffer constants : register(b0)
+////////
+/// Constant Buffer
+////////
+cbuffer ChangeEveryObject : register(b0)
 {
-    matrix MVP;
+    matrix WorldMatrix;
     float4 CustomColor;
     uint bUseVertexColor;
 }
 
+cbuffer ChangeEveryFrame : register(b1)
+{
+    matrix ViewMatrix;
+    float3 ViewPosition;
+}
+
+cbuffer ChangeOnResizeAndFov : register(b2)
+{
+    matrix ProjectionMatrix;
+    float NearClip;
+    float FarClip;
+}
+
+////////
+/// Input, Output
+////////
 struct VS_INPUT
 {
-    float4 position : POSITION; // Input position from vertex buffer
+    float4 Position : POSITION; // Input position from vertex buffer
 };
 
 struct PS_INPUT
 {
-    float4 position : SV_POSITION; // Transformed position to pass to the pixel shader
-    float4 color : COLOR;          // Color to pass to the pixel shader
-    // float4 depthPosition : TEXCOORD0;
+    float4 Position : SV_POSITION; // Transformed position to pass to the pixel shader
+    float4 Color : COLOR;          // Color to pass to the pixel shader
+    float4 WorldPosition : POSITION;
 };
 
 struct PS_OUTPUT
 {
-    float4 color : SV_TARGET;
-    float depth : SV_Depth;
+    float4 Color : SV_TARGET;
+    float Depth : SV_Depth;
 };
 
+////////
+/// Function
+////////
 PS_INPUT mainVS(VS_INPUT input)
 {
     PS_INPUT output;
+    output.Position = input.Position;
+    output.Position = mul(output.Position, WorldMatrix);
+    output.WorldPosition = output.Position;
+    output.Position = mul(output.Position, ViewMatrix);
+    output.Position = mul(output.Position, ProjectionMatrix);
 
-    output.position = mul(input.position, MVP);
-
-    output.color = CustomColor;
+    output.Color = CustomColor;
     return output;
 }
 
 
 float4 mainPS(PS_INPUT input) : SV_TARGET
 {
-    return input.color;
+    float Dist = length(input.WorldPosition.xyz - ViewPosition);
+
+    float MaxDist = FarClip * 0.8f;
+    float MinDist = MaxDist * 0.2f;
+
+    // Fade out grid
+    float Fade = saturate(1.f - (Dist - MinDist) / (MaxDist - MinDist));
+    input.Color.a *= Fade * Fade * Fade;
+    
+    return input.Color;
 }
