@@ -54,6 +54,8 @@ public:
 	void AddRenderComponent(class UPrimitiveComponent* Component) { RenderComponents.Add(Component); }
 	void RemoveRenderComponent(class UPrimitiveComponent* Component) { RenderComponents.Remove(Component); }
 
+	TArray<AActor*> GetActors() const { return Actors; };
+	
 private:
 	UWorldInfo GetWorldInfo() const;
 

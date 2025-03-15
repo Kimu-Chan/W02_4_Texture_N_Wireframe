@@ -1,5 +1,7 @@
 ﻿#include "pch.h" 
 #include "UI.h"
+
+#include "Axis.h"
 #include "Core/HAL/PlatformMemory.h"
 #include "URenderer.h"
 #include "Debugging/DebugConsole.h"
@@ -83,6 +85,7 @@ void UI::Update()
     RenderControlPanelWindow();
     RenderPropertyWindow();
     Debug::ShowConsole(bWasWindowSizeUpdated, PreRatio, CurRatio);
+    RenderSceneManager();
 
     // UI::RenderSomePanel 들에 대한 업데이트 완료 //
     bWasWindowSizeUpdated = false;
@@ -447,6 +450,45 @@ void UI::RenderGridGap()
     }
 
     ImGui::Separator();
+}
+
+void UI::RenderSceneManager()
+{
+    ImGui::Begin("Scene Manager");
+
+    TArray<AActor*> Actors = UEngine::Get().GetWorld()->GetActors();
+    
+    if (ImGui::TreeNodeEx("Primitives", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        for (const auto& Actor : Actors)
+        {
+            if (Actor->IsGizmoActor() || Actor->IsA<AAxis>())
+            {
+                continue;
+            }
+            
+            TSet<UActorComponent*> Comps = Actor->GetComponents();
+            
+            bool bHasPrimitive = false;
+            for (const auto& Comp : Comps)
+            {
+                if (Comp->IsA<UPrimitiveComponent>())
+                {
+                    bHasPrimitive = true;
+                    break;
+                }
+            }
+            
+            if (bHasPrimitive)
+            {
+                ImGui::Text(Actor->GetTypeName());
+            }
+        }
+        
+        ImGui::TreePop();
+    }
+
+    ImGui::End();
 }
 
 void UI::PreferenceStyle()
