@@ -70,7 +70,7 @@ float4 mainPS(PS_INPUT input) : SV_TARGET
 
     // Fade out grid
     float Fade = saturate(1.f - (Dist - MinDist) / (MaxDist - MinDist));
-    input.Color.a *= Fade;
+    input.Color.a *= Fade * Fade * Fade;
     
     return input.Color;
 }

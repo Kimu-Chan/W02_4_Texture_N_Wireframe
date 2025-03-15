@@ -15,7 +15,7 @@ ACamera::ACamera()
 
     RootComponent = AddComponent<USceneComponent>();
 
-    FVector StartLocation(3.f, 2.f, 2.f);
+    FVector StartLocation(3.f, -2.f, 2.f);
     
     FVector Delta = (FVector::ZeroVector - StartLocation).GetSafeNormal();
     float Pitch = FMath::RadiansToDegrees(asinf(Delta.Z)) * -1;

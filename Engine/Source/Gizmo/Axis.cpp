@@ -28,7 +28,7 @@ AAxis::AAxis()
     ULineComp* LineY = AddComponent<ULineComp>();
     FTransform YTransform = LineY->GetComponentTransform();
     YTransform.SetScale(FVector(1000.0f, 1.0f, 1.0f));
-    YTransform.Rotate({0.0f, 0.0f, 90.0f});
+    YTransform.Rotate({0.0f, 0.0f, -90.0f});
     LineY->SetRelativeTransform(YTransform);
     LineY->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
 
