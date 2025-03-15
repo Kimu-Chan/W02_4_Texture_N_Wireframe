@@ -481,7 +481,7 @@ void UI::RenderSceneManager()
             
             if (bHasPrimitive)
             {
-                ImGui::Text(Actor->GetTypeName());
+                ImGui::Text(*Actor->GetName());
             }
         }
         
