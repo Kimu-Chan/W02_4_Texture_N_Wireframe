@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #define NOMINMAX
 
@@ -43,3 +43,4 @@ using namespace Microsoft::WRL;
 
 template <typename T>
 using TQueue = std::queue<T>;
+

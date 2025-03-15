@@ -5,6 +5,7 @@
 #include "Core/AbstractClass/Singleton.h"
 #include "Core/Rendering/UI.h"
 #include "Core/Rendering/URenderer.h"
+#include "EngineConfig.h"
 
 class UObject;
 class UWorld;
@@ -49,6 +50,10 @@ public:
     int GetScreenHeight() const { return ScreenHeight; }
     int GetInitializedScreenWidth() const { return InitializedScreenWidth; }
     int GetInitializedScreenHeight() const { return InitializedScreenHeight; }
+    void LoadEngineConfig();
+	void SaveEngineConfig();
+    void SaveEngineConfig(EEngineConfig InConfig, UINT InValue);
+	UINT GetEngineConfigValue(EEngineConfig InConfig) const;
 
 private:
     void InitWindow(int InScreenWidth, int InScreenHeight);
@@ -126,6 +131,9 @@ private:
 public:
     // TArray<std::shared_ptr<UObject>> GObjects;
     TMap<uint32, std::shared_ptr<UObject>> GObjects;
+    
+private:
+	TMap<EEngineConfig, UINT> EngineConfig;
 };
 
 template <typename ObjectType> requires std::derived_from<ObjectType, UObject>

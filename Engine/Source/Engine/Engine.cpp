@@ -12,6 +12,7 @@
 #include "GameFrameWork/Camera.h"
 #include "GameFrameWork/Sphere.h"
 
+
 class AArrow;
 class APicker;
 
@@ -78,11 +79,16 @@ LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 void UEngine::Initialize(HINSTANCE hInstance, const WCHAR* InWindowTitle, const WCHAR* InWindowClassName, int InScreenWidth, int InScreenHeight, EScreenMode InScreenMode)
 {
+
     WindowInstance = hInstance;
     WindowTitle = InWindowTitle;
     WindowClassName = InWindowClassName;
-    ScreenWidth = InScreenWidth;
-    ScreenHeight = InScreenHeight;
+    ScreenWidth = InScreenWidth <= 0 ? 1920 : InScreenWidth;
+    ScreenHeight = InScreenHeight <= 0 ? 1080 : InScreenHeight;
+
+	SaveEngineConfig(EEngineConfig::EEC_ScreenWidth, ScreenWidth);
+	SaveEngineConfig(EEngineConfig::EEC_ScreenHeight, ScreenHeight);
+
     ScreenMode = InScreenMode;
 
     InitWindow(ScreenWidth, ScreenHeight);
@@ -194,6 +200,67 @@ void UEngine::Shutdown()
 }
 
 
+void UEngine::LoadEngineConfig()
+{
+    SetFileAttributes(DEFAULT_INI_FILE_PATH, FILE_ATTRIBUTE_NORMAL);
+
+    WCHAR Buffer[256];
+    WCHAR Key[50];
+    WCHAR Value[200];
+
+	int BufferSize = sizeof(Buffer) / sizeof(Buffer[0]);
+
+	for (int i = 0; i < static_cast<int>(EEngineConfig::EEC_Max); ++i)
+	{
+        const ConfigMapping& Mapping = ConfigMappings[i];
+        if (GetPrivateProfileString(L"Engine", Mapping.Key, nullptr, Buffer, BufferSize, DEFAULT_INI_FILE_PATH))
+        {
+            try
+            {
+				EngineConfig[Mapping.Config] = std::stoi(Buffer);
+			}
+            catch (const std::invalid_argument& e)
+            {
+				UE_LOG("LoadEngineConfig Error: %s, %s", Mapping.Key, e.what());
+            }
+        }
+        else
+        {
+			UE_LOG("LoadEngineConfig Load Failed: %s", Mapping.Key);
+        }
+	}
+}
+
+void UEngine::SaveEngineConfig()
+{
+	for (int i = 0; i < static_cast<int>(EEngineConfig::EEC_Max); ++i)
+	{
+		SaveEngineConfig(static_cast<EEngineConfig>(i), EngineConfig[static_cast<EEngineConfig>(i)]);
+	}
+}
+
+void UEngine::SaveEngineConfig(EEngineConfig InConfig, UINT InValue)
+{
+    const ConfigMapping& Mapping = ConfigMappings[static_cast<int>(InConfig)];
+
+    std::wstring valueStr = std::to_wstring(InValue);
+
+    if (!WritePrivateProfileString(L"Engine", Mapping.Key, valueStr.c_str(), DEFAULT_INI_FILE_PATH))
+    {
+        DWORD error = GetLastError();
+        wprintf(L"WritePrivateProfileString failed with error: %d\n", error);
+    }
+}
+
+UINT UEngine::GetEngineConfigValue(EEngineConfig InConfig) const
+{
+	if (EngineConfig.Contains(InConfig))
+	{
+        return EngineConfig[InConfig];
+	}
+    return 0;
+}
+
 void UEngine::InitWindow(int InScreenWidth, int InScreenHeight)
 {
 	// Register Window Class //
@@ -266,7 +333,9 @@ void UEngine::ShutdownWindow()
     UnregisterClassW(WindowClassName, WindowInstance);
     WindowInstance = nullptr;
 
-        ui.Shutdown();
+    ui.Shutdown();
+
+    SaveEngineConfig();
 }
 
 void UEngine::UpdateWindowSize(const uint32 InScreenWidth, const uint32 InScreenHeight)

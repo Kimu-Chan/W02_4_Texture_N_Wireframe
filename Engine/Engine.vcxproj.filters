@@ -142,6 +142,9 @@
     <ClCompile Include="Source\Core\AbstractClass\UClass.cpp">
       <Filter>Source Files\Core\AbstractClass</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Utils\IniParser.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Core\HAL\PlatformType.h">
@@ -348,6 +351,15 @@
     <ClInclude Include="Source\Core\AbstractClass\UClass.h">
       <Filter>Header Files\Core\AbstractClass</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Utils\IniParser.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\EngineConfig.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ThirdParty\IniParser\iniparser.hpp">
+      <Filter>ThirdParty\IniParser</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
@@ -485,15 +497,18 @@
     <Filter Include="Source Files\Core\AbstractClass">
       <UniqueIdentifier>{1fe7518d-444d-4a50-aef1-69411eb26684}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Shaders\ShaderW0.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
+    <Filter Include="ThirdParty\IniParser">
+      <UniqueIdentifier>{977d6273-0b4f-4970-91a6-42a84ba1a17c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\ShaderGrid.hlsl">
       <Filter>Shaders</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shaders\ShaderMain.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
