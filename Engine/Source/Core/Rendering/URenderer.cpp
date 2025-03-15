@@ -803,7 +803,14 @@ void URenderer::ReleaseBlendState()
 HRESULT URenderer::GenerateWorldGridVertices(int32 WorldGridCellPerSide)
 {
     HRESULT hr = S_OK;
-    
+
+    /**
+     * GridVertexNum 값에 대한 설명:
+     *   WorldGridCellPerSide 변수는 이름대로 한 모서리에 몇개의 그리드 칸이 존재할지를 설정하는 변수.
+     *   만약 n개의 구역을 나눈다면 선은 n + 1개를 그려야하므로, 1을 더함.
+     *   선은 가로 선과 세로 선이 존재하므로, 2를 곱함.
+     *   하나의 선은 2개의 정점으로 생성되므로, 마지막으로 2를 곱함.
+     */
     GridVertexNum = ((WorldGridCellPerSide + 1) * 2) * 2;
     float GridGap = 1.f; // WorldGrid Actor의 Scale을 통해 Gap 조정 가능. 현재는 아래 식의 이해를 돕기 위해 변수로 따로 분리함.
 
