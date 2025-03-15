@@ -19,13 +19,27 @@ class ACamera;
 class URenderer
 {
 private:
-	struct alignas(16) FConstants
+	// 한 프레임 동안 렌더할 각 오브젝트마다 바뀌는 값
+	struct alignas(16) FCbChangeEveryObject
 	{
-		FMatrix MVP;
-		FVector4 Color;
-		// true인 경우 Vertex Color를 사용하고, false인 경우 Color를 사용합니다.
+		FMatrix WorldMatrix;
+		FVector4 CustomColor;
+		// true인 경우 Vertex Color를 사용하고, false인 경우 CustomColor를 사용합니다.
 		uint32 bUseVertexColor;
-		FVector Padding;
+	};
+
+	// 한 프레임에 한번 바뀌는 값
+	struct alignas(16) FCbChangeEveryFrame
+	{
+		FMatrix ViewMatrix;
+	};
+
+	// 화면 크기가 바뀌거나 FOV값이 바뀌는 특정 상황에만 바뀌는 값
+	struct alignas(16) FCbChangeOnResizeAndFov
+	{
+		FMatrix ProjectionMatrix;
+		float NearClip;
+		float FarClip;
 	};
 	
 	struct alignas(16) FPickingConstants
@@ -106,7 +120,7 @@ public:
 	void ReleaseVertexBuffer(ID3D11Buffer* pBuffer) const;
 
 	/** Constant Data를 업데이트 합니다. */
-	void UpdateConstant(const ConstantUpdateInfo& UpdateInfo) const;
+	void UpdateObjectConstantBuffer(const ConstantUpdateInfo& UpdateInfo) const;
 
 	ID3D11Device* GetDevice() const;
 	ID3D11DeviceContext* GetDeviceContext() const;
@@ -172,8 +186,11 @@ protected:
 
 	ID3D11RasterizerState** CurrentRasterizerState = nullptr; // 현재 사용중인 레스터라이즈 상태
 	ERenderType CurrentRasterizerStateType = ERenderType::ERS_Solid; // 현재 사용중인 레스터라이즈 상태 타입
-	ID3D11Buffer* ConstantBuffer = nullptr;                 // 쉐이더에 데이터를 전달하기 위한 상수 버퍼
+	ID3D11Buffer* CbChangeEveryObject = nullptr;                 // 쉐이더에 데이터를 전달하기 위한 상수 버퍼
+	ID3D11Buffer* CbChangeEveryFrame = nullptr;
+	ID3D11Buffer* CbChangeOnResizeAndFov = nullptr;
 
+	
 	FLOAT ClearColor[4] = { 0.025f, 0.025f, 0.025f, 1.0f }; // 화면을 초기화(clear)할 때 사용할 색상 (RGBA)
 	D3D11_VIEWPORT ViewportInfo = {};                       // 렌더링 영역을 정의하는 뷰포트 정보
 

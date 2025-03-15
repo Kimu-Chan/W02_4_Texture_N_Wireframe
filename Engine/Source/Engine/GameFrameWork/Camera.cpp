@@ -9,8 +9,8 @@ ACamera::ACamera()
 {
     bIsGizmo = true;
     
-    Near = 0.1f;
-    Far = 100.f;
+    NearClip = 0.1f;
+    FarClip = 100.f;
     FieldOfView = 45.f;
     ProjectionMode = ECameraProjectionMode::Perspective;
 
@@ -28,12 +28,12 @@ void ACamera::SetFieldOfVew(float Fov)
 
 void ACamera::SetFar(float Far)
 {
-    this->Far = Far;
+    this->FarClip = Far;
 }
 
 void ACamera::SetNear(float Near)
 {
-    this->Near = Near;
+    this->NearClip = Near;
 }
 
 float ACamera::GetFieldOfView() const
@@ -41,12 +41,12 @@ float ACamera::GetFieldOfView() const
     return  FieldOfView;
 }
 
-float ACamera::GetNear() const
+float ACamera::GetNearClip() const
 {
-    return Near;
+    return NearClip;
 }
 
-float ACamera::GetFar() const
+float ACamera::GetFarClip() const
 {
-    return Far;
+    return FarClip;
 }

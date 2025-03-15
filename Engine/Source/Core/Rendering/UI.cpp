@@ -249,7 +249,7 @@ void UI::RenderCameraSettings()
         Camera->SetFieldOfVew(FOV);
     }
 
-    float NearFar[2] = { Camera->GetNear(), Camera->GetFar() };
+    float NearFar[2] = { Camera->GetNearClip(), Camera->GetFarClip() };
     if (ImGui::DragFloat2("Near, Far", NearFar, 0.1f))
     {
         NearFar[0] = FMath::Max(0.01f, NearFar[0]);
@@ -262,11 +262,11 @@ void UI::RenderCameraSettings()
         }
         else
         {
-            if (abs(NearFar[0] - Camera->GetNear()) < 0.00001f)
+            if (abs(NearFar[0] - Camera->GetNearClip()) < 0.00001f)
             {
                 Camera->SetFar(NearFar[0] + 0.01f);
             }
-            else if (abs(NearFar[1] - Camera->GetFar()) < 0.00001f)
+            else if (abs(NearFar[1] - Camera->GetFarClip()) < 0.00001f)
             {
                 Camera->SetNear(NearFar[1] - 0.01f);
             }

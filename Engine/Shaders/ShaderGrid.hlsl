@@ -1,11 +1,30 @@
+// ShaderGrid.hlsl
 
-cbuffer constants : register(b0)
+////////
+/// Constant Buffer
+////////
+cbuffer ChangeEveryObject : register(b0)
 {
-    matrix MVP;
+    matrix WorldMatrix;
     float4 CustomColor;
     uint bUseVertexColor;
 }
 
+cbuffer ChangeEveryFrame : register(b1)
+{
+    matrix ViewMatrix;
+}
+
+cbuffer ChangeOnResizeAndFov : register(b2)
+{
+    matrix ProjectionMatrix;
+    float NearClip;
+    float FarClip;
+}
+
+////////
+/// Input, Output
+////////
 struct VS_INPUT
 {
     float4 position : POSITION; // Input position from vertex buffer
@@ -24,11 +43,16 @@ struct PS_OUTPUT
     float depth : SV_Depth;
 };
 
+////////
+/// Function
+////////
 PS_INPUT mainVS(VS_INPUT input)
 {
     PS_INPUT output;
-
-    output.position = mul(input.position, MVP);
+    output.position = input.position;
+    output.position = mul(output.position, WorldMatrix);
+    output.position = mul(output.position, ViewMatrix);
+    output.position = mul(output.position, ProjectionMatrix);
 
     output.color = CustomColor;
     return output;
