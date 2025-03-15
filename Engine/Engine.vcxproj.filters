@@ -133,7 +133,10 @@
     <ClCompile Include="Source\Core\Math\Ray.cpp">
       <Filter>Source Files\Core\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Core\AbstractClass\UClass.cpp" />
+    <ClCompile Include="Source\Gizmo\WorldGrid.cpp" />
+    <ClCompile Include="Source\Core\AbstractClass\UClass.cpp">
+      <Filter>Header Files\Core\AbstractClass</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Core\HAL\PlatformType.h">
@@ -307,7 +310,10 @@
     <ClInclude Include="Source\Core\Rendering\RendererDefine.h">
       <Filter>Header Files\Core\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Core\AbstractClass\UClass.h" />
+    <ClInclude Include="Source\Gizmo\WorldGrid.h" />
+    <ClInclude Include="Source\Core\AbstractClass\UClass.h">
+      <Filter>Header Files\Core\AbstractClass</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
@@ -429,8 +435,8 @@
     <FxCompile Include="Shaders\ShaderW0.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Shaders\ShaderLine.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\ShaderGrid.hlsl" />
   </ItemGroup>
 </Project>

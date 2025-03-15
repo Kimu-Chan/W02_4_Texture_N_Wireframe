@@ -51,7 +51,7 @@ protected:
 	// !TODO : 런타임에 박스를 켜고 끄는 함수
 	std::shared_ptr<FBox> BoundingBox = nullptr;
 	virtual void InitBoundingBox() {};
-	virtual void UpdateBoundingBox() {};
+	virtual void UpdateBoundingBox();
 
 protected:
 	bool bIsPicked = false;

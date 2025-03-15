@@ -3,6 +3,7 @@
 
 #include "CoreUObject/Components/SceneComponent.h"
 #include "Debugging/DebugConsole.h"
+#include "CoreUObject/Components/PrimitiveComponent.h"
 
 
 FBox::FBox(USceneComponent* InOwner, const FVector& InMin, const FVector& InMax)
@@ -38,9 +39,6 @@ bool FBox::IntersectRay(const FRay& Ray) const
     float TMin = FMath::Max(FMath::Max(FMath::Min(T1, T2), FMath::Min(T3, T4)), FMath::Min(T5, T6));
     float TMax = FMath::Min(FMath::Min(FMath::Max(T1, T2), FMath::Max(T3, T4)), FMath::Max(T5, T6));
 
-    UE_LOG("Ray Origin: %.2f, %.2f, %.2f", Ray.Origin.X, Ray.Origin.Y, Ray.Origin.Z);
-    UE_LOG("Ray Direction: %.2f, %.2f, %.2f", NormalizedDir.X, NormalizedDir.Y, NormalizedDir.Z);
-
     // Ray가 AABB 뒤에서 시작함
     if (TMin < 0)
         return false;
@@ -54,33 +52,34 @@ bool FBox::IntersectRay(const FRay& Ray) const
 
 void FBox::Update(const FMatrix& InModelMatrix)
 {
-    FVector Vertices[8] =
-    {
-        InModelMatrix.TransformPosition(FVector(InitialMin.X, InitialMin.Y, InitialMin.Z)),
-        InModelMatrix.TransformPosition(FVector(InitialMin.X, InitialMin.Y, InitialMax.Z)),
-        InModelMatrix.TransformPosition(FVector(InitialMin.X, InitialMax.Y, InitialMin.Z)),
-        InModelMatrix.TransformPosition(FVector(InitialMin.X, InitialMax.Y, InitialMax.Z)),
-        InModelMatrix.TransformPosition(FVector(InitialMax.X, InitialMin.Y, InitialMin.Z)),
-        InModelMatrix.TransformPosition(FVector(InitialMax.X, InitialMin.Y, InitialMax.Z)),
-        InModelMatrix.TransformPosition(FVector(InitialMax.X, InitialMax.Y, InitialMin.Z)),
-        InModelMatrix.TransformPosition(FVector(InitialMax.X, InitialMax.Y, InitialMax.Z))
-    };
+	const FVector M0 = FVector(InModelMatrix.M[0][0], InModelMatrix.M[0][1], InModelMatrix.M[0][2]);
+	const FVector M1 = FVector(InModelMatrix.M[1][0], InModelMatrix.M[1][1], InModelMatrix.M[1][2]);
+	const FVector M2 = FVector(InModelMatrix.M[2][0], InModelMatrix.M[2][1], InModelMatrix.M[2][2]);
+	const FVector M3 = FVector(InModelMatrix.M[3][0], InModelMatrix.M[3][1], InModelMatrix.M[3][2]);
 
-    FVector NewMin = Vertices[0];
-    FVector NewMax = Vertices[0];
+	const FVector Origin = (InitialMin + InitialMax) * 0.5f;
+	const FVector Extent = (InitialMax - InitialMin) * 0.5f;
 
-    for (int i = 1; i < 8; i++)
+    FVector NewOrigin = FVector::Replicate(Origin, 0) * M0;
+    NewOrigin = FVector::Replicate(Origin, 1) * M1 + NewOrigin;
+    NewOrigin = FVector::Replicate(Origin, 2) * M2 + NewOrigin;
+    NewOrigin = M3 + NewOrigin;
+
+
+	FVector NewExtent = FVector::Abs(FVector::Replicate(Extent, 0) * M0);
+	NewExtent += FVector::Abs(FVector::Replicate(Extent, 1) * M1);
+	NewExtent += FVector::Abs(FVector::Replicate(Extent, 2) * M2);
+
+
+	Min = NewOrigin - NewExtent;
+	Max = NewOrigin + NewExtent;
+
+    if (Owner->IsA<USphereComp>())
     {
-        NewMin.X = FMath::Min(NewMin.X, Vertices[i].X);
-        NewMin.Y = FMath::Min(NewMin.Y, Vertices[i].Y);
-        NewMin.Z = FMath::Min(NewMin.Z, Vertices[i].Z);
-        NewMax.X = FMath::Max(NewMax.X, Vertices[i].X);
-        NewMax.Y = FMath::Max(NewMax.Y, Vertices[i].Y);
-        NewMax.Z = FMath::Max(NewMax.Z, Vertices[i].Z);
+		UE_LOG("Origin, %f, %f, %f", NewOrigin.X, NewOrigin.Y, NewOrigin.Z);
+		UE_LOG("Extent, %f, %f, %f", NewExtent.X, NewExtent.Y, NewExtent.Z);
     }
 
-    Min = NewMin;
-    Max = NewMax;
 }
 
 void FBox::Init(USceneComponent* InOwner, const FVector& InMin, const FVector& InMax)
