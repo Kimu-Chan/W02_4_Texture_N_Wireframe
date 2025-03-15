@@ -14,6 +14,8 @@ private:
 	uint32 UUID = 0;
 	uint32 InternalIndex; // Index of GUObjectArray
 
+	FString NamePrivate;
+
 public:
 	UObject();
 	virtual ~UObject();
@@ -21,6 +23,9 @@ public:
 public:
 	uint32 GetUUID() const { return UUID; }
 	uint32 GetInternalIndex() const { return InternalIndex; }
+
+	FString GetName() const { return NamePrivate; }
+	void SetName(const FString& InName) { NamePrivate = InName; }
 
 public:
 	template<typename T>
