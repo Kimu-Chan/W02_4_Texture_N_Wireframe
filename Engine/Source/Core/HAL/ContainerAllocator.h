@@ -71,8 +71,8 @@ public:
 	constexpr ~TContainerAllocator() = default;
 
 public:
-	constexpr T* allocate(size_type n) noexcept;
-	constexpr void deallocate(T* p, size_type n) noexcept;
+	static constexpr T* allocate(size_type n) noexcept;
+	static constexpr void deallocate(T* p, size_type n) noexcept;
 };
 
 template <typename T, int IndexSize>

@@ -282,6 +282,27 @@ FMatrix FMatrix::GetRotateMatrix(const FQuat& Q)
         return Result;
 }
 
+FMatrix FMatrix::GetOrthonormalizedMatrix(const FMatrix& Matrix)
+{
+	FVector Forward = FVector(Matrix.M[0][0], Matrix.M[0][1], Matrix.M[0][2]);
+	FVector Right = FVector(Matrix.M[1][0], Matrix.M[1][1], Matrix.M[1][2]);
+	FVector Up = FVector(Matrix.M[2][0], Matrix.M[2][1], Matrix.M[2][2]);
+	FVector Position = FVector(Matrix.M[3][0], Matrix.M[3][1], Matrix.M[3][2]);
+
+    Forward = Forward.GetSafeNormal();
+	Up = FVector::CrossProduct(Forward, Right).GetSafeNormal();
+	Right = FVector::CrossProduct(Up, Forward);
+
+	FMatrix Result = FMatrix(
+		Forward.X, Forward.Y, Forward.Z, 0.0f,
+		Right.X, Right.Y, Right.Z, 0.0f,
+		Up.X, Up.Y, Up.Z, 0.0f,
+		Position.X, Position.Y, Position.Z, 1.0f
+	);
+	return Result;
+
+}
+
 /// <summary>
 /// 뷰 변환 행렬을 생성합니다.
 /// </summary>
@@ -357,11 +378,12 @@ FVector FMatrix::GetRotation() const
 
 FVector4 FMatrix::TransformVector4(const FVector4& Vector) const
 {
-        return {
-                        Vector.X * M[0][0] + Vector.Y * M[1][0] + Vector.Z * M[2][0] + Vector.W * M[3][0],
-                        Vector.X * M[0][1] + Vector.Y * M[1][1] + Vector.Z * M[2][1] + Vector.W * M[3][1],
-                        Vector.X * M[0][2] + Vector.Y * M[1][2] + Vector.Z * M[2][2] + Vector.W * M[3][2],
-                        Vector.X * M[0][3] + Vector.Y * M[1][3] + Vector.Z * M[2][3] + Vector.W * M[3][3]
+        return 
+        {
+            Vector.X * M[0][0] + Vector.Y * M[1][0] + Vector.Z * M[2][0] + Vector.W * M[3][0],
+            Vector.X * M[0][1] + Vector.Y * M[1][1] + Vector.Z * M[2][1] + Vector.W * M[3][1],
+            Vector.X * M[0][2] + Vector.Y * M[1][2] + Vector.Z * M[2][2] + Vector.W * M[3][2],
+            Vector.X * M[0][3] + Vector.Y * M[1][3] + Vector.Z * M[2][3] + Vector.W * M[3][3]
         };
 }
 

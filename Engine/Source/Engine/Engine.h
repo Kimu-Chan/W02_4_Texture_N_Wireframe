@@ -20,7 +20,7 @@ class UEngine : public TSingleton<UEngine>
 {
 public:
     // 각종 윈도우 관련 메시지(이벤트)를 처리하는 함수
-    static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+    static LRESULT CALLBACK WndProc(HWND hWnd, uint32 uMsg, WPARAM wParam, LPARAM lParam);
 
     /**
      * Application을 초기화 합니다.
@@ -55,7 +55,7 @@ private:
     void InitRenderer();
     void InitWorld();
     void ShutdownWindow();
-    void UpdateWindowSize(UINT InScreenWidth, UINT InScreenHeight);
+    void UpdateWindowSize(uint32 InScreenWidth, uint32 InScreenHeight);
 
 public:
 	UWorld* GetWorld() const { return World; }
@@ -87,6 +87,9 @@ private:
 
     int ScreenWidth = 0;
     int ScreenHeight = 0;
+
+    int ResizeWidth = 0;
+	int ResizeHeight = 0;
 
 private:
 	std::unique_ptr<URenderer> Renderer;

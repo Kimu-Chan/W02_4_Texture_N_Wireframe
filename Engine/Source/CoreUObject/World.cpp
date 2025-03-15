@@ -257,8 +257,10 @@ void UWorld::LoadWorld(const char* SceneName)
         {
             Actor = SpawnActor<ACone>();
         }
-                
-        Actor->SetActorTransform(Transform);
+        if (Actor)
+        {
+            Actor->SetActorTransform(Transform);
+        }
     }
 }
 

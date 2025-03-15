@@ -32,6 +32,7 @@ struct alignas(16) FMatrix
 	static FMatrix GetScaleMatrix(float X, float Y, float Z);
 	static FMatrix GetScaleMatrix(const FVector& InScale);
 	static FMatrix GetRotateMatrix(const FQuat& Q);
+	static FMatrix GetOrthonormalizedMatrix(const FMatrix& Matrix);
 	static FMatrix LookAtLH(const FVector& EyePosition, const FVector& FocusPoint, const FVector& WorldUp);
 	static FMatrix PerspectiveFovLH(float FieldOfView, float AspectRatio, float NearPlane, float FarPlane);
 	static FMatrix OrthoLH(float ScreenWidth, float ScreenHeight, float NearPlane, float FarPlane);

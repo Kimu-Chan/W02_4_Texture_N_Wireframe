@@ -1,4 +1,4 @@
-#include "pch.h" 
+﻿#include "pch.h" 
 #include "Engine.h"
 
 #include "WorldGrid.h"
@@ -28,20 +28,20 @@ LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     
     switch (uMsg)
     {
-	case WM_DESTROY:    // Window Close, Alt + F4
+    case WM_DESTROY:    // Window Close, Alt + F4
         PostQuitMessage(0);
-        break;
+        return 0;
 
-    // Handle Key Input
-	case WM_KEYDOWN:    //@TODO: WinApi의 AysncKeyState로 교체 검토
+        // Handle Key Input
+    case WM_KEYDOWN:    //@TODO: WinApi의 AysncKeyState로 교체 검토
         APlayerInput::Get().KeyDown(static_cast<EKeyCode>(wParam));
-        if ((lParam>>30)%2 != 0)
+        if ((lParam >> 30) % 2 != 0)
         {
-            APlayerInput::Get().KeyOnceUp(static_cast<EKeyCode>( wParam ));
+            APlayerInput::Get().KeyOnceUp(static_cast<EKeyCode>(wParam));
         }
         break;
     case WM_KEYUP:
-        APlayerInput::Get().KeyUp(static_cast<EKeyCode>( wParam ));
+        APlayerInput::Get().KeyUp(static_cast<EKeyCode>(wParam));
         break;
     case WM_LBUTTONDOWN:
         APlayerInput::Get().HandleMouseInput(hWnd, lParam, true, false);
@@ -55,18 +55,25 @@ LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_RBUTTONUP:
         APlayerInput::Get().HandleMouseInput(hWnd, lParam, false, true);
         break;
-	case WM_MOUSEWHEEL:
-		APlayerInput::Get().HandleMouseWheel(wParam);
-		break;
+    case WM_MOUSEWHEEL:
+        APlayerInput::Get().HandleMouseWheel(wParam);
+        break;
 
     case WM_SIZE:
-        UEngine::Get().UpdateWindowSize(LOWORD(lParam), HIWORD(lParam));
-        break;
-    default:
-        return DefWindowProc(hWnd, uMsg, wParam, lParam);
+        if (wParam == SIZE_MINIMIZED)
+        {
+            return 0;
+        }
+        {
+            int32 Width = static_cast<int32>(LOWORD(lParam));
+            int32 Height = static_cast<int32>(HIWORD(lParam));
+            UEngine::Get().ResizeWidth = Width;
+            UEngine::Get().ResizeHeight = Height;
+            UEngine::Get().UpdateWindowSize(Width, Height);
+        }
+        return 0;
     }
-
-    return 0;
+    return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
 void UEngine::Initialize(HINSTANCE hInstance, const WCHAR* InWindowTitle, const WCHAR* InWindowClassName, int InScreenWidth, int InScreenHeight, EScreenMode InScreenMode)
@@ -74,18 +81,24 @@ void UEngine::Initialize(HINSTANCE hInstance, const WCHAR* InWindowTitle, const 
     WindowInstance = hInstance;
     WindowTitle = InWindowTitle;
     WindowClassName = InWindowClassName;
-    ScreenMode = InScreenMode;
     ScreenWidth = InScreenWidth;
     ScreenHeight = InScreenHeight;
+    ScreenMode = InScreenMode;
 
-    InitWindow(InScreenWidth, InScreenWidth);
+    InitWindow(ScreenWidth, ScreenHeight);
+
+	// Get Client Rect
+	RECT ClientRect;
+	GetClientRect(WindowHandle, &ClientRect);
+	ScreenWidth = ClientRect.right - ClientRect.left;
+	ScreenHeight = ClientRect.bottom - ClientRect.top;
 
     InitRenderer();
 
-    InitWorld();
-
     InitializedScreenWidth = ScreenWidth;
     InitializedScreenHeight = ScreenHeight;
+
+    InitWorld();
     
     ui.Initialize(WindowHandle, *Renderer, ScreenWidth, ScreenHeight);
     
@@ -103,7 +116,6 @@ void UEngine::Run()
 
     LARGE_INTEGER StartTime;
     QueryPerformanceCounter(&StartTime);
-
 
     bIsExit = true;
     while (bIsExit)
@@ -130,6 +142,13 @@ void UEngine::Run()
                 break;
             }
         }
+
+        // Handle window being minimized or screen locked
+        if (Renderer->IsOccluded()) continue;
+
+        // Handle window resize (we don't resize directly in the WM_SIZE handler)
+        if (ResizeWidth != 0 && ResizeHeight != 0)
+			UpdateWindowSize(ResizeWidth, ResizeHeight);
 
         // Renderer Update
         Renderer->PrepareRender();
@@ -186,10 +205,11 @@ void UEngine::InitWindow(int InScreenWidth, int InScreenHeight)
 
     // Create Window Handle //
     WindowHandle = CreateWindowExW(
-        0, WindowClassName, WindowTitle,
+        WS_EX_NOREDIRECTIONBITMAP,
+        WindowClassName, WindowTitle,
         WS_POPUP | WS_VISIBLE | WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT,
-        InScreenWidth, InScreenHeight,
+        ScreenWidth, ScreenHeight,
         nullptr, nullptr, WindowInstance, nullptr
     );
 
@@ -249,20 +269,21 @@ void UEngine::ShutdownWindow()
         ui.Shutdown();
 }
 
-void UEngine::UpdateWindowSize(UINT InScreenWidth, UINT InScreenHeight)
+void UEngine::UpdateWindowSize(const uint32 InScreenWidth, const uint32 InScreenHeight)
 {
     ScreenWidth = InScreenWidth;
     ScreenHeight = InScreenHeight;
 
     if(Renderer)
     {
-        Renderer->OnUpdateWindowSize(ScreenWidth, ScreenHeight);
+        Renderer->OnUpdateWindowSize(InScreenWidth, InScreenHeight);
     }
 
     if (ui.bIsInitialized)
     {
-        ui.OnUpdateWindowSize(ScreenWidth, ScreenHeight);
+        ui.OnUpdateWindowSize(InScreenWidth, InScreenHeight);
     }
+	ResizeWidth = ResizeHeight = 0;
 }
 
 UObject* UEngine::GetObjectByUUID(uint32 InUUID) const
