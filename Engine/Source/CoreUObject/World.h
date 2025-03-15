@@ -54,6 +54,8 @@ public:
 	void AddRenderComponent(class UPrimitiveComponent* Component) { RenderComponents.Add(Component); }
 	void RemoveRenderComponent(class UPrimitiveComponent* Component) { RenderComponents.Remove(Component); }
 
+	TArray<AActor*> GetActors() const { return Actors; };
+	
 private:
 	UWorldInfo GetWorldInfo() const;
 
@@ -74,6 +76,8 @@ protected:
 	TArray<AActor*> PendingDestroyActors; // TODO: 추후에 TQueue로 변경
 	TSet<UPrimitiveComponent*> RenderComponents;
 	TSet<class FBox*> BoundingBoxes;
+
+	TSet<FString> ActorNames;
 };
 
 template <typename T>
@@ -81,16 +85,49 @@ template <typename T>
 T* UWorld::SpawnActor()
 {
 	T* Actor = FObjectFactory::ConstructObject<T>();
-	
-	if (UWorld* World = UEngine::Get().GetWorld())
+
+	UWorld* World = UEngine::Get().GetWorld();
+	if (!World)
 	{
-		Actor->SetWorld(World);
-		Actors.Add(Actor);
-		//ActorsToSpawn.Add(Actor);
-		Actor->BeginPlay();
-		return Actor;
+		UE_LOG("Actor Construction Failed. World is nullptr");
+		return nullptr;
 	}
 
-	UE_LOG("Actor Construction Failed. World is nullptr");
-	return nullptr;
+	Actor->SetWorld(World);
+	Actors.Add(Actor);
+	//ActorsToSpawn.Add(Actor);
+
+	FString NewActorName = Actor->GetTypeName();
+	if (ActorNames.Contains(NewActorName))
+	{
+		uint32 Count = 0;
+		NewActorName += "_";
+		while (Count < UINT_MAX)
+		{
+			FString NumToStr = FString(std::to_string(Count));
+			FString TempName = NewActorName;
+			TempName += NumToStr;
+			if (!ActorNames.Contains(TempName))
+			{
+				Actor->SetName(TempName);
+				ActorNames.Add(TempName);
+				break;
+			}
+			++Count;
+		}
+
+		if (Count == UINT_MAX)
+		{
+			// TODO: 어떤 동작을 해야할지 고민해봐야 함.
+		}
+	}
+	else
+	{
+		Actor->SetName(NewActorName);
+		ActorNames.Add(NewActorName);
+	}
+	
+	Actor->BeginPlay();
+	
+	return Actor;
 }

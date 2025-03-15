@@ -40,6 +40,7 @@ private:
 	ESelectedAxis SelectedAxis = ESelectedAxis::None;
 	EGizmoType GizmoType = EGizmoType::Translate;
 
+public:
 	virtual const char* GetTypeName() override;
 
 private:
