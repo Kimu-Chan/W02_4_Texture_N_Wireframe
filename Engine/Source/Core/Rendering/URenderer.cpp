@@ -15,6 +15,7 @@ void URenderer::Create(HWND hWindow)
     CreateBufferCache();
     CreateDepthStencilBuffer();
     CreateDepthStencilState();
+    CreateBlendState();
 
     CreatePickingTexture(hWindow);
 
@@ -218,7 +219,9 @@ void URenderer::CreateConstantBuffer()
     DeviceContext->VSSetConstantBuffers(0, 1, &CbChangeEveryObject);
     DeviceContext->VSSetConstantBuffers(1, 1, &CbChangeEveryFrame);
     DeviceContext->VSSetConstantBuffers(2, 1, &CbChangeOnResizeAndFov);
-    
+
+    DeviceContext->PSSetConstantBuffers(1, 1, &CbChangeEveryFrame);
+    DeviceContext->PSSetConstantBuffers(2, 1, &CbChangeOnResizeAndFov);
     DeviceContext->PSSetConstantBuffers(3, 1, &ConstantPickingBuffer);
     DeviceContext->PSSetConstantBuffers(4, 1, &ConstantsDepthBuffer);
 }
@@ -419,7 +422,7 @@ void URenderer::PrepareWorldGrid()
     
     DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);
     DeviceContext->OMSetRenderTargets(1, &FrameBufferRTV, DepthStencilView);
-    DeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
+    DeviceContext->OMSetBlendState(GridBlendState, nullptr, 0xFFFFFFFF);
     
     DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
     DeviceContext->IASetInputLayout(GridInputLayout);
@@ -773,6 +776,30 @@ void URenderer::InitMatrix()
     ProjectionMatrix = FMatrix::Identity;
 }
 
+void URenderer::CreateBlendState()
+{
+    D3D11_BLEND_DESC BlendState;
+    ZeroMemory(&BlendState, sizeof(D3D11_BLEND_DESC));
+    BlendState.RenderTarget[0].BlendEnable = TRUE;
+    BlendState.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;  // 소스 색상: 알파값 사용
+    BlendState.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA; // 대상 색상: (1 - 알파)
+    BlendState.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+    BlendState.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;   // 알파값 유지
+    BlendState.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+    BlendState.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+    BlendState.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+    Device->CreateBlendState(&BlendState, &GridBlendState);
+}
+
+void URenderer::ReleaseBlendState()
+{
+    if (GridBlendState)
+    {
+        GridBlendState->Release();
+        GridBlendState = nullptr;
+    }
+}
+
 HRESULT URenderer::GenerateWorldGridVertices(int32 WorldGridCellPerSide)
 {
     HRESULT hr = S_OK;
@@ -1013,6 +1040,7 @@ void URenderer::UpdateViewMatrix(const FTransform& CameraTransform)
     if (FCbChangeEveryFrame* Constants = static_cast<FCbChangeEveryFrame*>(ConstantBufferMSR.pData))
     {
         Constants->ViewMatrix = FMatrix::Transpose(ViewMatrix);
+        Constants->ViewPosition = CameraTransform.GetPosition();
     }
     // UnMap해서 GPU에 값이 전달 될 수 있게 함
     DeviceContext->Unmap(CbChangeEveryFrame, 0);

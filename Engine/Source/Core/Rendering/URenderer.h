@@ -32,6 +32,7 @@ private:
 	struct alignas(16) FCbChangeEveryFrame
 	{
 		FMatrix ViewMatrix;
+		FVector ViewPosition;
 	};
 
 	// 화면 크기가 바뀌거나 FOV값이 바뀌는 특정 상황에만 바뀌는 값
@@ -172,6 +173,10 @@ protected:
 
 	void InitMatrix();
 
+	void CreateBlendState();
+
+	void ReleaseBlendState();
+
 protected:
 	// Direct3D 11 장치(Device)와 장치 컨텍스트(Device Context) 및 스왑 체인(Swap Chain)을 관리하기 위한 포인터들
 	ID3D11Device* Device = nullptr;                         // GPU와 통신하기 위한 Direct3D 장치
@@ -206,6 +211,8 @@ protected:
 	
 	ID3D11InputLayout* GridInputLayout = nullptr;           // World Grid 용 인풋 레이아웃
 	uint32 GridStride = 0;
+
+	ID3D11BlendState* GridBlendState = nullptr;
 	
 	// Depth Stenil Buffer
 	ID3D11Texture2D* DepthStencilBuffer = nullptr;          // DepthStencil버퍼 역할을 하는 텍스쳐
