@@ -183,7 +183,16 @@
     <ClInclude Include="Source\Core\Rendering\BufferCache.h" />
     <ClInclude Include="Source\Core\Rendering\UI.h" />
     <ClInclude Include="Source\Core\Rendering\URenderer.h" />
+    <ClInclude Include="Source\Core\Template\RemoveReference.h" />
+    <ClInclude Include="Source\Core\Template\Template.h" />
     <ClInclude Include="Source\Debugging\DebugConsole.h" />
+    <ClInclude Include="Source\Editor\EditorDesigner.h" />
+    <ClInclude Include="Source\Editor\EditorWindow.h" />
+    <ClInclude Include="Source\Editor\Font\IconDefs.h" />
+    <ClInclude Include="Source\Editor\Font\RawFonts.h" />
+    <ClInclude Include="Source\Editor\ICommand.h" />
+    <ClInclude Include="Source\Editor\ISwitchable.h" />
+    <ClInclude Include="Source\Editor\Windows\ConsoleWindow.h" />
     <ClInclude Include="Source\EnginePch.h" />
     <ClInclude Include="Source\Engine\Engine.h" />
     <ClInclude Include="Source\Engine\EngineStatics.h" />
@@ -234,6 +243,7 @@
     <ClCompile Include="Source\Core\Rendering\UI.cpp" />
     <ClCompile Include="Source\Core\Rendering\URenderer.cpp" />
     <ClCompile Include="Source\Debugging\DebugConsole.cpp" />
+    <ClCompile Include="Source\Editor\Windows\ConsoleWindow.cpp" />
     <ClCompile Include="Source\EnginePch.cpp" />
     <ClCompile Include="Source\Engine\Engine.cpp" />
     <ClCompile Include="Source\Engine\EngineStatics.cpp" />

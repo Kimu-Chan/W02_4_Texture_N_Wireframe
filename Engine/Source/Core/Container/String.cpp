@@ -1,6 +1,7 @@
 #include "pch.h" 
 #include "String.h"
 #include "Core/Math/MathUtility.h"
+#include "Template/Template.h"
 
 #if IS_WIDECHAR
 std::wstring FString::ConvertWideChar(const ANSICHAR* NarrowStr)
@@ -15,18 +16,18 @@ std::wstring FString::ConvertWideChar(const ANSICHAR* NarrowStr)
 FString FString::FromInt(int32 Num)
 {
 #if IS_WIDECHAR
-    return FString{std::to_wstring(Num)};
+    return FString{ std::to_wstring(Num) };
 #else
-    return FString{std::to_string(Num)};
+    return FString{ std::to_string(Num) };
 #endif
 }
 
 FString FString::SanitizeFloat(float InFloat)
 {
 #if IS_WIDECHAR
-    return FString{std::to_wstring(InFloat)};
+    return FString{ std::to_wstring(InFloat) };
 #else
-    return FString{std::to_string(InFloat)};
+    return FString{ std::to_string(InFloat) };
 #endif
 }
 
@@ -49,7 +50,7 @@ bool FString::Equals(const FString& Other, ESearchCase::Type SearchCase) const
     {
         if (SearchCase == ESearchCase::CaseSensitive)
         {
-            return TCString<TCHAR>::Strcmp(**this, *Other) == 0; 
+            return TCString<TCHAR>::Strcmp(**this, *Other) == 0;
         }
         else
         {
@@ -80,9 +81,9 @@ int32 FString::Find(
     const int32 SubStrLen = SubStr.Len();
 
     auto CompareFunc = [SearchCase](TCHAR A, TCHAR B) -> bool {
-        return (SearchCase == ESearchCase::IgnoreCase) ? 
+        return (SearchCase == ESearchCase::IgnoreCase) ?
             tolower(A) == tolower(B) : A == B;
-    };
+        };
 
     auto FindSubString = [&](int32 Start, int32 End, int32 Step) -> int32 {
         for (int32 i = Start; i != End; i += Step)
@@ -102,7 +103,7 @@ int32 FString::Find(
             }
         }
         return INDEX_NONE;
-    };
+        };
 
     if (SearchDir == ESearchDir::FromStart)
     {
@@ -114,4 +115,100 @@ int32 FString::Find(
         StartPosition = (StartPosition == INDEX_NONE) ? StrLen - SubStrLen : FMath::Min(StartPosition, StrLen - SubStrLen);
         return FindSubString(StartPosition, -1, -1);
     }
+}
+
+int FString::Strnicmp(const FString& Other, const size_t Count) const
+{
+    return TCString<TCHAR>::Strnicmp(**this, *Other, Count);
+}
+
+FString FString::Substr(const size_t Pos, const size_t Count) const
+{
+    if (Pos > PrivateString.length())
+    {
+        return FString();
+    }
+    return FString(PrivateString.substr(Pos, Count));
+}
+
+void FString::RemoveAt(const size_t Pos, const size_t Count)
+{
+    PrivateString.erase(Pos, Count);
+}
+
+void FString::RemoveAt(BaseStringType::iterator It, const size_t Count)
+{
+    PrivateString.erase(It, It + Count);
+}
+
+FString FString::ToUpper() const
+{
+    FString UpperString = *this;
+    TCString<TCHAR>::Strupr(UpperString.PrivateString.data());
+    return UpperString;
+}
+
+void FString::TrimStartAndEndInline()
+{
+    TrimEndInline();
+    TrimStartInline();
+}
+
+FString FString::TrimStartAndEnd() const&
+{
+    FString Result(*this);
+    Result.TrimStartAndEndInline();
+    return Result;
+}
+
+FString FString::TrimStartAndEnd()&&
+{
+    TrimStartAndEndInline();
+    return MoveTemp(*this);
+}
+
+void FString::TrimStartInline()
+{
+    int32 Pos = 0;
+    while (Pos < Len() && std::isspace((*this)[Pos]))
+    {
+        Pos++;
+    }
+    RemoveAt(0, Pos);
+}
+
+FString FString::TrimStart() const&
+{
+    FString Result(*this);
+    Result.TrimStartInline();
+    return Result;
+}
+
+FString FString::TrimStart()&&
+{
+    TrimStartInline();
+    return MoveTemp(*this);
+}
+
+void FString::TrimEndInline()
+{
+    int32 End = Len();
+    while (End > 0 && std::isspace(((*this)[End - 1])))
+    {
+        End--;
+    }
+    RemoveAt(End, Len() - End);
+}
+
+FString FString::TrimEnd() const&
+{
+    FString Result(*this);
+    Result.TrimEndInline();
+    return Result;
+}
+
+FString FString::TrimEnd()&&
+{
+    TrimEndInline();
+    return MoveTemp(*this);
 }

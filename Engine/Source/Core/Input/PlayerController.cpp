@@ -1,4 +1,4 @@
-#include "pch.h" 
+﻿#include "pch.h" 
 #include "PlayerController.h"
 
 #include "Static/EditorManager.h"
@@ -12,6 +12,7 @@ APlayerController::APlayerController() {
 
 void APlayerController::HandleCameraMovement(float DeltaTime) {
 
+	//@TODO: ImGuiIO.WantCaptureMouse를 이용하여 UI 조작중에는 카메라 조작을 막아야함
     FVector NewVelocity(0, 0, 0);
 
     if (APlayerInput::Get().IsPressedMouse(true) == false)

@@ -6,6 +6,10 @@
 #include "Static/EditorManager.h"
 #include "CoreUObject/World.h"
 #include "CoreUObject/Components/PrimitiveComponent.h"
+#include "Editor/EditorDesigner.h"
+#include "Editor/Font/IconDefs.h"
+#include "Editor/Font/RawFonts.h"
+#include "Editor/Windows/ConsoleWindow.h"
 #include "Engine/GameFrameWork/Actor.h"
 #include "Engine/GameFrameWork/Camera.h"
 #include "Engine/GameFrameWork/Sphere.h"
@@ -18,20 +22,23 @@
 #include "ImGui/imgui_impl_win32.h"
 #include "ImGui/imgui_internal.h"
 
+//@TODO: Replace with EditorWindow
 
-void UI::Initialize(HWND hWnd, const URenderer& Renderer, UINT ScreenWidth, UINT ScreenHeight)
+std::shared_ptr<ConsoleWindow> UI::ConsoleWindowInstance = nullptr;
+
+void UI::Initialize(HWND hWnd, const URenderer& Renderer, uint32 ScreenWidth, uint32 ScreenHeight)
 {
     // Initialize ImGui
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+	//CreateUsingFont();
 
     // Fix Font Size
     io.FontGlobalScale = 1.0f;
-    io.DisplaySize = ScreenSize;
-    //io.WantSetMousePos = true;
 
     // Initialize ImGui Backend
     ImGui_ImplWin32_Init(hWnd);
@@ -45,42 +52,47 @@ void UI::Initialize(HWND hWnd, const URenderer& Renderer, UINT ScreenWidth, UINT
 
     PreRatio = GetRatio();
     CurRatio = GetRatio();
+
+    // Add Windows
+    //@TODO: Control, Property, Stat, etc...
+    ConsoleWindowInstance = std::make_shared<ConsoleWindow>();
+	UEditorDesigner::Get().AddWindow("ConsoleWindow", ConsoleWindowInstance);
 }
 
 void UI::Update()
 {
-    POINT mousePos;
-    if (GetCursorPos(&mousePos)) {
-        HWND hwnd = GetActiveWindow();
-        ScreenToClient(hwnd, &mousePos);
-
-        ImVec2 CalculatedMousePos = ResizeToScreenByCurrentRatio(ImVec2(mousePos.x, mousePos.y));
-        ImGui::GetIO().MousePos = CalculatedMousePos;
-        //UE_LOG("MousePos: (%.1f, %.1f), DisplaySize: (%.1f, %.1f)\n",CalculatedMousePos.x, CalculatedMousePos.y, GetRatio().x, GetRatio().y);
-    }
+	// Set ImGui Style //
+    PreferenceStyle();
 
 	// New Frame //
     ImGui_ImplDX11_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
 
+    // 화면비 갱신 //
     if (bWasWindowSizeUpdated)
     {
         PreRatio = CurRatio;
         CurRatio = GetRatio();
         UE_LOG("Current Ratio: %f, %f", CurRatio.x, CurRatio.y);
     }
-    
-    RenderControlPanel();
-    RenderPropertyWindow();
 
+    if (bShowDemoWindow)
+		ImGui::ShowDemoWindow(&bShowDemoWindow);
+    
+    RenderControlPanelWindow();
+    RenderPropertyWindow();
     Debug::ShowConsole(bWasWindowSizeUpdated, PreRatio, CurRatio);
+
+    // UI::RenderSomePanel 들에 대한 업데이트 완료 //
+    bWasWindowSizeUpdated = false;
+
+	// Render Windows //
+	UEditorDesigner::Get().Render();
 
 	// Render ImGui //
     ImGui::Render();
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-
-    bWasWindowSizeUpdated = false;
 }
 
 
@@ -101,9 +113,12 @@ void UI::OnUpdateWindowSize(UINT InScreenWidth, UINT InScreenHeight)
     ScreenSize = ImVec2(static_cast<float>(InScreenWidth), static_cast<float>(InScreenHeight));
 
     bWasWindowSizeUpdated = true;
+
+    // Render Windows //
+    UEditorDesigner::Get().OnResize(InScreenWidth, InScreenHeight);
 }
 
-void UI::RenderControlPanel()
+void UI::RenderControlPanelWindow()
 {
     ImGui::Begin("Jungle Control Panel");
 
@@ -116,13 +131,42 @@ void UI::RenderControlPanel()
     }
     
     ImGui::Text("Hello, Jungle World!");
-    ImGui::Text("FPS: %.3f (what is that ms)", ImGui::GetIO().Framerate);
 
+    ImGui::Separator();
+
+    ImGui::Text("Mouse pos: (%g, %g)", ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y);
+	ImGui::Text("Screen Size: (%g, %g)", ScreenSize.x, ScreenSize.y);
+
+    ImGui::Separator();
+
+    ImGui::Text("FPS: %.3f (what is that ms)", ImGui::GetIO().Framerate);
     RenderMemoryUsage();
+
+    ImGui::Separator();
+
     RenderPrimitiveSelection();
+
+    ImGui::Separator();
+
     RenderCameraSettings();
+
+    ImGui::Separator();
+
     RenderRenderMode();
+
+	ImGui::Separator();
+
     RenderGridGap();
+
+	ImGui::Separator();
+
+    if (ImGui::Button("Toggle New Console"))
+    {
+        UEditorDesigner::Get().Toggle();
+    }
+	ImGui::SameLine();
+    ImGui::Checkbox("Demo Window", &bShowDemoWindow);
+
     ImGui::End();
 }
 
@@ -147,8 +191,6 @@ void UI::RenderMemoryUsage()
         ContainerAllocByte + ObjectAllocByte,
         ContainerAllocCount + ObjectAllocCount
     );
-
-    ImGui::Separator();
 }
 
 void UI::RenderPrimitiveSelection()
@@ -196,22 +238,23 @@ void UI::RenderPrimitiveSelection()
     
     if (ImGui::InputText("Scene Name", SceneNameInput, bufferSize))
     {
-            World->SceneName = SceneNameInput;
+    	World->SceneName = SceneNameInput;
     }
     
     if (ImGui::Button("New Scene"))
     {
         World->ClearWorld();
     }
+    ImGui::SameLine();
     if (ImGui::Button("Save Scene"))
     {
         World->SaveWorld();   
     }
+    ImGui::SameLine();
     if (ImGui::Button("Load Scene"))
     {
         World->LoadWorld(SceneNameInput);
     }
-    ImGui::Separator();
 }
 
 void UI::RenderCameraSettings()
@@ -359,7 +402,7 @@ void UI::RenderPropertyWindow()
             FVector DeltaEulerAngle = UIEulerAngle - PrevEulerAngle;
 
             selectedTransform.Rotate(DeltaEulerAngle);
-                        UE_LOG("Rotation: %.2f, %.2f, %.2f", DeltaEulerAngle.X, DeltaEulerAngle.Y, DeltaEulerAngle.Z);
+            UE_LOG("Rotation: %.2f, %.2f, %.2f", DeltaEulerAngle.X, DeltaEulerAngle.Y, DeltaEulerAngle.Z);
             selectedActor->SetActorTransform(selectedTransform);
         }
         if (ImGui::DragFloat3("Scale", scale, 0.1f))
@@ -393,9 +436,9 @@ void UI::RenderGridGap()
 
     float MaxVal = 10.f;
     float MinVal = 0.5f;
-    
+
     float GridGap = UEngine::Get().GetWorldGridGap();
-    
+
     if (ImGui::DragFloat("Grid Gap", &GridGap, 0.01f, MinVal, MaxVal))
     {
         GridGap = GridGap > MaxVal ? MaxVal : (GridGap < MinVal ? MinVal : GridGap); // Clamp
@@ -405,3 +448,57 @@ void UI::RenderGridGap()
     ImGui::Separator();
 }
 
+void UI::PreferenceStyle()
+{
+    // Window
+    ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = ImVec4(0.0f, 0.0f, 0.0f, 0.9f);
+    ImGui::GetStyle().Colors[ImGuiCol_TitleBgActive] = ImVec4(0.0f, 0.5f, 0.0f, 1.0f);
+    ImGui::GetStyle().Colors[ImGuiCol_TitleBg] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
+    ImGui::GetStyle().WindowRounding = 5.0f;
+
+    ImGui::GetStyle().FrameRounding = 3.0f;
+
+    // Sep
+    ImGui::GetStyle().Colors[ImGuiCol_Separator] = ImVec4(0.3f, 0.3f, 0.3f, 1.0f);
+
+    // Frame
+    ImGui::GetStyle().Colors[ImGuiCol_FrameBg] = ImVec4(0.31f, 0.31f, 0.31f, 0.6f);
+    ImGui::GetStyle().Colors[ImGuiCol_FrameBgActive] = ImVec4(0.203f, 0.203f, 0.203f, 0.6f);
+    ImGui::GetStyle().Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.0f, 0.5f, 0.0f, 0.6f);
+
+    // Button
+    ImGui::GetStyle().Colors[ImGuiCol_Button] = ImVec4(0.105f, 0.105f, 0.105f, 0.6f);
+    ImGui::GetStyle().Colors[ImGuiCol_ButtonActive] = ImVec4(0.105f, 0.105f, 0.105f, 0.6f);
+    ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered] = ImVec4(0.0f, 0.5f, 0.0f, 0.6f);
+
+    ImGui::GetStyle().Colors[ImGuiCol_Header] = ImVec4(0.203f, 0.203f, 0.203f, 0.6f);
+    ImGui::GetStyle().Colors[ImGuiCol_HeaderActive] = ImVec4(0.105f, 0.105f, 0.105f, 0.6f);
+    ImGui::GetStyle().Colors[ImGuiCol_HeaderHovered] = ImVec4(0.0f, 0.5f, 0.0f, 0.6f);
+
+    // Text
+    ImGui::GetStyle().Colors[ImGuiCol_Text] = ImVec4(1.0f, 1.0f, 1.0f, 0.9f);
+
+}
+
+//void UI::CreateUsingFont()
+//{
+//    ImGuiIO& io = ImGui::GetIO();
+//    io.Fonts->AddFontFromFileTTF(R"(C:\Windows\Fonts\malgun.ttf)", 14.0f, NULL, io.Fonts->GetGlyphRangesKorean());
+//
+//    ImFontConfig FeatherFontConfig;
+//    FeatherFontConfig.PixelSnapH = true;
+//    FeatherFontConfig.FontDataOwnedByAtlas = false;
+//    FeatherFontConfig.GlyphOffset = ImVec2(0, 0);
+//    static constexpr ImWchar IconRanges[] = {
+//        ICON_MOVE,      ICON_MOVE + 1,
+//        ICON_ROTATE,    ICON_ROTATE + 1,
+//        ICON_SCALE,     ICON_SCALE + 1,
+//        ICON_MONITOR,   ICON_MONITOR + 1,
+//        ICON_BAR_GRAPH, ICON_BAR_GRAPH + 1,
+//        ICON_NEW,       ICON_NEW + 1,
+//        ICON_SAVE,      ICON_SAVE + 1,
+//        ICON_LOAD,      ICON_LOAD + 1,
+//        0 };
+//
+//    io.Fonts->AddFontFromMemoryTTF(FeatherRawData, FontSizeOfFeather, 22.0f, &FeatherFontConfig, IconRanges);
+//}
