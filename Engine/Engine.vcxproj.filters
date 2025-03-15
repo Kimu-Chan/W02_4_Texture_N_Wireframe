@@ -136,9 +136,6 @@
     <ClCompile Include="Source\Editor\Windows\ConsoleWindow.cpp">
       <Filter>Source Files\Editor\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Editor\Windows\ConsoleWindow.cpp">
-      <Filter>Source Files\Editor\Windows</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Gizmo\WorldGrid.cpp">
       <Filter>Source Files\Gizmo</Filter>
     </ClCompile>

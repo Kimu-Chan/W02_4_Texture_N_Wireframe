@@ -195,7 +195,7 @@ void UI::RenderMemoryUsage()
 
 void UI::RenderPrimitiveSelection()
 {
-    const char* items[] = { "Sphere", "Cube", "Cylinder", "Cone" };
+    const char* items[] = { "Sphere", "Cube", "Cylinder", "Cone", "Arrow"};
 
     ImGui::Combo("Primitive", &currentItem, items, IM_ARRAYSIZE(items));
 
@@ -219,6 +219,10 @@ void UI::RenderPrimitiveSelection()
             else if (strcmp(items[currentItem], "Cone") == 0)
             {
                 World->SpawnActor<ACone>();
+            }
+            else if (strcmp(items[currentItem], "Arrow") == 0)
+            {
+                World->SpawnActor<AArrow>();
             }
             //else if (strcmp(items[currentItem], "Triangle") == 0)
             //{
@@ -359,11 +363,11 @@ void UI::RenderRenderMode()
 		URenderer* Renderer = UEngine::Get().GetRenderer();
 		if (currentItem == 0)
 		{
-			Renderer->SetRenderMode(ERenderType::ERS_Solid);
+			Renderer->SetRenderMode(EViewModeIndex::ERS_Solid);
 		}
 		else if (currentItem == 1)
 		{
-			Renderer->SetRenderMode(ERenderType::ERS_Wireframe);
+			Renderer->SetRenderMode(EViewModeIndex::ERS_Wireframe);
 		}
 	}
     

@@ -121,7 +121,7 @@ public:
 
     void GetPrimitiveLocalBounds(EPrimitiveType Type, FVector& OutMin, FVector& OutMax);
 
-	void SetRenderMode(ERenderType Type);
+	void SetRenderMode(EViewModeIndex Type);
 
 	// World Grid
 	HRESULT GenerateWorldGridVertices(int32 WorldGridCellPerSide);
@@ -183,7 +183,7 @@ protected:
 	ID3D11RasterizerState* RasterizerState_Wireframe = nullptr; // Wireframe 레스터라이즈 상태
 
 	ID3D11RasterizerState** CurrentRasterizerState = nullptr; // 현재 사용중인 레스터라이즈 상태
-	ERenderType CurrentRasterizerStateType = ERenderType::ERS_Solid; // 현재 사용중인 레스터라이즈 상태 타입
+	EViewModeIndex CurrentRasterizerStateType = EViewModeIndex::ERS_Solid; // 현재 사용중인 레스터라이즈 상태 타입
 	ID3D11Buffer* ConstantBuffer = nullptr;                 // 쉐이더에 데이터를 전달하기 위한 상수 버퍼
 
 	FLOAT ClearColor[4] = { 0.025f, 0.025f, 0.025f, 1.0f }; // 화면을 초기화(clear)할 때 사용할 색상 (RGBA)
