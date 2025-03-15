@@ -215,10 +215,10 @@ void URenderer::PrepareRender()
 
     switch (CurrentRasterizerStateType)
     {
-    case ERenderType::ERS_Solid:
+    case EViewModeIndex::ERS_Solid:
         CurrentRasterizerState = &RasterizerState_Solid;
         break;
-    case ERenderType::ERS_Wireframe:
+    case EViewModeIndex::ERS_Wireframe:
         CurrentRasterizerState = &RasterizerState_Wireframe;
         break;
     }
@@ -774,7 +774,7 @@ HRESULT URenderer::GenerateWorldGridVertices(int32 WorldGridCellPerSide)
     return S_OK;
 }
 
-void URenderer::SetRenderMode(ERenderType Type)
+void URenderer::SetRenderMode(EViewModeIndex Type)
 {
 	CurrentRasterizerStateType = Type;
 }

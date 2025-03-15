@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Core/HAL/PlatformType.h"
 
-enum class ERenderType : uint8
+enum class EViewModeIndex : uint8
 {
 	ERS_Solid,
 	ERS_Wireframe,

@@ -15,6 +15,7 @@ struct alignas(16) FQuat : public FVector4{
 	explicit FQuat(FVector Rotation) : FVector4(EulerToQuaternion(Rotation)) {}
 	FQuat(const FVector& Axis, float AngleInDegrees) : FVector4(AxisAngleToQuaternion(Axis, AngleInDegrees)) {}
 
+
 	static FQuat EulerToQuaternion(FVector Euler);
 	static FVector QuaternionToEuler(const FQuat& quaternion);
 	static FQuat AxisAngleToQuaternion(const FVector& Axis, float AngleInDegrees);
@@ -24,5 +25,8 @@ struct alignas(16) FQuat : public FVector4{
 	static FQuat SubtractQuaternions(const FQuat& q1, const FQuat& q2);
 
 	static FQuat MakeFromRotationMatrix(const struct FMatrix& M);
+	FQuat Conjugate();
 	FVector GetEuler() const { return QuaternionToEuler(*this); }
+	FVector RotateVector(const FVector& InVector) const;
+	FQuat Normalize();
 };
