@@ -125,14 +125,15 @@ void AGizmoHandle::SetScaleByDistance()
     // 거리 계산
     float distance = (actorWorldPos - cameraWorldPos).Length();
 
-    float baseScale = 1.0f;    // 기본 스케일
-    float scaleFactor = distance * 0.1f; // 거리에 비례하여 스케일 증가
+    float baseScale = 3.0f;    // 기본 스케일
+    float scaleFactor = distance * (1.f/baseScale); // 거리에 비례하여 스케일 증d가
 
     // float minScale = 1.0f;     // 최소 스케일
     // float maxScale = 1.0f;     // 최대 스케일
     // float scaleFactor = clamp(1.0f / distance, minScale, maxScale);
 
     MyTransform.SetScale(scaleFactor, scaleFactor, scaleFactor);
+    SetActorTransform(MyTransform);
 }
 
 void AGizmoHandle::SetActive(bool bActive)
