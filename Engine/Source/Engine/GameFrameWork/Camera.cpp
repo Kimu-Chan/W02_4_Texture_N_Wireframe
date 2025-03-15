@@ -1,6 +1,5 @@
 ﻿#include "pch.h" 
 #include "Camera.h"
-#include "Core/Rendering/URenderer.h"
 #include "CoreUObject/Components/PrimitiveComponent.h"
 
 
@@ -11,14 +10,23 @@ ACamera::ACamera()
     
     NearClip = 0.1f;
     FarClip = 100.f;
-    FieldOfView = 45.f;
+    FieldOfView = 90.f;
     ProjectionMode = ECameraProjectionMode::Perspective;
 
     RootComponent = AddComponent<USceneComponent>();
+
+    FVector StartLocation(3.f, 2.f, 2.f);
     
-    FTransform StartPos = GetActorTransform();
-    StartPos.SetPosition(FVector(-5, 0, 0));
-    SetActorTransform(StartPos);
+    FVector Delta = (FVector::ZeroVector - StartLocation).GetSafeNormal();
+    float Pitch = FMath::RadiansToDegrees(asinf(Delta.Z)) * -1;
+    float Yaw = FMath::RadiansToDegrees(atan2(Delta.Y, Delta.X));
+    FVector StartRotation(0.f, Pitch, Yaw);
+    
+    FTransform StartTransform = GetActorTransform();
+    StartTransform.SetPosition(StartLocation);
+    StartTransform.SetRotation(StartRotation);
+    
+    SetActorTransform(StartTransform);
 }
 
 void ACamera::SetFieldOfVew(float Fov)
@@ -38,7 +46,7 @@ void ACamera::SetNear(float Near)
 
 float ACamera::GetFieldOfView() const
 {
-    return  FieldOfView;
+    return FieldOfView;
 }
 
 float ACamera::GetNearClip() const
