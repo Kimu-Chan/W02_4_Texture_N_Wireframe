@@ -17,7 +17,7 @@ public:
     FBox(USceneComponent* InOwner, const FVector& InMin, const FVector& InMax);
 
     bool IsValidBox() const;
-    bool IntersectRay(const FRay& Ray) const;
+    bool IntersectRay(const FRay& Ray, float& OutDistance) const;
     void Update(const FMatrix& InModelMatrix);
     void Init(USceneComponent* InOwner, const FVector& InMin, const FVector& InMax);
     void Init(USceneComponent* InOwner, const FVector& InCenter, float InRadius);

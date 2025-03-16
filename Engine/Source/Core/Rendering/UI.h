@@ -13,7 +13,7 @@ class UI
 {
 public:
 	int currentItem = 0;
-	int NumOfSpawn = 0;
+	int NumOfSpawn = 1;
 	bool bIsInitialized = false;
 	
 	void Initialize(HWND hWnd, const class URenderer& Renderer, UINT ScreenWidth, UINT ScreenHeight);
@@ -30,6 +30,7 @@ public:// UIWindows
 	void RenderRenderMode();
 	void RenderPropertyWindow();
 	void RenderGridGap();
+	void RenderDebugRaycast();
 	void RenderSceneManager();
 
 private:
