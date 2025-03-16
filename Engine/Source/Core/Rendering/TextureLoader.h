@@ -2,6 +2,7 @@
 
 #define RESOURCE_PATH L"Resources/"
 
+
 struct TextureInfo
 {
 	ComPtr<ID3D11ShaderResourceView> ShaderResourceView;
