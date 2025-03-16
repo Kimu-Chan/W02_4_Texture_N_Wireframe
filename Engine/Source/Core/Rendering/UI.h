@@ -30,6 +30,7 @@ public:// UIWindows
 	void RenderRenderMode();
 	void RenderPropertyWindow();
 	void RenderGridGap();
+	void RenderDebugRaycast();
 	void RenderSceneManager();
 
 private:

@@ -64,6 +64,12 @@ public:
 	bool LineTrace(const FRay& Ray, USceneComponent** FirstHitComponent) const;
 	void AddBoundingBox(FBox* Box) { BoundingBoxes.Add(Box); }
 	void RemoveBoundingBox(FBox* Box) { BoundingBoxes.Remove(Box); }
+
+	bool IsDebuggingRaycast() const { return bDebugRaycast; }
+	void SetDebugRaycast(bool bInDebugRaycast) { bDebugRaycast = bInDebugRaycast; }
+
+private:
+	bool bDebugRaycast = false;
 	
 public:
 	FString SceneName;

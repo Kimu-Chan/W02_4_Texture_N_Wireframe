@@ -282,7 +282,7 @@ UWorldInfo UWorld::GetWorldInfo() const
         WorldInfo.ObjctInfos[i] = new UObjectInfo();
         const FTransform& Transform = actor->GetActorTransform();
         WorldInfo.ObjctInfos[i]->Location = Transform.GetPosition();
-        WorldInfo.ObjctInfos[i]->Rotation = Transform.GetRotation();
+        WorldInfo.ObjctInfos[i]->Rotation = Transform.GetRotation(); // TODO: GetRotation()의 리턴 타입은 FQuat으로, FVector로 변환된다는 보장 없음.
         WorldInfo.ObjctInfos[i]->Scale = Transform.GetScale();
         WorldInfo.ObjctInfos[i]->ObjectType = actor->GetTypeName();
 
@@ -294,13 +294,29 @@ UWorldInfo UWorld::GetWorldInfo() const
 
 bool UWorld::LineTrace(const FRay& Ray, USceneComponent** FirstHitComponent) const
 {
+    TArray<TPair<USceneComponent*, float>> Hits;
 	for (FBox* Box : BoundingBoxes)
 	{
-		if (Box && Box->IsValidBox() && Box->IntersectRay(Ray))
+	    float Distance = 0.f;
+		if (Box && Box->IsValidBox() && Box->IntersectRay(Ray, Distance))
 		{
-			*FirstHitComponent = Box->GetOwner();
-			return true;
+			Hits.Add({Box->GetOwner(), Distance});
 		}
 	}
+    if (Hits.Num() == 0)
+    {
+        return false;
+    }
+
+    // Find min dist
+    float MinDistance = FLT_MAX;
+    for (const auto& [SceneComp, Dist] : Hits)
+    {
+        if (Dist < MinDistance)
+        {
+            MinDistance = Dist;
+            *FirstHitComponent = SceneComp;
+        }
+    }
     return false;
 }

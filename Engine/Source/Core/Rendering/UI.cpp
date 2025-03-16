@@ -161,6 +161,10 @@ void UI::RenderControlPanelWindow()
 
     RenderGridGap();
 
+    ImGui::Separator();
+
+    RenderDebugRaycast();
+
 	ImGui::Separator();
 
     if (ImGui::Button("Toggle New Console"))
@@ -450,6 +454,15 @@ void UI::RenderGridGap()
     }
 
     ImGui::Separator();
+}
+
+void UI::RenderDebugRaycast()
+{
+    bool bDebugRaycast = UEngine::Get().GetWorld()->IsDebuggingRaycast();
+    if (ImGui::Checkbox("Debug Raycast", &bDebugRaycast))
+    {
+        UEngine::Get().GetWorld()->SetDebugRaycast(bDebugRaycast);
+    }
 }
 
 void UI::RenderSceneManager()
