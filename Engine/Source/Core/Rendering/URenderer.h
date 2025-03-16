@@ -147,6 +147,13 @@ public:
 
 	void RenderDebugLines(float DelatTime);
 
+	// Texture
+	void CreateTextureBuffer();
+
+	void PrepareTexture();
+
+	void RenderTexture();
+
 protected:
 	/** Direct3D Device 및 SwapChain을 생성합니다. */
 	void CreateDeviceAndSwapChain(HWND hWindow);
@@ -245,7 +252,7 @@ protected:
 	uint32 GridStride = 0;
 
 	ID3D11BlendState* GridBlendState = nullptr;
-	
+
 	// Depth Stenil Buffer
 	ID3D11Texture2D* DepthStencilBuffer = nullptr;          // DepthStencil버퍼 역할을 하는 텍스쳐
 	ID3D11DepthStencilView* DepthStencilView = nullptr;     // DepthStencil버퍼를 렌더 타겟으로 사용하는 뷰
@@ -265,6 +272,12 @@ protected:
 	// World Grid
 	uint32 GridVertexNum = 0;
 	ID3D11Buffer* GridVertexBuffer = nullptr;
+
+	// Texture Shader & Buffer;
+	ID3D11Buffer* TextureVertexBuffer = nullptr;              // 텍스처 버퍼
+	ID3D11VertexShader* TextureVertexShader = nullptr;      // 텍스처용 버텍스 쉐이더
+	ID3D11PixelShader* TexturePixelShader = nullptr;        // 텍스처용 픽셀 쉐이더
+	ID3D11InputLayout* TextureInputLayout = nullptr;        // 텍스처용 인풋 레이아웃
 
 private:
 	// Debug Line

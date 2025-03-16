@@ -20,6 +20,8 @@ void URenderer::Create(HWND hWindow)
 
     CreatePickingFrameBuffer();
 
+    CreateTextureBuffer();
+
     AdjustDebugLineVertexBuffer(DebugLineNumStep);
 
     InitMatrix();
@@ -164,6 +166,45 @@ void URenderer::CreateShader()
     }
     DebugLineVertexCSO->Release();
     DebugLinePixelCSO->Release();
+
+
+    /* Compile TextureShader */
+    ID3DBlob* TextureVertexCSO;
+	ID3DBlob* TexturePixelCSO;
+	hr = D3DCompileFromFile(L"Shaders/ShaderTexture.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &TextureVertexCSO, &ErrorMsg);
+    if (ErrorMsg)
+    {
+        std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
+        ErrorMsg->Release();
+    }
+    if (FAILED(hr))
+        return;
+	hr = Device->CreateVertexShader(TextureVertexCSO->GetBufferPointer(), TextureVertexCSO->GetBufferSize(), nullptr, &TextureVertexShader);
+	if (FAILED(hr))
+		return;
+
+    D3D11_INPUT_ELEMENT_DESC TextureLayout[] =
+    {
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    };
+
+	Device->CreateInputLayout(TextureLayout, ARRAYSIZE(TextureLayout), TextureVertexCSO->GetBufferPointer(), TextureVertexCSO->GetBufferSize(), &TextureInputLayout);
+
+	hr = D3DCompileFromFile(L"Shaders/ShaderTexture.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &TexturePixelCSO, &ErrorMsg);
+	if (FAILED(hr))
+		return;
+	hr = Device->CreatePixelShader(TexturePixelCSO->GetBufferPointer(), TexturePixelCSO->GetBufferSize(), nullptr, &TexturePixelShader);
+	if (FAILED(hr))
+		return;
+	if (ErrorMsg)
+	{
+		std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
+		ErrorMsg->Release();
+	}
+    
+	TextureVertexCSO->Release();
+	TexturePixelCSO->Release();
 }
 
 void URenderer::ReleaseShader()
@@ -203,6 +244,24 @@ void URenderer::ReleaseShader()
         GridPixelShader->Release();
         GridPixelShader = nullptr;
     }
+
+    if (TextureVertexShader)
+    {
+		TextureVertexShader->Release();
+		TextureVertexShader = nullptr;
+    }
+
+	if (TexturePixelShader)
+	{
+		TexturePixelShader->Release();
+		TexturePixelShader = nullptr;
+	}
+
+	if (TextureInputLayout)
+	{
+		TextureInputLayout->Release();
+		TextureInputLayout = nullptr;
+	}
 }
 
 void URenderer::CreateConstantBuffer()
@@ -1050,6 +1109,36 @@ void URenderer::RenderDebugLines(float DeltaTime)
     DeviceContext->Unmap(DebugLineVertexBuffer, 0);
     
     DeviceContext->Draw(DebugLines.Num() * 2, 0);
+}
+
+void URenderer::CreateTextureBuffer()
+{
+	D3D11_BUFFER_DESC TextureBufferDesc = {};
+	TextureBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+    TextureBufferDesc.ByteWidth = sizeof(UVQuadVertices);
+	TextureBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA TextureBufferInitData = {};
+	TextureBufferInitData.pSysMem = UVQuadVertices;
+
+    Device->CreateBuffer(&TextureBufferDesc, &TextureBufferInitData, &TextureVertexBuffer);
+}
+
+void URenderer::PrepareTexture()
+{
+    UINT stride = sizeof(FVertexUV);
+    DeviceContext->IASetVertexBuffers(0, 1, &TextureVertexBuffer, &stride, nullptr);
+    DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    DeviceContext->IASetInputLayout(TextureInputLayout);
+    DeviceContext->VSSetShader(TextureVertexShader, nullptr, 0);
+    DeviceContext->PSSetShader(TexturePixelShader, nullptr, 0);
+}
+
+void URenderer::RenderTexture()
+{
+	PrepareTexture();
+
+	DeviceContext->Draw(6, 0);
 }
 
 void URenderer::AdjustDebugLineVertexBuffer(uint32 LineNum)
