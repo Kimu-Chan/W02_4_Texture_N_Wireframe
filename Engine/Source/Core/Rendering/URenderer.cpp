@@ -1452,6 +1452,7 @@ void URenderer::OnUpdateWindowSize(int Width, int Height)
         CreateDepthStencilBuffer();
 
     	CreatePickingFrameBuffer();
+
     }
 
     if (ACamera* Camera = FEditorManager::Get().GetCamera())
