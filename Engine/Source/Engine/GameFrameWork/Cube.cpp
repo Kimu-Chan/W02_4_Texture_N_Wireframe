@@ -1,6 +1,8 @@
 ﻿#include "pch.h" 
 #include "Cube.h"
 #include "CoreUObject/Components/PrimitiveComponent.h"
+#include "Static/EditorManager.h"
+#include "Camera.h"
 
 REGISTER_CLASS(ACube);
 ACube::ACube()
@@ -21,6 +23,9 @@ void ACube::BeginPlay()
 void ACube::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+    FTransform Transform = GetActorTransform();
+    Transform.LookAt(FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition());
+	SetActorTransform(Transform);
 }
 
 const char* ACube::GetTypeName()
