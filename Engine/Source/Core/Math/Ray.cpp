@@ -28,7 +28,7 @@ FRay FRay::GetRayByMousePoint(ACamera* InCamera)
     RayOrigin = InvProjMat.TransformVector4(RayOrigin);
     RayOrigin.W = 1;
     RayEnd = InvProjMat.TransformVector4(RayEnd);
-    RayEnd *= 1000.f;
+    RayEnd *= 1000.f; // TODO: 임의 값인 경우 카메라의 FarClip에 맞게 변경하기.
     RayEnd.W = 1;
 
     // 4. 월드 공간으로 변환
@@ -36,7 +36,9 @@ FRay FRay::GetRayByMousePoint(ACamera* InCamera)
     RayOrigin = InvViewMat.TransformVector4(RayOrigin);
     //RayOrigin /= RayOrigin.W = 1;
     RayEnd = InvViewMat.TransformVector4(RayEnd);
-    FVector RayDir = (RayEnd - RayOrigin).GetSafeNormal();
+	FVector RayDelta = RayEnd - RayOrigin;
+    FVector RayDir = RayDelta.GetSafeNormal();
+	float RayLength = RayDelta.Length();
  
-	return FRay(RayOrigin, RayDir);
+	return FRay(RayOrigin, RayDir, RayLength);
 }

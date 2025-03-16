@@ -16,7 +16,7 @@ bool FBox::IsValidBox() const
     return Min.X < Max.X && Min.Y < Max.Y && Min.Z < Max.Z;
 }
 
-bool FBox::IntersectRay(const FRay& Ray) const
+bool FBox::IntersectRay(const FRay& Ray, float& OutDistance) const
 {
     USceneComponent* debug = Owner;
 
@@ -47,6 +47,7 @@ bool FBox::IntersectRay(const FRay& Ray) const
     if (TMin > TMax)
         return false;
 
+    OutDistance = TMin;
     return true;
 }
 

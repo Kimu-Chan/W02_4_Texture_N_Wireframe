@@ -63,7 +63,7 @@ void UWorld::LateTick(float DeltaTime)
     PendingDestroyActors.Empty();
 }
 
-void UWorld::Render()
+void UWorld::Render(float DeltaTime)
 {
     URenderer* Renderer = UEngine::Get().GetRenderer();
 
@@ -89,8 +89,9 @@ void UWorld::Render()
     RenderMainTexture(*Renderer);
 	RenderBoundingBoxes(*Renderer);
 
-    // DisplayPickingTexture(*Renderer);
+    RenderDebugLines(*Renderer, DeltaTime);
 
+    // DisplayPickingTexture(*Renderer);
 }
 
 void UWorld::RenderPickingTexture(URenderer& Renderer)
@@ -154,6 +155,11 @@ void UWorld::RenderBoundingBoxes(URenderer& Renderer)
 void UWorld::RenderWorldGrid(URenderer& Renderer)
 {
     Renderer.RenderWorldGrid();
+}
+
+void UWorld::RenderDebugLines(URenderer& Renderer, float DeltaTime)
+{
+    Renderer.RenderDebugLines(DeltaTime);
 }
 
 void UWorld::DisplayPickingTexture(URenderer& Renderer)
@@ -282,7 +288,7 @@ UWorldInfo UWorld::GetWorldInfo() const
         WorldInfo.ObjctInfos[i] = new UObjectInfo();
         const FTransform& Transform = actor->GetActorTransform();
         WorldInfo.ObjctInfos[i]->Location = Transform.GetPosition();
-        WorldInfo.ObjctInfos[i]->Rotation = Transform.GetRotation();
+        WorldInfo.ObjctInfos[i]->Rotation = Transform.GetRotation(); // TODO: GetRotation()의 리턴 타입은 FQuat으로, FVector로 변환된다는 보장 없음.
         WorldInfo.ObjctInfos[i]->Scale = Transform.GetScale();
         WorldInfo.ObjctInfos[i]->ObjectType = actor->GetTypeName();
 
@@ -294,13 +300,54 @@ UWorldInfo UWorld::GetWorldInfo() const
 
 bool UWorld::LineTrace(const FRay& Ray, USceneComponent** FirstHitComponent) const
 {
+    TArray<TPair<USceneComponent*, float>> Hits;
 	for (FBox* Box : BoundingBoxes)
 	{
-		if (Box && Box->IsValidBox() && Box->IntersectRay(Ray))
+	    float Distance = 0.f;
+		if (Box && Box->IsValidBox() && Box->IntersectRay(Ray, Distance))
 		{
-			*FirstHitComponent = Box->GetOwner();
-			return true;
+			Hits.Add({Box->GetOwner(), Distance});
 		}
 	}
-    return false;
+    if (Hits.Num() == 0)
+    {
+        if (bDebugRaycast)
+        {
+            FVector Start = Ray.Origin;
+            FVector End = Ray.Origin + Ray.Direction * Ray.Length;
+            DrawDebugLine(Start, End, FVector(1.f, 0.f, 0.f), 10.f);
+        }
+        return false;
+    }
+
+    // Find min dist
+    float MinDistance = FLT_MAX;
+    for (const auto& [SceneComp, Dist] : Hits)
+    {
+        if (Dist < MinDistance)
+        {
+            MinDistance = Dist;
+            *FirstHitComponent = SceneComp;
+        }
+    }
+    if (bDebugRaycast)
+    {
+        FVector Start = Ray.Origin;
+        FVector End = Ray.Origin + Ray.Direction * MinDistance;
+        DrawDebugLine(Start, End, FVector(1.f, 0.f, 0.f), 5.f);
+        
+        Start = End;
+        End = Start + Ray.Direction * (Ray.Length - MinDistance);
+        DrawDebugLine(Start, End, FVector(0.f, 1.f, 0.f), 5.f);
+    }
+    
+    return true;
+}
+
+void UWorld::DrawDebugLine(FVector Start, FVector End, FVector Color, float Time) const
+{
+    if (URenderer* Renderer = UEngine::Get().GetRenderer())
+    {
+        Renderer->AddDebugLine(Start, End, Color, Time);
+    }
 }

@@ -1,6 +1,8 @@
 ﻿#include "pch.h" 
 #include "Cube.h"
 #include "CoreUObject/Components/PrimitiveComponent.h"
+#include "Static/EditorManager.h"
+#include "Camera.h"
 
 REGISTER_CLASS(ACube);
 ACube::ACube()

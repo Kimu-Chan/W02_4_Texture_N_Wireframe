@@ -143,6 +143,10 @@ public:
 
 	bool IsOccluded();
 
+	void AddDebugLine(FVector Start, FVector End, FVector Color, float Time);
+
+	void RenderDebugLines(float DelatTime);
+
 protected:
 	/** Direct3D Device 및 SwapChain을 생성합니다. */
 	void CreateDeviceAndSwapChain(HWND hWindow);
@@ -184,6 +188,22 @@ protected:
 	void CreateBlendState();
 
 	void ReleaseBlendState();
+
+	/**
+	 * 필요한 선의 개수에 맞게 버퍼 크기 조정
+	 * @param LineNum 필요한 선의 개수
+	 */
+	void AdjustDebugLineVertexBuffer(uint32 LineNum);
+	
+	void UpdateDebugLines(float DeltaTime);
+
+	void PrepareDebugLines();
+
+private:
+	/**
+	 * @param NewSize 정점 개수. 버퍼의 크기에 비례.
+	 */
+	void CreateDebugLineVertexBuffer(uint32 NewSize);
 
 protected:
 	HWND hWnd = nullptr;                                    // 렌더러가 사용할 윈도우 핸들indow = nullptr;                                 // 렌더러가 사용할 윈도우 핸들
@@ -245,6 +265,26 @@ protected:
 	// World Grid
 	uint32 GridVertexNum = 0;
 	ID3D11Buffer* GridVertexBuffer = nullptr;
+
+private:
+	// Debug Line
+	struct FDebugLineInfo
+	{
+		FVector Start;
+		FVector End;
+		FVector Color;
+		float Time;
+	};
+
+	TArray<FDebugLineInfo> DebugLines;
+
+	ID3D11Buffer* DebugLineVertexBuffer = nullptr;
+	// 현재 버퍼의 크기로 그릴 수 있는 선의 최대 개수로, 그려야 할 선의 개수와는 다름에 주의.
+	uint32 DebugLineCurrentMaxNum = 0;
+	uint32 DebugLineNumStep = 5;
+
+	ID3D11VertexShader* DebugLineVertexShader = nullptr;
+	ID3D11PixelShader* DebugLinePixelShader = nullptr;
 	
 #pragma region picking
 protected:

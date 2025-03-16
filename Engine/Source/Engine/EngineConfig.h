@@ -57,7 +57,6 @@ struct ConfigMapping
 {
 	EEngineConfigValueType Config;
 	const FString Key;
-	// 값의 타입
 	EConfigValueType ValueType;
 	EEngineConfigSectionType Section;
 };
