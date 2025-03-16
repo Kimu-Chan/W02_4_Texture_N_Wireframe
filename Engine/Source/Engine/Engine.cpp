@@ -13,6 +13,7 @@
 #include "GameFrameWork/Sphere.h"
 #include "Core/Rendering/TextureLoader.h"
 
+
 class AArrow;
 class APicker;
 
@@ -29,20 +30,20 @@ LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     
     switch (uMsg)
     {
-	case WM_DESTROY:    // Window Close, Alt + F4
+    case WM_DESTROY:    // Window Close, Alt + F4
         PostQuitMessage(0);
-        break;
+        return 0;
 
-    // Handle Key Input
-	case WM_KEYDOWN:    //@TODO: WinApi의 AysncKeyState로 교체 검토
+        // Handle Key Input
+    case WM_KEYDOWN:    //@TODO: WinApi의 AysncKeyState로 교체 검토
         APlayerInput::Get().KeyDown(static_cast<EKeyCode>(wParam));
-        if ((lParam>>30)%2 != 0)
+        if ((lParam >> 30) % 2 != 0)
         {
-            APlayerInput::Get().KeyOnceUp(static_cast<EKeyCode>( wParam ));
+            APlayerInput::Get().KeyOnceUp(static_cast<EKeyCode>(wParam));
         }
         break;
     case WM_KEYUP:
-        APlayerInput::Get().KeyUp(static_cast<EKeyCode>( wParam ));
+        APlayerInput::Get().KeyUp(static_cast<EKeyCode>(wParam));
         break;
     case WM_LBUTTONDOWN:
         APlayerInput::Get().HandleMouseInput(hWnd, lParam, true, false);
@@ -56,41 +57,65 @@ LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_RBUTTONUP:
         APlayerInput::Get().HandleMouseInput(hWnd, lParam, false, true);
         break;
-	case WM_MOUSEWHEEL:
-		APlayerInput::Get().HandleMouseWheel(wParam);
-		break;
+    case WM_MOUSEWHEEL:
+        APlayerInput::Get().HandleMouseWheel(wParam);
+        break;
 
     case WM_SIZE:
-                UEngine::Get().UpdateWindowSize(LOWORD(lParam), HIWORD(lParam));
-                break;
-    default:
-        return DefWindowProc(hWnd, uMsg, wParam, lParam);
+        if (wParam == SIZE_MINIMIZED)
+        {
+            return 0;
+        }
+        {
+            int32 Width = static_cast<int32>(LOWORD(lParam));
+            int32 Height = static_cast<int32>(HIWORD(lParam));
+            UEngine::Get().ResizeWidth = Width;
+            UEngine::Get().ResizeHeight = Height;
+            UEngine::Get().UpdateWindowSize(Width, Height);
+        }
+        return 0;
     }
-
-    return 0;
+    return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
 void UEngine::Initialize(HINSTANCE hInstance, const WCHAR* InWindowTitle, const WCHAR* InWindowClassName, int InScreenWidth, int InScreenHeight, EScreenMode InScreenMode)
 {
+    // ini파일 로드
+	EngineConfig = new FEngineConfig();
+	EngineConfig->LoadEngineConfig();
+
+	int width = EngineConfig->GetEngineConfigValue<int>(EEngineConfigValueType::EEC_ScreenWidth);
+	int height = EngineConfig->GetEngineConfigValue<int>(EEngineConfigValueType::EEC_ScreenHeight);
+
     WindowInstance = hInstance;
     WindowTitle = InWindowTitle;
     WindowClassName = InWindowClassName;
-    ScreenMode = InScreenMode;
-    ScreenWidth = InScreenWidth;
-    ScreenHeight = InScreenHeight;
+    ScreenWidth = width <= 0 ? InScreenWidth : width;
+    ScreenHeight = height <= 0 ? InScreenHeight : height;
 
-    InitWindow(InScreenWidth, InScreenWidth);
+    ScreenMode = InScreenMode;
+
+    InitWindow(ScreenWidth, ScreenHeight);
+
+	EngineConfig->SaveEngineConfig<int>(EEngineConfigValueType::EEC_ScreenWidth, ScreenWidth);
+	EngineConfig->SaveEngineConfig<int>(EEngineConfigValueType::EEC_ScreenHeight, ScreenHeight);
+
+	// Get Client Rect
+	RECT ClientRect;
+	GetClientRect(WindowHandle, &ClientRect);
+	ScreenWidth = ClientRect.right - ClientRect.left;
+	ScreenHeight = ClientRect.bottom - ClientRect.top;
 
     InitRenderer();
 
-    InitWorld();
-
+    
     InitTextureLoader();
 
     InitializedScreenWidth = ScreenWidth;
     InitializedScreenHeight = ScreenHeight;
+    InitWorld();
+    ui.Initialize(WindowHandle, *Renderer, ScreenWidth, ScreenHeight);
     
-    ui.Initialize(WindowHandle, *Renderer, ScreenWidth, ScreenHeight);    
     UE_LOG("Engine Initialized!");
 }
 
@@ -105,7 +130,6 @@ void UEngine::Run()
 
     LARGE_INTEGER StartTime;
     QueryPerformanceCounter(&StartTime);
-
 
     bIsExit = true;
     while (bIsExit)
@@ -132,6 +156,13 @@ void UEngine::Run()
                 break;
             }
         }
+
+        // Handle window being minimized or screen locked
+        if (Renderer->IsOccluded()) continue;
+
+        // Handle window resize (we don't resize directly in the WM_SIZE handler)
+        if (ResizeWidth != 0 && ResizeHeight != 0)
+			UpdateWindowSize(ResizeWidth, ResizeHeight);
 
         // Renderer Update
         Renderer->PrepareRender();
@@ -188,10 +219,11 @@ void UEngine::InitWindow(int InScreenWidth, int InScreenHeight)
 
     // Create Window Handle //
     WindowHandle = CreateWindowExW(
-        0, WindowClassName, WindowTitle,
+        WS_EX_NOREDIRECTIONBITMAP,
+        WindowClassName, WindowTitle,
         WS_POPUP | WS_VISIBLE | WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT,
-        InScreenWidth, InScreenHeight,
+        ScreenWidth, ScreenHeight,
         nullptr, nullptr, WindowInstance, nullptr
     );
 
@@ -221,7 +253,30 @@ void UEngine::InitWorld()
 {
     World = FObjectFactory::ConstructObject<UWorld>();
 
-    FEditorManager::Get().SetCamera(World->SpawnActor<ACamera>());
+    if (ACamera* Camera = World->SpawnActor<ACamera>())
+    {
+        FEditorManager::Get().SetCamera(Camera);
+
+        // 렌더러가 먼저 초기화 되므로, 카메라가 생성되는 시점인 현재 함수에서 프로젝션 매트릭스 업데이트
+        Renderer->UpdateProjectionMatrix(Camera);
+
+        // 카메라 ini 읽어오기
+		float PosX = EngineConfig->GetEngineConfigValue<float>(EEngineConfigValueType::EEC_EditorCameraPosX, -5.f);
+		float PosY = EngineConfig->GetEngineConfigValue<float>(EEngineConfigValueType::EEC_EditorCameraPosY);
+		float PosZ = EngineConfig->GetEngineConfigValue<float>(EEngineConfigValueType::EEC_EditorCameraPosZ);
+
+		FVector CameraPos = FVector(PosX, PosY, PosZ);
+		float RotX = EngineConfig->GetEngineConfigValue<float>(EEngineConfigValueType::EEC_EditorCameraRotX);
+		float RotY = EngineConfig->GetEngineConfigValue<float>(EEngineConfigValueType::EEC_EditorCameraRotY);
+		float RotZ = EngineConfig->GetEngineConfigValue<float>(EEngineConfigValueType::EEC_EditorCameraRotZ);
+		float RotW = EngineConfig->GetEngineConfigValue<float>(EEngineConfigValueType::EEC_EditorCameraRotW, 1.f);
+
+		FQuat CameraRot = FQuat(RotX, RotY, RotZ, RotW);
+		FTransform CameraTransform = FTransform(CameraPos, CameraRot, FVector(1,1,1));
+
+		Camera->SetActorTransform(CameraTransform);
+		Camera->CameraSpeed = EngineConfig->GetEngineConfigValue<float>(EEngineConfigValueType::EEC_EditorCameraSpeed, 1.f);
+    }
 
     //// Test
     //AArrow* Arrow = World->SpawnActor<AArrow>();
@@ -256,23 +311,29 @@ void UEngine::ShutdownWindow()
     UnregisterClassW(WindowClassName, WindowInstance);
     WindowInstance = nullptr;
 
-        ui.Shutdown();
+    ui.Shutdown();
+    EngineConfig->SaveAllConfig();
+	delete EngineConfig;
 }
 
-void UEngine::UpdateWindowSize(UINT InScreenWidth, UINT InScreenHeight)
+void UEngine::UpdateWindowSize(const uint32 InScreenWidth, const uint32 InScreenHeight)
 {
     ScreenWidth = InScreenWidth;
     ScreenHeight = InScreenHeight;
 
     if(Renderer)
     {
-        Renderer->OnUpdateWindowSize(ScreenWidth, ScreenHeight);
+        Renderer->OnUpdateWindowSize(InScreenWidth, InScreenHeight);
     }
 
     if (ui.bIsInitialized)
     {
-        ui.OnUpdateWindowSize(ScreenWidth, ScreenHeight);
+        ui.OnUpdateWindowSize(InScreenWidth, InScreenHeight);
     }
+	ResizeWidth = ResizeHeight = 0;
+
+	EngineConfig->SaveEngineConfig<int>(EEngineConfigValueType::EEC_ScreenWidth, ScreenWidth);
+	EngineConfig->SaveEngineConfig<int>(EEngineConfigValueType::EEC_ScreenHeight, ScreenHeight);
 }
 
 UObject* UEngine::GetObjectByUUID(uint32 InUUID) const

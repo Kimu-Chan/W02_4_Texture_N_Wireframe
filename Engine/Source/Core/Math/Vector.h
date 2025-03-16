@@ -49,6 +49,10 @@ public:
 
 	bool operator==(const FVector& Other) const;
 	bool operator!=(const FVector& Other) const;
+
+	static FVector Abs(const FVector& V);
+	static FVector Replicate(const FVector& V, int index);
+
 };
 
 inline float FVector::DotProduct(const FVector& A, const FVector& B)
@@ -192,6 +196,22 @@ inline bool FVector::operator==(const FVector& Other) const
 inline bool FVector::operator!=(const FVector& Other) const
 {
 	return X != Other.X || Y != Other.Y || Z != Other.Z;
+}
+
+inline FVector FVector::Abs(const FVector& V)
+{
+	return { FMath::Abs(V.X), FMath::Abs(V.Y), FMath::Abs(V.Z) };
+}
+
+inline FVector FVector::Replicate(const FVector& V, int Index)
+{
+	switch (Index)
+	{
+	case 0: return FVector(V.X, V.X, V.X);  // X 값을 모든 성분에 복제
+	case 1: return FVector(V.Y, V.Y, V.Y);  // Y 값을 모든 성분에 복제
+	case 2: return FVector(V.Z, V.Z, V.Z);  // Z 값을 모든 성분에 복제
+	default: return FVector(0.0f, 0.0f, 0.0f);  // 기본값
+	}
 }
 
 struct alignas(16) FVector4 : public FVector

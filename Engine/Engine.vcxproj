@@ -165,6 +165,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Source\ThirdParty\IniParser\iniparser.hpp" />
     <ClInclude Include="Source\Core\AbstractClass\UClass.h" />
     <ClInclude Include="Source\Core\Rendering\RendererDefine.h" />
     <ClInclude Include="Source\CoreUObject\Components\ActorComponent.h" />
@@ -196,9 +197,19 @@
     <ClInclude Include="Source\Core\Rendering\TextureLoader.h" />
     <ClInclude Include="Source\Core\Rendering\UI.h" />
     <ClInclude Include="Source\Core\Rendering\URenderer.h" />
+    <ClInclude Include="Source\Core\Template\RemoveReference.h" />
+    <ClInclude Include="Source\Core\Template\Template.h" />
     <ClInclude Include="Source\Debugging\DebugConsole.h" />
+    <ClInclude Include="Source\Editor\EditorDesigner.h" />
+    <ClInclude Include="Source\Editor\EditorWindow.h" />
+    <ClInclude Include="Source\Editor\Font\IconDefs.h" />
+    <ClInclude Include="Source\Editor\Font\RawFonts.h" />
+    <ClInclude Include="Source\Editor\ICommand.h" />
+    <ClInclude Include="Source\Editor\ISwitchable.h" />
+    <ClInclude Include="Source\Editor\Windows\ConsoleWindow.h" />
     <ClInclude Include="Source\EnginePch.h" />
     <ClInclude Include="Source\Engine\Engine.h" />
+    <ClInclude Include="Source\Engine\EngineConfig.h" />
     <ClInclude Include="Source\Engine\EngineStatics.h" />
     <ClInclude Include="Source\Engine\EngineTypes.h" />
     <ClInclude Include="Source\Engine\GameFrameWork\Actor.h" />
@@ -248,8 +259,10 @@
     <ClCompile Include="Source\Core\Rendering\UI.cpp" />
     <ClCompile Include="Source\Core\Rendering\URenderer.cpp" />
     <ClCompile Include="Source\Debugging\DebugConsole.cpp" />
+    <ClCompile Include="Source\Editor\Windows\ConsoleWindow.cpp" />
     <ClCompile Include="Source\EnginePch.cpp" />
     <ClCompile Include="Source\Engine\Engine.cpp" />
+    <ClCompile Include="Source\Engine\EngineConfig.cpp" />
     <ClCompile Include="Source\Engine\EngineStatics.cpp" />
     <ClCompile Include="Source\Engine\GameFrameWork\Actor.cpp" />
     <ClCompile Include="Source\Engine\GameFrameWork\Arrow.cpp" />
@@ -301,7 +314,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\ShaderGrid.hlsl" />
-    <FxCompile Include="Shaders\ShaderW0.hlsl">
+    <FxCompile Include="Shaders\ShaderMain.hlsl">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">mainVS</EntryPointName>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">mainVS</EntryPointName>
     </FxCompile>

@@ -24,8 +24,8 @@ public:
     ACamera();
 
 private:    
-    float Near;
-    float Far;
+    float NearClip;
+    float FarClip;
     // 화면각
     float FieldOfView;
 
@@ -38,13 +38,13 @@ public:
     ECameraProjectionMode::Type ProjectionMode;
     // float AspectRatio;	// 카메라 비율 (이번 프로젝트에서는 사용 안할듯) 
 
-    void SetFieldOfVew(float Fov);
+    void SetFieldOfView(float Fov);
     void SetFar(float Far);
     void SetNear(float Near);
     
     float GetFieldOfView() const;
-    float GetNear() const;
-    float GetFar() const;
+    float GetNearClip() const;
+    float GetFarClip() const;
 
         
     FVector GetForward() const

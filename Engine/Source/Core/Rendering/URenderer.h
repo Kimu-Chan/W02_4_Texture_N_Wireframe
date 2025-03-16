@@ -19,13 +19,28 @@ class ACamera;
 class URenderer
 {
 private:
-	struct alignas(16) FConstants
+	// 한 프레임 동안 렌더할 각 오브젝트마다 바뀌는 값
+	struct alignas(16) FCbChangeEveryObject
 	{
-		FMatrix MVP;
-		FVector4 Color;
-		// true인 경우 Vertex Color를 사용하고, false인 경우 Color를 사용합니다.
+		FMatrix WorldMatrix;
+		FVector4 CustomColor;
+		// true인 경우 Vertex Color를 사용하고, false인 경우 CustomColor를 사용합니다.
 		uint32 bUseVertexColor;
-		FVector Padding;
+	};
+
+	// 한 프레임에 한번 바뀌는 값
+	struct alignas(16) FCbChangeEveryFrame
+	{
+		FMatrix ViewMatrix;
+		FVector ViewPosition;
+	};
+
+	// 화면 크기가 바뀌거나 FOV값이 바뀌는 특정 상황에만 바뀌는 값
+	struct alignas(16) FCbChangeOnResizeAndFov
+	{
+		FMatrix ProjectionMatrix;
+		float NearClip;
+		float FarClip;
 	};
 	
 	struct alignas(16) FPickingConstants
@@ -67,7 +82,7 @@ public:
 	void ReleaseConstantBuffer();
 
 	/** 스왑 체인의 백 버퍼와 프론트 버퍼를 교체하여 화면에 출력 */
-	void SwapBuffer() const;
+	void SwapBuffer();
 
 	/** 렌더링 파이프라인을 준비 합니다. */
 	void PrepareRender();
@@ -106,7 +121,7 @@ public:
 	void ReleaseVertexBuffer(ID3D11Buffer* pBuffer) const;
 
 	/** Constant Data를 업데이트 합니다. */
-	void UpdateConstant(const ConstantUpdateInfo& UpdateInfo) const;
+	void UpdateObjectConstantBuffer(const ConstantUpdateInfo& UpdateInfo) const;
 
 	ID3D11Device* GetDevice() const;
 	ID3D11DeviceContext* GetDeviceContext() const;
@@ -121,10 +136,12 @@ public:
 
     void GetPrimitiveLocalBounds(EPrimitiveType Type, FVector& OutMin, FVector& OutMax);
 
-	void SetRenderMode(ERenderType Type);
+	void SetRenderMode(EViewModeIndex Type);
 
 	// World Grid
 	HRESULT GenerateWorldGridVertices(int32 WorldGridCellPerSide);
+
+	bool IsOccluded();
 
 protected:
 	/** Direct3D Device 및 SwapChain을 생성합니다. */
@@ -147,6 +164,12 @@ protected:
 
 	/** 뎁스 스텐실 버퍼를 해제합니다. */
 	void ReleaseDepthStencilBuffer();
+
+	/** 뎁스 스텐실 상태를 해제합니다. */
+	void ReleaseDepthStencilState();
+
+	/** 뎁스 스텐실 버퍼 및 상태를 해제합니다 */
+	void ReleaseDepthStencilResources();
 	
 	/** 레스터라이즈 상태를 생성합니다. */
 	void CreateRasterizerState();
@@ -158,11 +181,19 @@ protected:
 
 	void InitMatrix();
 
+	void CreateBlendState();
+
+	void ReleaseBlendState();
+
 protected:
+	HWND hWnd = nullptr;                                    // 렌더러가 사용할 윈도우 핸들indow = nullptr;                                 // 렌더러가 사용할 윈도우 핸들
 	// Direct3D 11 장치(Device)와 장치 컨텍스트(Device Context) 및 스왑 체인(Swap Chain)을 관리하기 위한 포인터들
 	ID3D11Device* Device = nullptr;                         // GPU와 통신하기 위한 Direct3D 장치
+	ID3D11Debug* debugDevice = nullptr;						// 디버깅을 위한 디버그 장치
+	ID3D11InfoQueue* infoQueue = nullptr;					// 디버깅을 위한 정보 큐
 	ID3D11DeviceContext* DeviceContext = nullptr;           // GPU 명령 실행을 담당하는 컨텍스트
 	IDXGISwapChain* SwapChain = nullptr;                    // 프레임 버퍼를 교체하는 데 사용되는 스왑 체인
+	bool bSwapChainOccluded = false;                        // 스왑 체인이 가려졌는지 여부
 
 	// 렌더링에 필요한 리소스 및 상태를 관리하기 위한 변수들
 	ID3D11Texture2D* FrameBuffer = nullptr;                 // 화면 출력용 텍스처
@@ -171,8 +202,11 @@ protected:
 	ID3D11RasterizerState* RasterizerState_Wireframe = nullptr; // Wireframe 레스터라이즈 상태
 
 	ID3D11RasterizerState** CurrentRasterizerState = nullptr; // 현재 사용중인 레스터라이즈 상태
-	ERenderType CurrentRasterizerStateType = ERenderType::ERS_Solid; // 현재 사용중인 레스터라이즈 상태 타입
-	ID3D11Buffer* ConstantBuffer = nullptr;                 // 쉐이더에 데이터를 전달하기 위한 상수 버퍼
+	EViewModeIndex CurrentRasterizerStateType = EViewModeIndex::ERS_Solid; // 현재 사용중인 레스터라이즈 상태 타입
+
+	ID3D11Buffer* CbChangeEveryObject = nullptr;                 // 쉐이더에 데이터를 전달하기 위한 상수 버퍼
+	ID3D11Buffer* CbChangeEveryFrame = nullptr;                  // 쉐이더에 데이터를 전달하기 위한 상수 버퍼
+	ID3D11Buffer* CbChangeOnResizeAndFov = nullptr;              // 쉐이더에 데이터를 전달하기 위한 상수 버퍼
 
 	FLOAT ClearColor[4] = { 0.025f, 0.025f, 0.025f, 1.0f }; // 화면을 초기화(clear)할 때 사용할 색상 (RGBA)
 	D3D11_VIEWPORT ViewportInfo = {};                       // 렌더링 영역을 정의하는 뷰포트 정보
@@ -189,6 +223,8 @@ protected:
 	
 	ID3D11InputLayout* GridInputLayout = nullptr;           // World Grid 용 인풋 레이아웃
 	uint32 GridStride = 0;
+
+	ID3D11BlendState* GridBlendState = nullptr;
 	
 	// Depth Stenil Buffer
 	ID3D11Texture2D* DepthStencilBuffer = nullptr;          // DepthStencil버퍼 역할을 하는 텍스쳐
@@ -197,7 +233,6 @@ protected:
 	ID3D11DepthStencilState* GizmoDepthStencilState = nullptr; // 기즈모용 스텐실 스테이트. Z버퍼 테스트 하지않고 항상 앞에렌더
 	
 	// Buffer Cache
-
 	std::unique_ptr<class FBufferCache> BufferCache;
 	ID3D11Buffer* DynamicVertexBuffer = nullptr;
 
@@ -225,8 +260,8 @@ protected:
 
 public:
 	//피킹용 함수들	
+	void CreatePickingFrameBuffer();
 	void ReleasePickingFrameBuffer();
-	void CreatePickingTexture(HWND hWnd);
 	void PrepareZIgnore();
 	void PreparePicking();
 	void PreparePickingShader() const;

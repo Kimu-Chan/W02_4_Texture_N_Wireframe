@@ -5,6 +5,7 @@
 #include "Core/AbstractClass/Singleton.h"
 #include "Core/Rendering/UI.h"
 #include "Core/Rendering/URenderer.h"
+#include "EngineConfig.h"
 
 class UObject;
 class UWorld;
@@ -22,7 +23,7 @@ class UEngine : public TSingleton<UEngine>
 {
 public:
     // 각종 윈도우 관련 메시지(이벤트)를 처리하는 함수
-    static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+    static LRESULT CALLBACK WndProc(HWND hWnd, uint32 uMsg, WPARAM wParam, LPARAM lParam);
 
     /**
      * Application을 초기화 합니다.
@@ -52,13 +53,14 @@ public:
     int GetInitializedScreenWidth() const { return InitializedScreenWidth; }
     int GetInitializedScreenHeight() const { return InitializedScreenHeight; }
 
+
 private:
     void InitWindow(int InScreenWidth, int InScreenHeight);
     void InitRenderer();
     void InitWorld();
     void InitTextureLoader();
     void ShutdownWindow();
-    void UpdateWindowSize(UINT InScreenWidth, UINT InScreenHeight);
+    void UpdateWindowSize(uint32 InScreenWidth, uint32 InScreenHeight);
 
 public:
 	UWorld* GetWorld() const { return World; }
@@ -93,9 +95,11 @@ private:
     int ScreenWidth = 0;
     int ScreenHeight = 0;
 
-    // 텍스처 로더
-    TextureLoader* TextureLoaderInstance = nullptr;
+    int ResizeWidth = 0;
+	int ResizeHeight = 0;
 
+	// 텍스처 로더
+    TextureLoader* TextureLoaderInstance = nullptr;
 private:
 	std::unique_ptr<URenderer> Renderer;
 
@@ -118,16 +122,26 @@ private:
      *   만약 그리드의 크기가 충분히 크다면, 그리드의 끝은 카메라의 Far clip에 잘려서 보이지 않게 됨.
      *   하지만 그리드가 작다면, 그리드의 끝이 보임.
      *
-     *   현재 카메라는 Far clip이 1000으로 설정되어있으며, 카메라가 그리드의 중앙에 위치하므로,
-     *   Far clip에 의해 그리드의 끝이 잘려나가려면 크기가 적어도 2000이어야 함.
+     *   현재 카메라는 Far clip이 100으로 설정되어있으며, 카메라가 그리드의 중앙에 위치하므로,
+     *   Far clip에 의해 그리드의 끝이 잘려나가려면 크기가 적어도 200이어야 함.
      *   UI에서 WorldGridGap 값은 최소 0.5로 제한되어있기 때문에 한 모서리에 위치한 그리드의 간격은 적어도 400이어야
-     *   그리드의 크기가 2000이 되며, 그리드의 끝이 카메라의 Far clip에 잘리게 됨.
+     *   그리드의 크기가 200이 되며, 그리드의 끝이 카메라의 Far clip에 잘리게 됨. (200 / 0.5 = 400)
+     *
+     *   또한, 그리드는 스냅하며 움직이기 때문에 카메라의 위치에 따라 그리드의 가장 끝 부분이 카메라의 Far clip 내부에 존재할 수 있음.
+     *   따라서 양쪽으로 길이 1씩 추가해서 402로 설정.
      */
     int32 WorldGridCellPerSide = 402;
     
 public:
     // TArray<std::shared_ptr<UObject>> GObjects;
     TMap<uint32, std::shared_ptr<UObject>> GObjects;
+
+private:
+    FEngineConfig* EngineConfig;
+
+public:
+	FEngineConfig* GetEngineConfig() const { return EngineConfig; }
+
 };
 
 template <typename ObjectType> requires std::derived_from<ObjectType, UObject>

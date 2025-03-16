@@ -1,12 +1,13 @@
 ﻿#pragma once
 
-#include "Core/Math/Vector.h"
-#include "Core/Math/Matrix.h"
-#include "Core/Math/Transform.h"
 #include "Core/Container/Set.h"
-#include "CoreUObject/Object.h"
 #include "CoreUObject/Components/ActorComponent.h"
-#include "Core/Math/Box.h"
+#include "Core/Math/Transform.h"
+
+struct FVector;
+struct FMatrix;
+struct FTransform;
+struct FBox;
 
 class USceneComponent : public UActorComponent
 {
@@ -50,7 +51,7 @@ protected:
 	// !TODO : 런타임에 박스를 켜고 끄는 함수
 	std::shared_ptr<FBox> BoundingBox = nullptr;
 	virtual void InitBoundingBox() {};
-	virtual void UpdateBoundingBox() {};
+	virtual void UpdateBoundingBox();
 
 protected:
 	bool bIsPicked = false;

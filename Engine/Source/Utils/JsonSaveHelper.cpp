@@ -1,7 +1,9 @@
-#include "pch.h" 
+﻿#include "pch.h" 
 #include "JsonSaveHelper.h"
 #include "Engine/EngineStatics.h"
 #include "Debugging/DebugConsole.h"
+#include "Editor/Windows/ConsoleWindow.h"
+#include "Rendering/UI.h"
 #include "SimpleJSON/Json.hpp"
 
 using json::JSON;

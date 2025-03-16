@@ -1,10 +1,11 @@
-#include "pch.h" 
+﻿#include "pch.h" 
 #include "PlayerController.h"
 
 #include "Static/EditorManager.h"
 #include "PlayerInput.h"
 #include "Core/Math/Plane.h"
 #include "Engine/GameFrameWork/Camera.h"
+#include "Engine/EngineConfig.h"
 
 APlayerController::APlayerController() {
 
@@ -12,6 +13,7 @@ APlayerController::APlayerController() {
 
 void APlayerController::HandleCameraMovement(float DeltaTime) {
 
+	//@TODO: ImGuiIO.WantCaptureMouse를 이용하여 UI 조작중에는 카메라 조작을 막아야함
     FVector NewVelocity(0, 0, 0);
 
     if (APlayerInput::Get().IsPressedMouse(true) == false)
@@ -77,6 +79,9 @@ void APlayerController::HandleCameraMovement(float DeltaTime) {
     CameraTransform.Translate(NewVelocity * DeltaTime * Camera->CameraSpeed);
     Camera->SetActorTransform(CameraTransform);
     // FCamera::Get().SetVelocity(NewVelocity);
+    SaveCameraProperties(Camera);
+	
+
 }
 
 void APlayerController::HandleGizmoMovement(float DeltaTime)
@@ -94,6 +99,29 @@ void APlayerController::HandleGizmoMovement(float DeltaTime)
         return;
     }
 
+
+}
+
+void APlayerController::SaveCameraProperties(ACamera* Camera)
+{
+	FEngineConfig* EngineConfig = UEngine::Get().GetEngineConfig();
+	FTransform CameraTransform = Camera->GetActorTransform();
+
+	float FOV = Camera->GetFieldOfView();
+	float NearClip = Camera->GetNearClip();
+	float FarClip = Camera->GetFarClip();
+	float CameraSpeed = Camera->CameraSpeed;
+
+    UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraPosX, CameraTransform.GetPosition().X);
+    UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraPosY, CameraTransform.GetPosition().Y);
+    UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraPosZ, CameraTransform.GetPosition().Z);
+
+	UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraRotX, CameraTransform.GetRotation().X);
+	UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraRotY, CameraTransform.GetRotation().Y);
+	UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraRotZ, CameraTransform.GetRotation().Z);
+	UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraRotW, CameraTransform.GetRotation().W);
+
+	UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraSpeed, CameraSpeed);
 
 }
 

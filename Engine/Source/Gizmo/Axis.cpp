@@ -1,5 +1,9 @@
 ﻿#include "pch.h" 
 #include "Axis.h"
+#include "Engine/Engine.h"
+#include "World.h"
+
+#include "World.h"
 
 AAxis::AAxis()
 {
@@ -41,7 +45,7 @@ AAxis::AAxis()
     ULineComp* LineZ = AddComponent<ULineComp>();
     FTransform ZTransform = LineZ->GetComponentTransform();
     ZTransform.SetScale(FVector(1000.0f, 1.0f, 1.0f));
-    ZTransform.Rotate({0.0f, 90.0f, 0.0f});
+    ZTransform.Rotate({0.0f, -90.0f, 0.0f});
     LineZ->SetRelativeTransform(ZTransform);
     LineZ->SetCustomColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
 
@@ -51,6 +55,10 @@ AAxis::AAxis()
         Euler.Y,
         Euler.Z
     );
+
+    UEngine::Get().GetWorld()->AddZIgnoreComponent(LineX);
+    UEngine::Get().GetWorld()->AddZIgnoreComponent(LineY);
+    UEngine::Get().GetWorld()->AddZIgnoreComponent(LineZ);
 } 
 
 void AAxis::BeginPlay()

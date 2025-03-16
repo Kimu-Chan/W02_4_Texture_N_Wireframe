@@ -74,7 +74,6 @@ void UWorld::Render()
 
     ACamera* cam = FEditorManager::Get().GetCamera();
     Renderer->UpdateViewMatrix(cam->GetActorTransform());
-    Renderer->UpdateProjectionMatrix(cam);
         
     if (APlayerInput::Get().GetMouseDown(false))
     {
@@ -258,8 +257,10 @@ void UWorld::LoadWorld(const char* SceneName)
         {
             Actor = SpawnActor<ACone>();
         }
-                
-        Actor->SetActorTransform(Transform);
+        if (Actor)
+        {
+            Actor->SetActorTransform(Transform);
+        }
     }
 }
 

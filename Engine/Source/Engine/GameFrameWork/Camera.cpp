@@ -1,6 +1,5 @@
 ﻿#include "pch.h" 
 #include "Camera.h"
-#include "Core/Rendering/URenderer.h"
 #include "CoreUObject/Components/PrimitiveComponent.h"
 
 
@@ -9,44 +8,53 @@ ACamera::ACamera()
 {
     bIsGizmo = true;
     
-    Near = 0.1f;
-    Far = 100.f;
-    FieldOfView = 45.f;
+    NearClip = 0.1f;
+    FarClip = 100.f;
+    FieldOfView = 90.f;
     ProjectionMode = ECameraProjectionMode::Perspective;
 
     RootComponent = AddComponent<USceneComponent>();
+
+    FVector StartLocation(3.f, -2.f, 2.f);
     
-    FTransform StartPos = GetActorTransform();
-    StartPos.SetPosition(FVector(-5, 0, 0));
-    SetActorTransform(StartPos);
+    FVector Delta = (FVector::ZeroVector - StartLocation).GetSafeNormal();
+    float Pitch = FMath::RadiansToDegrees(asinf(Delta.Z)) * -1;
+    float Yaw = FMath::RadiansToDegrees(atan2(Delta.Y, Delta.X));
+    FVector StartRotation(0.f, Pitch, Yaw);
+    
+    FTransform StartTransform = GetActorTransform();
+    StartTransform.SetPosition(StartLocation);
+    StartTransform.SetRotation(StartRotation);
+    
+    SetActorTransform(StartTransform);
 }
 
-void ACamera::SetFieldOfVew(float Fov)
+void ACamera::SetFieldOfView(float Fov)
 {
     FieldOfView = Fov;
 }
 
 void ACamera::SetFar(float Far)
 {
-    this->Far = Far;
+    this->FarClip = Far;
 }
 
 void ACamera::SetNear(float Near)
 {
-    this->Near = Near;
+    this->NearClip = Near;
 }
 
 float ACamera::GetFieldOfView() const
 {
-    return  FieldOfView;
+    return FieldOfView;
 }
 
-float ACamera::GetNear() const
+float ACamera::GetNearClip() const
 {
-    return Near;
+    return NearClip;
 }
 
-float ACamera::GetFar() const
+float ACamera::GetFarClip() const
 {
-    return Far;
+    return FarClip;
 }

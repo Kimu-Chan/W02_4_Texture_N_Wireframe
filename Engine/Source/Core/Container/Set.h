@@ -61,4 +61,7 @@ public:
 
 	// IsEmpty
 	bool IsEmpty() const { return PrivateSet.empty(); }
+
+	// Contains
+	bool Contains(const T& Item) const { return PrivateSet.contains(Item); }
 };

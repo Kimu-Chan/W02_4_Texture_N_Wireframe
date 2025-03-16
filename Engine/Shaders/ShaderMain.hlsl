@@ -1,21 +1,40 @@
-// ShaderW0.hlsl
-cbuffer constants : register(b0)
+// ShaderMain.hlsl
+
+////////
+/// Constant Buffer
+////////
+cbuffer ChangeEveryObject : register(b0)
 {
-    matrix MVP;
+    matrix WorldMatrix;
     float4 CustomColor;
     uint bUseVertexColor;
 }
 
-cbuffer UUIDColor : register(b1){
+cbuffer ChangeEveryFrame : register(b1)
+{
+    matrix ViewMatrix;
+}
+
+cbuffer ChangeOnResizeAndFov : register(b2)
+{
+    matrix ProjectionMatrix;
+    float NearClip;
+    float FarClip;
+}
+
+cbuffer UUIDColor : register(b3){
     float4 UUIDColor;
 }
 
-cbuffer Depth : register(b2){
+cbuffer Depth : register(b4){
     int depth;
     int nearPlane;
     int farPlane;
 }
 
+////////
+/// Input, Output
+////////
 struct VS_INPUT
 {
     float4 position : POSITION; // Input position from vertex buffer
@@ -26,7 +45,6 @@ struct PS_INPUT
 {
     float4 position : SV_POSITION; // Transformed position to pass to the pixel shader
     float4 color : COLOR;          // Color to pass to the pixel shader
-    // float4 depthPosition : TEXCOORD0;
 };
 
 struct PS_OUTPUT
@@ -35,17 +53,20 @@ struct PS_OUTPUT
     float depth : SV_Depth;
 };
 
+////////
+/// Function
+////////
 PS_INPUT mainVS(VS_INPUT input)
 {
     PS_INPUT output;
-
-    output.position = mul(input.position, MVP);
-    // output.depthPosition = output.position;
+    output.position = input.position;
+    output.position = mul(output.position, WorldMatrix);
+    output.position = mul(output.position, ViewMatrix);
+    output.position = mul(output.position, ProjectionMatrix);
 
     output.color = bUseVertexColor == 1 ? input.color : CustomColor;
     return output;
 }
-
 
 PS_OUTPUT mainPS(PS_INPUT input) : SV_TARGET
 {
