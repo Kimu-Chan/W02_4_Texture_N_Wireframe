@@ -158,7 +158,7 @@ void UEngine::Run()
         if (World)
         {
             World->Tick(DeltaTime);
-            World->Render();
+            World->Render(DeltaTime);
             World->LateTick(DeltaTime);
         }
 

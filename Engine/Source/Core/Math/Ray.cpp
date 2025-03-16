@@ -36,8 +36,9 @@ FRay FRay::GetRayByMousePoint(ACamera* InCamera)
     RayOrigin = InvViewMat.TransformVector4(RayOrigin);
     //RayOrigin /= RayOrigin.W = 1;
     RayEnd = InvViewMat.TransformVector4(RayEnd);
-    FVector RayDir = (RayEnd - RayOrigin).GetSafeNormal();
-	float RayLength = RayDir.Length();
+	FVector RayDelta = RayEnd - RayOrigin;
+    FVector RayDir = RayDelta.GetSafeNormal();
+	float RayLength = RayDelta.Length();
  
 	return FRay(RayOrigin, RayDir, RayLength);
 }

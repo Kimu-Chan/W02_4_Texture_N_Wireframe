@@ -35,12 +35,13 @@ public:
   
 	bool DestroyActor(AActor* InActor);
 	
-	void Render();
+	void Render(float DeltaTime);
 	void RenderPickingTexture(URenderer& Renderer);
 	void DisplayPickingTexture(URenderer& Renderer);
 	void RenderMainTexture(URenderer& Renderer);
 	void RenderBoundingBoxes(URenderer& Renderer);
 	void RenderWorldGrid(URenderer& Renderer);
+	void RenderDebugLines(URenderer& Renderer, float DeltaTime);
 
 	void ClearWorld();
 	void LoadWorld(const char* SceneName);
@@ -65,6 +66,7 @@ public:
 	void AddBoundingBox(FBox* Box) { BoundingBoxes.Add(Box); }
 	void RemoveBoundingBox(FBox* Box) { BoundingBoxes.Remove(Box); }
 
+	void DrawDebugLine(FVector Start, FVector End, FVector Color, float Time) const;
 	bool IsDebuggingRaycast() const { return bDebugRaycast; }
 	void SetDebugRaycast(bool bInDebugRaycast) { bDebugRaycast = bInDebugRaycast; }
 

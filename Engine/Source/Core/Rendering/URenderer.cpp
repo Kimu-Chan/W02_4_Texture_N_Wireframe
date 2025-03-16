@@ -20,6 +20,8 @@ void URenderer::Create(HWND hWindow)
 
     CreatePickingFrameBuffer();
 
+    AdjustDebugLineVertexBuffer(DebugLineNumStep);
+
     InitMatrix();
 }
 
@@ -131,6 +133,37 @@ void URenderer::CreateShader()
     GridPixelCSO->Release();
 
     GridStride = sizeof(FVertexGrid);
+
+    ////////
+    // Debug Line
+    ////////
+    // Compile Shader //
+    ID3DBlob* DebugLineVertexCSO;
+    ID3DBlob* DebugLinePixelCSO;
+    hr = D3DCompileFromFile(L"Shaders/ShaderDebugLine.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &DebugLineVertexCSO, &ErrorMsg);
+    if (ErrorMsg)
+    {
+        std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
+        ErrorMsg->Release();
+    }
+    if (FAILED(hr))
+        return;
+    hr = Device->CreateVertexShader(DebugLineVertexCSO->GetBufferPointer(), DebugLineVertexCSO->GetBufferSize(), nullptr, &DebugLineVertexShader);
+    if (FAILED(hr))
+        return;
+    hr = D3DCompileFromFile(L"Shaders/ShaderDebugLine.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &DebugLinePixelCSO, &ErrorMsg);
+    if (FAILED(hr))
+        return;
+    hr = Device->CreatePixelShader(DebugLinePixelCSO->GetBufferPointer(), DebugLinePixelCSO->GetBufferSize(), nullptr, &DebugLinePixelShader);
+    if (FAILED(hr))
+        return;
+    if (ErrorMsg)
+    {
+        std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
+        ErrorMsg->Release();
+    }
+    DebugLineVertexCSO->Release();
+    DebugLinePixelCSO->Release();
 }
 
 void URenderer::ReleaseShader()
@@ -965,6 +998,140 @@ bool URenderer::IsOccluded()
     }
     bSwapChainOccluded = false;
     return false;
+}
+
+void URenderer::AddDebugLine(FVector Start, FVector End, FVector Color, float Time)
+{
+    DebugLines.Add({Start, End, Color, Time});
+}
+
+void URenderer::RenderDebugLines(float DeltaTime)
+{
+    UpdateDebugLines(DeltaTime);
+
+    if (DebugLines.IsEmpty())
+    {
+        return;
+    }
+    
+    PrepareDebugLines();
+
+    D3D11_MAPPED_SUBRESOURCE MappedSubresource;
+    DeviceContext->Map(DebugLineVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedSubresource);
+    if (FVertexSimple* VertexSimple = reinterpret_cast<FVertexSimple*>(MappedSubresource.pData))
+    {
+        // TODO: DebugLineVertexBuffer에 디버그 라인 정점 정보 넣기.
+        int32 BufferIdx = 0;
+        for (int32 i = 0; i < DebugLines.Num(); ++i)
+        {
+            FVertexSimple StartVertex(
+                    DebugLines[i].Start.X,
+                    DebugLines[i].Start.Y,
+                    DebugLines[i].Start.Z,
+                    DebugLines[i].Color.X,
+                    DebugLines[i].Color.Y,
+                    DebugLines[i].Color.Z,
+                    1.f
+                );
+            VertexSimple[BufferIdx++] = StartVertex;
+
+            FVertexSimple EndVertex(
+                    DebugLines[i].End.X,
+                    DebugLines[i].End.Y,
+                    DebugLines[i].End.Z,
+                    DebugLines[i].Color.X,
+                    DebugLines[i].Color.Y,
+                    DebugLines[i].Color.Z,
+                    1.f
+                );
+            VertexSimple[BufferIdx++] = EndVertex;
+        }
+    }
+    DeviceContext->Unmap(DebugLineVertexBuffer, 0);
+    
+    DeviceContext->Draw(DebugLines.Num() * 2, 0);
+}
+
+void URenderer::AdjustDebugLineVertexBuffer(uint32 LineNum)
+{
+    if (DebugLineNumStep == 0)
+    {
+        // TODO: ERROR 처리
+        return;
+    }
+
+    uint32 LowerBound = (DebugLineCurrentMaxNum >= DebugLineNumStep) ? (DebugLineCurrentMaxNum - DebugLineNumStep) : 0;
+    
+    if (LowerBound <= LineNum && LineNum <= DebugLineCurrentMaxNum)
+    {
+        // Line Num의 개수가 현재 버퍼 크기의 허용 범위
+        return;
+    }
+    
+    DebugLineCurrentMaxNum = ((LineNum + DebugLineNumStep) / DebugLineNumStep) * DebugLineNumStep;
+    CreateDebugLineVertexBuffer(DebugLineCurrentMaxNum * 2);
+}
+
+void URenderer::CreateDebugLineVertexBuffer(uint32 NewSize)
+{
+    if (DebugLineVertexBuffer)
+    {
+        DebugLineVertexBuffer->Release();    
+    }
+    
+    D3D11_BUFFER_DESC DebugLineVertexBufferDesc = {};
+    ZeroMemory(&DebugLineVertexBufferDesc, sizeof(D3D11_BUFFER_DESC));
+    DebugLineVertexBufferDesc.ByteWidth = sizeof(FVertexSimple) * NewSize;
+    DebugLineVertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+    DebugLineVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    DebugLineVertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    DebugLineVertexBufferDesc.MiscFlags = 0;
+    DebugLineVertexBufferDesc.StructureByteStride = 0;
+    
+    HRESULT result = Device->CreateBuffer(&DebugLineVertexBufferDesc, NULL, &DebugLineVertexBuffer);
+    if (FAILED(result))
+    {
+        wchar_t errorMsg[256];
+        swprintf_s(errorMsg, L"Failed to create Debug Line Vertex Buffer! HRESULT: 0x%08X", result);
+        MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
+    }
+}
+
+void URenderer::UpdateDebugLines(float DeltaTime)
+{
+    if (DebugLines.IsEmpty())
+    {
+        return;
+    }
+
+    for (auto& DebugLine : DebugLines)
+    {
+        DebugLine.Time -= DeltaTime;
+    }
+
+    DebugLines.RemoveAll(
+        [](const FDebugLineInfo& Info)
+        {
+            return Info.Time <= 0.f;            
+        }
+    );
+
+    AdjustDebugLineVertexBuffer(DebugLines.Num());
+}
+
+void URenderer::PrepareDebugLines()
+{
+    UINT Offset = 0;
+    DeviceContext->IASetVertexBuffers(0, 1, &DebugLineVertexBuffer, &Stride, &Offset);
+    
+    DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);
+    DeviceContext->OMSetRenderTargets(1, &FrameBufferRTV, DepthStencilView);
+    DeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
+    
+    DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+    DeviceContext->IASetInputLayout(SimpleInputLayout);
+    DeviceContext->VSSetShader(DebugLineVertexShader, nullptr, 0);
+    DeviceContext->PSSetShader(DebugLinePixelShader, nullptr, 0);
 }
 
 void URenderer::CreatePickingFrameBuffer()

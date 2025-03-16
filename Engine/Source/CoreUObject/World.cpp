@@ -63,7 +63,7 @@ void UWorld::LateTick(float DeltaTime)
     PendingDestroyActors.Empty();
 }
 
-void UWorld::Render()
+void UWorld::Render(float DeltaTime)
 {
     URenderer* Renderer = UEngine::Get().GetRenderer();
 
@@ -89,8 +89,9 @@ void UWorld::Render()
     RenderMainTexture(*Renderer);
 	RenderBoundingBoxes(*Renderer);
 
-    // DisplayPickingTexture(*Renderer);
+    RenderDebugLines(*Renderer, DeltaTime);
 
+    // DisplayPickingTexture(*Renderer);
 }
 
 void UWorld::RenderPickingTexture(URenderer& Renderer)
@@ -154,6 +155,11 @@ void UWorld::RenderBoundingBoxes(URenderer& Renderer)
 void UWorld::RenderWorldGrid(URenderer& Renderer)
 {
     Renderer.RenderWorldGrid();
+}
+
+void UWorld::RenderDebugLines(URenderer& Renderer, float DeltaTime)
+{
+    Renderer.RenderDebugLines(DeltaTime);
 }
 
 void UWorld::DisplayPickingTexture(URenderer& Renderer)
@@ -305,6 +311,12 @@ bool UWorld::LineTrace(const FRay& Ray, USceneComponent** FirstHitComponent) con
 	}
     if (Hits.Num() == 0)
     {
+        if (bDebugRaycast)
+        {
+            FVector Start = Ray.Origin;
+            FVector End = Ray.Origin + Ray.Direction * Ray.Length;
+            DrawDebugLine(Start, End, FVector(1.f, 0.f, 0.f), 10.f);
+        }
         return false;
     }
 
@@ -318,5 +330,24 @@ bool UWorld::LineTrace(const FRay& Ray, USceneComponent** FirstHitComponent) con
             *FirstHitComponent = SceneComp;
         }
     }
-    return false;
+    if (bDebugRaycast)
+    {
+        FVector Start = Ray.Origin;
+        FVector End = Ray.Origin + Ray.Direction * MinDistance;
+        DrawDebugLine(Start, End, FVector(1.f, 0.f, 0.f), 5.f);
+        
+        Start = End;
+        End = Start + Ray.Direction * (Ray.Length - MinDistance);
+        DrawDebugLine(Start, End, FVector(0.f, 1.f, 0.f), 5.f);
+    }
+    
+    return true;
+}
+
+void UWorld::DrawDebugLine(FVector Start, FVector End, FVector Color, float Time) const
+{
+    if (URenderer* Renderer = UEngine::Get().GetRenderer())
+    {
+        Renderer->AddDebugLine(Start, End, Color, Time);
+    }
 }
