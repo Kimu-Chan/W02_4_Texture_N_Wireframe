@@ -29,7 +29,7 @@ ACamera::ACamera()
     SetActorTransform(StartTransform);
 }
 
-void ACamera::SetFieldOfVew(float Fov)
+void ACamera::SetFieldOfView(float Fov)
 {
     FieldOfView = Fov;
 }
