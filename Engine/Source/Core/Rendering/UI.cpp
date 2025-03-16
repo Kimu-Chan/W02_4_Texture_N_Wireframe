@@ -23,6 +23,8 @@
 #include "ImGui/imgui_impl_dx11.h"
 #include "ImGui/imgui_impl_win32.h"
 #include "ImGui/imgui_internal.h"
+#include "Input/PlayerController.h"
+#include "Input/PlayerInput.h"
 
 //@TODO: Replace with EditorWindow
 
@@ -345,7 +347,14 @@ void UI::RenderCameraSettings()
         Transform.SetRotation(UIEulerAngle);
         Camera->SetActorTransform(Transform);
     }
-    ImGui::DragFloat("Camera Speed", &Camera->CameraSpeed, 0.1f);
+
+    float CurrentSpeed = APlayerController::Get().GetCurrentSpeed();
+    const float CameraMaxSpeed = APlayerController::Get().GetMaxSpeed();
+    const float CameraMinSpeed = APlayerController::Get().GetMinSpeed();
+    if (ImGui::DragFloat("Camera Speed", &CurrentSpeed, 0.1f, CameraMinSpeed, CameraMaxSpeed))
+    {
+        APlayerController::Get().SetCurrentSpeed(CurrentSpeed);
+    }
 
     FVector Forward = Camera->GetActorTransform().GetForward();
     FVector Up = Camera->GetActorTransform().GetUp();
