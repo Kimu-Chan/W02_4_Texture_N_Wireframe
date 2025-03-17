@@ -2,6 +2,7 @@
 
 //@TODO: UE_LOG()를 사용할 수 있도록 수정
 #define UE_LOG(format, ...) if (UI::ConsoleWindowInstance) { UI::ConsoleWindowInstance->Log(format, ##__VA_ARGS__); }
+#define ProcCommand(cmd) if (UI::ConsoleWindowInstance) { UI::ConsoleWindowInstance->ProcessCommand(cmd); }
 
 #include "Editor/EditorWindow.h"
 #include "Editor/ICommand.h"
@@ -45,7 +46,7 @@ public:
 private:
 
     void ClearLog();
-
+public:
     void ProcessCommand(const FString& cmd);
 
 private:
