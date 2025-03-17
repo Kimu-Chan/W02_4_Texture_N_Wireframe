@@ -97,15 +97,6 @@ void URenderer::CreateConstantBuffer()
     hr = Device->CreateBuffer(&ConstantBufferDescPicking, nullptr, &ConstantPickingBuffer);
     if (FAILED(hr))
         return;
-    
-    D3D11_BUFFER_DESC ConstantBufferDescDepth = {};
-    ConstantBufferDescDepth.Usage = D3D11_USAGE_DYNAMIC;                        // 매 프레임 CPU에서 업데이트 하기 위해
-    ConstantBufferDescDepth.BindFlags = D3D11_BIND_CONSTANT_BUFFER;             // 상수 버퍼로 설정
-    ConstantBufferDescDepth.ByteWidth = sizeof(FDepthConstants) + 0xf & 0xfffffff0;  // 16byte의 배수로 올림
-    ConstantBufferDescDepth.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;            // CPU에서 쓰기 접근이 가능하게 설정
-    hr = Device->CreateBuffer(&ConstantBufferDescDepth, nullptr, &ConstantsDepthBuffer);
-    if (FAILED(hr))
-        return;
 
     D3D11_BUFFER_DESC TextureConstantBufferDesc = {};
     TextureConstantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -129,7 +120,6 @@ void URenderer::CreateConstantBuffer()
     DeviceContext->PSSetConstantBuffers(1, 1, &CbChangeOnCameraMove);
     DeviceContext->PSSetConstantBuffers(2, 1, &CbChangeOnResizeAndFov);
     DeviceContext->PSSetConstantBuffers(3, 1, &ConstantPickingBuffer);
-    DeviceContext->PSSetConstantBuffers(4, 1, &ConstantsDepthBuffer);
 }
 
 void URenderer::ReleaseConstantBuffer()
@@ -157,12 +147,6 @@ void URenderer::ReleaseConstantBuffer()
         ConstantPickingBuffer->Release();
         ConstantPickingBuffer = nullptr;
     }
-
-    if (ConstantsDepthBuffer)
-    {
-        ConstantsDepthBuffer->Release();
-        ConstantsDepthBuffer = nullptr;
-    }
 }
 
 void URenderer::SwapBuffer()
@@ -176,6 +160,9 @@ void URenderer::PrepareRender()
     // Clear Screen
 	DeviceContext->ClearRenderTargetView(FrameBufferRTV, ClearColor);
     DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+    DeviceContext->ClearRenderTargetView(PickingFrameBufferRTV, PickingClearColor);
+    DeviceContext->ClearDepthStencilView(PickingDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
     // InputAssembler의 Vertex 해석 방식을 설정
     DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -643,6 +630,37 @@ void URenderer::CreateDepthStencilBuffer()
 		MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
 		return;
 	}
+
+    D3D11_TEXTURE2D_DESC PickingDepthBufferDesc = {};
+    PickingDepthBufferDesc.Width = static_cast<UINT>(ViewportInfo.Width);
+    PickingDepthBufferDesc.Height = static_cast<UINT>(ViewportInfo.Height);
+    PickingDepthBufferDesc.MipLevels = 1;
+    PickingDepthBufferDesc.ArraySize = 1;
+    PickingDepthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;            // 32비트 중 24비트는 깊이, 8비트는 스텐실
+    PickingDepthBufferDesc.SampleDesc.Count = 1;
+    PickingDepthBufferDesc.SampleDesc.Quality = 0;
+    PickingDepthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+    PickingDepthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;              // 텍스쳐 바인딩 플래그를 DepthStencil로 설정
+    PickingDepthBufferDesc.CPUAccessFlags = 0;
+    PickingDepthBufferDesc.MiscFlags = 0;
+
+    result = Device->CreateTexture2D(&PickingDepthBufferDesc, nullptr, &PickingDepthStencilBuffer);
+    if (FAILED(result))
+    {
+        wchar_t errorMsg[256];
+        swprintf_s(errorMsg, L"Failed to create Depth Stencil Buffer! HRESULT: 0x%08X", result);
+        MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
+        return;
+    }
+
+    result = Device->CreateDepthStencilView(PickingDepthStencilBuffer, &dsvDesc, &PickingDepthStencilView);
+    if (FAILED(result))
+    {
+        wchar_t errorMsg[256];
+        swprintf_s(errorMsg, L"Failed to create Depth Stencil View! HRESULT: 0x%08X", result);
+        MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
+        return;
+    }
 }
 
 void URenderer::CreateDepthStencilState()
@@ -701,6 +719,17 @@ void URenderer::ReleaseDepthStencilBuffer()
     {
         DepthStencilView->Release();
         DepthStencilView = nullptr;
+    }
+    
+    if (PickingDepthStencilBuffer)
+    {
+        PickingDepthStencilBuffer->Release();
+        PickingDepthStencilBuffer = nullptr;
+    }
+    if (PickingDepthStencilView)
+    {
+        PickingDepthStencilView->Release();
+        PickingDepthStencilView = nullptr;
     }
 }
 
@@ -1168,7 +1197,7 @@ void URenderer::PrepareZIgnore()
 void URenderer::PreparePicking()
 {
     // 렌더 타겟 바인딩
-    DeviceContext->OMSetRenderTargets(1, &PickingFrameBufferRTV, DepthStencilView);
+    DeviceContext->OMSetRenderTargets(1, &PickingFrameBufferRTV, PickingDepthStencilView);
     DeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
     DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);                // DepthStencil 상태 설정. StencilRef: 스텐실 테스트 결과의 레퍼런스
 
@@ -1203,32 +1232,6 @@ void URenderer::UpdateConstantPicking(FVector4 UUIDColor) const
         Constants->UUIDColor = UUIDColor;
     }
     DeviceContext->Unmap(ConstantPickingBuffer, 0);
-}
-
-void URenderer::UpdateConstantDepth(int Depth) const
-{
-    if (!ConstantsDepthBuffer) return;
-
-    ACamera* Cam = FEditorManager::Get().GetCamera();
-
-    D3D11_MAPPED_SUBRESOURCE ConstantBufferMSR;
-
-    HRESULT result = DeviceContext->Map(ConstantsDepthBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &ConstantBufferMSR);
-	if (FAILED(result))
-	{
-		wchar_t errorMsg[256];
-		swprintf_s(errorMsg, L"Failed to map Constant Depth Buffer! HRESULT: 0x%08X", result);
-		MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
-		return;
-	}
-	{
-        FDepthConstants* Constants = static_cast<FDepthConstants*>(ConstantBufferMSR.pData);
-        Constants->DepthOffset = Depth;
-        //@TODO: nP/fP Constant 전달시, float -> int 문제 없는가?
-        Constants->nearPlane = Cam->GetNearClip();
-        Constants->farPlane = Cam->GetFarClip();
-    }
-    DeviceContext->Unmap(ConstantsDepthBuffer, 0);
 }
 
 void URenderer::PrepareMain()

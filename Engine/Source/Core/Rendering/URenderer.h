@@ -253,11 +253,12 @@ protected:
 	// 피킹용 버퍼들
 	ID3D11Texture2D* PickingFrameBuffer = nullptr;                 // 화면 출력용 텍스처
 	ID3D11Texture2D* PickingFrameBufferStaging = nullptr;
+	ID3D11Texture2D* PickingDepthStencilBuffer = nullptr;
+	ID3D11DepthStencilView* PickingDepthStencilView = nullptr;
 	ID3D11RenderTargetView* PickingFrameBufferRTV = nullptr;       // 텍스처를 렌더 타겟으로 사용하는 뷰
 	ID3D11Buffer* ConstantPickingBuffer = nullptr;                 // 뷰 상수 버퍼
 	FLOAT PickingClearColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f }; //
 	ID3D11PixelShader* PickingPixelShader = nullptr;         // Pixel의 색상을 결정하는 Pixel 셰이더
-	ID3D11Buffer* ConstantsDepthBuffer = nullptr;
 
 	ID3D11DepthStencilState* IgnoreDepthStencilState = nullptr;   // DepthStencil 상태(깊이 테스트, 스텐실 테스트 등 정의)
 
@@ -269,7 +270,6 @@ public:
 	void PreparePicking();
 	void PreparePickingShader() const;
 	void UpdateConstantPicking(FVector4 UUIDColor) const;
-	void UpdateConstantDepth(int Depth) const;
 
 	void PrepareMain();
 	void PrepareMainShader();

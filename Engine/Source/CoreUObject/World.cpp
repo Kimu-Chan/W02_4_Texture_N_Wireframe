@@ -129,9 +129,11 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 {
     Renderer.PrepareMain();
     Renderer.PrepareMainShader();
+
+    bool bRenderPrimitives = UEngine::Get().GetShowPrimitives();
     for (auto& RenderComponent : RenderComponents)
     {
-        if (RenderComponent->GetOwner()->GetDepth() > 0)
+        if (!bRenderPrimitives && !RenderComponent->GetOwner()->IsGizmoActor())
         {
             continue;
         }

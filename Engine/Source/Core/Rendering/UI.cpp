@@ -400,6 +400,12 @@ void UI::RenderRenderMode()
 			Renderer->SetRenderMode(EViewModeIndex::ERS_Wireframe);
 		}
 	}
+
+    bool bShowPrimitives = UEngine::Get().GetShowPrimitives();
+    if (ImGui::Checkbox("Show Primitives", &bShowPrimitives))
+    {
+        UEngine::Get().SetShowPrimitives(bShowPrimitives);
+    }
     
     ImGui::Separator();
 }
