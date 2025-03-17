@@ -236,6 +236,7 @@
     <ClInclude Include="Source\ThirdParty\ImGui\imstb_truetype.h" />
     <ClInclude Include="Source\ThirdParty\SimpleJSON\json.hpp" />
     <ClInclude Include="Source\Utils\JsonSaveHelper.h" />
+    <ClInclude Include="Billboard.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\CoreUObject\Components\ActorComponent.cpp" />
@@ -311,6 +312,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Source\Utils\JsonSaveHelper.cpp" />
+    <ClCompile Include="Billboard.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\ShaderTexture.hlsl">

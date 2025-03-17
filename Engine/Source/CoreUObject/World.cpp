@@ -14,9 +14,7 @@
 #include "Engine/GameFrameWork/Cube.h"
 #include "Engine/GameFrameWork/Cylinder.h"
 #include "Engine/GameFrameWork/Sphere.h"
-
-
-
+#include "../Billboard.h"
 REGISTER_CLASS(UWorld);
 void UWorld::BeginPlay()
 {
@@ -24,6 +22,8 @@ void UWorld::BeginPlay()
     {
         Actor->BeginPlay();
     }
+    std::cout << "D3DCompiler Version: " << D3D_COMPILER_VERSION << std::endl;
+    //SpawnActor<
 }
 
 void UWorld::Tick(float DeltaTime)

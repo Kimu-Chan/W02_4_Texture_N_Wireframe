@@ -15,6 +15,7 @@
 
 
 class AActor;
+class UBillboard;
 
 class UWorld :public UObject
 {
@@ -86,6 +87,8 @@ protected:
 	TSet<class FBox*> BoundingBoxes;
 
 	TSet<FString> ActorNames;
+
+	UBillboard* Billboard;
 };
 
 template <typename T>

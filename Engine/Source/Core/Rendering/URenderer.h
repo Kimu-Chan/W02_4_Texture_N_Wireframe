@@ -53,6 +53,12 @@ private:
 		int nearPlane;
 		int farPlane;
 	};
+
+	struct alignas(16) FTextureConstants
+	{
+		FMatrix WorldViewProj;
+		float u, v;
+	};
 	
     struct ConstantUpdateInfo
     {
@@ -153,6 +159,8 @@ public:
 	void PrepareTexture();
 
 	void RenderTexture();
+
+	void UpdateTextureConstantBuffer(const FMatrix& World, float u, float v);
 
 protected:
 	/** Direct3D Device 및 SwapChain을 생성합니다. */
@@ -278,6 +286,7 @@ protected:
 	ID3D11VertexShader* TextureVertexShader = nullptr;      // 텍스처용 버텍스 쉐이더
 	ID3D11PixelShader* TexturePixelShader = nullptr;        // 텍스처용 픽셀 쉐이더
 	ID3D11InputLayout* TextureInputLayout = nullptr;        // 텍스처용 인풋 레이아웃
+	ID3D11Buffer* TextureConstantBuffer = nullptr;
 
 private:
 	// Debug Line

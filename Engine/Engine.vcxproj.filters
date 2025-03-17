@@ -143,7 +143,10 @@
       <Filter>Source Files\Core\AbstractClass</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\EngineConfig.cpp" />
-    <ClCompile Include="Source\Core\Rendering\TextureLoader.cpp" />
+    <ClCompile Include="Source\Core\Rendering\TextureLoader.cpp">
+      <Filter>Source Files\Core\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Billboard.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Core\HAL\PlatformType.h">
@@ -356,7 +359,10 @@
     <ClInclude Include="Source\ThirdParty\IniParser\iniparser.hpp">
       <Filter>ThirdParty\IniParser</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Core\Rendering\TextureLoader.h" />
+    <ClInclude Include="Source\Core\Rendering\TextureLoader.h">
+      <Filter>Header Files\Core\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Billboard.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">

@@ -308,6 +308,15 @@ void URenderer::CreateConstantBuffer()
     hr = Device->CreateBuffer(&ConstantBufferDescDepth, nullptr, &ConstantsDepthBuffer);
     if (FAILED(hr))
         return;
+
+    D3D11_BUFFER_DESC TextureConstantBufferDesc = {};
+    TextureConstantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+    TextureConstantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    TextureConstantBufferDesc.ByteWidth = sizeof(FTextureConstants) + 0xf & 0xfffffff0;
+    TextureConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    hr = Device->CreateBuffer(&TextureConstantBufferDesc, nullptr, &TextureConstantBuffer);
+    if (FAILED(hr))
+        return;
     
     /**
      * 여기에서 상수 버퍼를 쉐이더에 바인딩.
@@ -317,6 +326,7 @@ void URenderer::CreateConstantBuffer()
     DeviceContext->VSSetConstantBuffers(0, 1, &CbChangeEveryObject);
     DeviceContext->VSSetConstantBuffers(1, 1, &CbChangeEveryFrame);
     DeviceContext->VSSetConstantBuffers(2, 1, &CbChangeOnResizeAndFov);
+    DeviceContext->VSSetConstantBuffers(3, 1, &TextureConstantBuffer);
 
     DeviceContext->PSSetConstantBuffers(1, 1, &CbChangeEveryFrame);
     DeviceContext->PSSetConstantBuffers(2, 1, &CbChangeOnResizeAndFov);
@@ -1139,6 +1149,21 @@ void URenderer::RenderTexture()
 	PrepareTexture();
 
 	DeviceContext->Draw(6, 0);
+}
+
+void URenderer::UpdateTextureConstantBuffer(const FMatrix& World, float u, float v)
+{
+    D3D11_MAPPED_SUBRESOURCE MappedResource;
+    HRESULT hr = DeviceContext->Map(TextureConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
+    if (FAILED(hr))
+        return;
+
+    FTextureConstants* BufferData = reinterpret_cast<FTextureConstants*>(MappedResource.pData);
+    BufferData->WorldViewProj = ProjectionMatrix * ViewMatrix * World;
+    BufferData->u = u;
+	BufferData->v = v;
+
+    DeviceContext->Unmap(TextureConstantBuffer, 0);
 }
 
 void URenderer::AdjustDebugLineVertexBuffer(uint32 LineNum)
