@@ -162,7 +162,6 @@ private:
 
 protected:
 	HWND hWnd = nullptr;                                    // 렌더러가 사용할 윈도우 핸들
-
 	// Direct3D 11 장치(Device)와 장치 컨텍스트(Device Context) 및 스왑 체인(Swap Chain)을 관리하기 위한 포인터들
 	ID3D11Device* Device = nullptr;                         // GPU와 통신하기 위한 Direct3D 장치
 	ID3D11Debug* debugDevice = nullptr;						// 디버깅을 위한 디버그 장치
@@ -201,9 +200,9 @@ protected:
 	std::unique_ptr<class FBufferCache> BufferCache;
 	ID3D11Buffer* DynamicVertexBuffer = nullptr;
 
-
-	// shader
+	// Shader Cache
 	std::unique_ptr<class FShaderCache> ShaderCache;
+
 	FMatrix WorldMatrix;
 	FMatrix ViewMatrix;
 	FMatrix ProjectionMatrix;

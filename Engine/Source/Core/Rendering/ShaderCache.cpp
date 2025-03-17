@@ -97,6 +97,17 @@ bool FShaderCache::CreateInputLayout(ID3DBlob* VertexShaderBlob, ID3D11InputLayo
 
 void FShaderCache::CreateShaders(const TArray<std::wstring>& ShaderNames)
 {
+	/*
+	* 컴파일된 셰이더의 바이트코드를 저장할 변수 (ID3DBlob)
+	*
+	* 범용 메모리 버퍼를 나타내는 형식
+	*   - 여기서는 shader object bytecode를 담기위해 쓰임
+	* 다음 두 메서드를 제공한다.
+	*   - LPVOID GetBufferPointer
+	*     - 버퍼를 가리키는 void* 포인터를 돌려준다.
+	*   - SIZE_T GetBufferSize
+	*     - 버퍼의 크기(바이트 갯수)를 돌려준다
+	*/
 	for (std::wstring ShaderName : ShaderNames)
 	{
 		std::wstring ShaderPath = L"Shaders/" + ShaderName + L".hlsl";

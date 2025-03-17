@@ -17,11 +17,8 @@ void URenderer::Create(HWND hWindow)
     CreateDepthStencilBuffer();
     CreateDepthStencilState();
     CreateBlendState();
-
     CreatePickingFrameBuffer();
-
     AdjustDebugLineVertexBuffer(DebugLineNumStep);
-
     InitMatrix();
 }
 
@@ -44,23 +41,6 @@ void URenderer::Release()
 
 void URenderer::CreateShader()
 {
-    /**
-    * 컴파일된 셰이더의 바이트코드를 저장할 변수 (ID3DBlob)
-    *
-    * 범용 메모리 버퍼를 나타내는 형식
-    *   - 여기서는 shader object bytecode를 담기위해 쓰임
-    * 다음 두 메서드를 제공한다.
-    *   - LPVOID GetBufferPointer
-    *     - 버퍼를 가리키는 void* 포인터를 돌려준다.
-    *   - SIZE_T GetBufferSize
-    *     - 버퍼의 크기(바이트 갯수)를 돌려준다
-    */
-    //ID3DBlob* VertexShaderCSO;
-    //ID3DBlob* PixelShaderCSO;
-    //ID3DBlob* PickingShaderCSO;
-
-    //ID3DBlob* ErrorMsg = nullptr;
-
     if (ShaderCache == nullptr)
     {
         return;
@@ -71,7 +51,6 @@ void URenderer::CreateShader()
     // unit byte
     Stride = sizeof(FVertexSimple);
     GridStride = sizeof(FVertexGrid);
-
 }
 
 void URenderer::ReleaseShader()
@@ -1256,15 +1235,13 @@ FVector4 URenderer::GetPixel(FVector MPos)
 
 void URenderer::UpdateViewMatrix(const FTransform& CameraTransform)
 {
-    ViewMatrix = CameraTransform.GetViewMatrix();
-
     // Update Constant Buffer
     D3D11_MAPPED_SUBRESOURCE ConstantBufferMSR;
     DeviceContext->Map(CbChangeEveryFrame, 0, D3D11_MAP_WRITE_DISCARD, 0, &ConstantBufferMSR);
     // 매핑된 메모리를 캐스팅
     if (FCbChangeEveryFrame* Constants = static_cast<FCbChangeEveryFrame*>(ConstantBufferMSR.pData))
     {
-        Constants->ViewMatrix = FMatrix::Transpose(ViewMatrix);
+        Constants->ViewMatrix = FMatrix::Transpose(CameraTransform.GetViewMatrix());
         Constants->ViewPosition = CameraTransform.GetPosition();
     }
     // UnMap해서 GPU에 값이 전달 될 수 있게 함
