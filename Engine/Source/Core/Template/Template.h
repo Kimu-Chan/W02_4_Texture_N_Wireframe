@@ -1,4 +1,4 @@
-#include "HAL/PlatformMemory.h"
+﻿#include "HAL/PlatformMemory.h"
 #include "RemoveReference.h"
 
 /**
@@ -6,6 +6,24 @@
  */
 template<typename T> struct TIsLValueReferenceType { enum { Value = false }; };
 template<typename T> struct TIsLValueReferenceType<T&> { enum { Value = true }; };
+
+/**
+ * utility template for a class that should not be copyable.
+ * Derive from this class to make your class non-copyable
+ * 생성자와 소멸자를 protected로 선언하여 객체 생성을 막는다.
+ * 복사 생성자와 대입 연산자를 private로 선언하여 복사를 막는다.
+ */
+class FNoncopyable
+{
+protected:
+	// ensure the class cannot be constructed directly
+	FNoncopyable() {}
+	// the class should not be used polymorphically
+	~FNoncopyable() {}
+private:
+	FNoncopyable(const FNoncopyable&);
+	FNoncopyable& operator=(const FNoncopyable&);
+};
 
 /**
  * MoveTemp will cast a reference to an rvalue reference.

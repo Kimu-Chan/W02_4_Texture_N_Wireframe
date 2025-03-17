@@ -1,153 +1,135 @@
 #include "pch.h" 
 #include "PlayerInput.h"
 
-FVector GetWndWH(HWND hWnd)
-{
-    RECT Rect;
-    int Width , Height;
-    if (GetClientRect(hWnd , &Rect)) {
-        Width = Rect.right - Rect.left;
-        Height = Rect.bottom - Rect.top;
-    }
-
-    return FVector(Width, Height, 0.0f);
-}
-
-void HandleMouseInput(HWND hWnd, LPARAM lParam, bool isDown, bool isRight)
-{
-    POINTS Pts = MAKEPOINTS(lParam);
-    FVector WH = GetWndWH(hWnd);
-    if (isDown)
-    {
-        APlayerInput::Get().MouseKeyDown(FVector(Pts.x , Pts.y , 0), FVector(WH.X , WH.Y , 0), isRight);
-    }else
-    {
-        APlayerInput::Get().MouseKeyUp(FVector(Pts.x , Pts.y , 0), FVector(WH.X , WH.Y , 0), isRight);
-    }
-}
+#include "Editor/Windows/ConsoleWindow.h"
+#include "Rendering/UI.h"
 
 APlayerInput::APlayerInput()
 {
-    for (bool& key : _keys)
+    Keyboard = std::make_unique<DirectX::Keyboard>();
+    Mouse = std::make_unique<DirectX::Mouse>();
+    GamePad = std::make_unique<DirectX::GamePad>();
+}
+
+void APlayerInput::SetWindowSize(uint32 InWidth, uint32 InHeight)
+{
+    WindowWidth = InWidth;
+    WindowHeight = InHeight;
+}
+
+void APlayerInput::UpdateInput()
+{
+    auto Kb = Keyboard->GetState();
+    KeyboardTracker.Update(Kb);
+
+    // 마우스 상태 가져오기
+    auto MouseState = Mouse->GetState();
+    MouseTracker.Update(MouseState);
+
+    PrevMouseState = CurrentMouseState;
+    
+    CurrentMouseState.LeftDown = MouseState.leftButton;
+    CurrentMouseState.RightDown = MouseState.rightButton;
+    CurrentMouseState.MiddleDown = MouseState.middleButton;
+    CurrentMouseState.Wheel = MouseState.scrollWheelValue;
+    CurrentMouseState.X = MouseState.x; // 윈도우에 상대적
+    CurrentMouseState.Y = MouseState.y; // 윈도우에 상대적
+
+    POINT p;
+    GetCursorPos(&p);
+    CurrentMouseState.ScreenX = p.x;
+    CurrentMouseState.ScreenY = p.y;
+}
+
+bool APlayerInput::IsKeyPressed(DirectX::Keyboard::Keys InKey) const
+{
+    return KeyboardTracker.pressed.IsKeyDown(InKey);
+}
+
+bool APlayerInput::IsKeyReleased(DirectX::Keyboard::Keys InKey) const
+{
+    return KeyboardTracker.released.IsKeyDown(InKey);
+}
+
+bool APlayerInput::IsKeyDown(DirectX::Keyboard::Keys InKey) const
+{
+    return Keyboard->GetState().IsKeyDown(InKey);
+}
+
+bool APlayerInput::IsMousePressed(bool isRight) const
+{
+    if (isRight)
     {
-        key = false;
+        return !PrevMouseState.RightDown && CurrentMouseState.RightDown;
     }
+    return !PrevMouseState.LeftDown && CurrentMouseState.LeftDown;
+}
 
-    for (bool& m : _mouse)
+bool APlayerInput::IsMouseReleased(bool isRight) const
+{
+    if (isRight)
     {
-        m=false;
+        return PrevMouseState.RightDown && !CurrentMouseState.RightDown;
     }
+    return PrevMouseState.LeftDown && !CurrentMouseState.LeftDown;
+}
 
-    for (bool& ok : _onceKeys)
+bool APlayerInput::IsMouseDown(bool isRight) const
+{
+    if (isRight)
     {
-        ok=false;
+        return CurrentMouseState.RightDown;
     }
-
-    for (bool& om : _onceMouse)
-    {
-        om=false;
-    }
+    return CurrentMouseState.LeftDown;
 }
 
-bool APlayerInput::IsPressedKey(EKeyCode key) const
+void APlayerInput::GetMouseDelta(int32& OutX, int32& OutY) const
 {
-    return _keys[static_cast<uint8_t>(key)];
+    OutX = CurrentMouseState.ScreenX - PrevMouseState.ScreenX;
+    OutY = CurrentMouseState.ScreenY - PrevMouseState.ScreenY;
 }
 
-void APlayerInput::KeyDown(EKeyCode key)
+void APlayerInput::GetMousePosition(int32& OutX, int32& OutY) const
 {
-    _keys[static_cast<uint8_t>(key)] = true;
-    _onceKeys[static_cast<uint8_t>(key)] = true;
+    OutX = CurrentMouseState.X;
+    OutY = CurrentMouseState.Y;
 }
 
-void APlayerInput::KeyOnceUp(EKeyCode key)
+void APlayerInput::GetMousePositionNDC(float& OutX, float& OutY) const
 {
-    _onceKeys[static_cast<uint8_t>(key)] = false;
+    float HalfWidth = static_cast<float>(WindowWidth) / 2.f;
+    float HalfHeight = static_cast<float>(WindowHeight) / 2.f;
+    OutX = (static_cast<float>(CurrentMouseState.X) - HalfWidth) / HalfWidth;
+    OutY = (static_cast<float>(CurrentMouseState.Y) - HalfHeight) / HalfHeight * -1.f;
 }
 
-void APlayerInput::KeyUp(EKeyCode key)
+int32 APlayerInput::GetMouseWheel() const
 {
-    _keys[static_cast<uint8_t>(key)] = false;
-    _onceKeys[static_cast<uint8_t>(key)] = false;
+    return CurrentMouseState.Wheel;
 }
 
-std::vector<EKeyCode> APlayerInput::GetPressedKeys() {
-    std::vector<EKeyCode> ret;
-
-    for (int i = 0; i < 256; i++) {
-        if (_keys[ i ]) {
-            ret.push_back(static_cast< EKeyCode >( i ));
-        }
-    }
-
-    return ret;
-}
-
-void APlayerInput::MouseKeyDown(FVector MouseDownPoint, FVector WindowSize, int isRight) {
-    _mouse[isRight] = true;
-    _onceMouse[isRight] = true;
-    MouseKeyDownPos[isRight] = MouseDownPoint;
-    MouseKeyDownNDCPos[isRight] = CalNDCPos(MouseKeyDownPos[isRight], WindowSize);
-}
-
-void APlayerInput::MouseKeyUp(FVector MouseUpPoint, FVector WindowSize, int isRight) {
-    _mouse[isRight] = false;
-    _onceMouse[isRight] = false;
-}
-
-void APlayerInput::PreProcessInput()
+int32 APlayerInput::GetMouseWheelDelta() const
 {
-    ExpireOnce();
+    return CurrentMouseState.Wheel - PrevMouseState.Wheel;
 }
 
-void APlayerInput::TickPlayerInput()
+void APlayerInput::CacheCursorPosition()
 {
-    SetMousePos();
+    /**
+     * PrevMouseState를 캐싱하는 이유:
+     *   윈도우 메시지를 통한 마우스 커서 위치 업데이트는 커서가 윈도우 창을 벗어나면 업데이트 되지 않음.
+     *   만약 커서가 빠르게 움직이고 있고, 캐싱해야할 시점에 커서가 윈도우를 벗어나면,
+     *   캐싱 값은 스크린 포지션이므로 윈도우 바깥의 위치를 캐싱하고, 그 위치에 커서를 고정함.
+     *   윈도우 바깥에 커서가 고정되니 포지션 델타값이 업데이트 되지 않아서 값이 유지되고, 시점에 지속적으로 회전하는 문제 발생.
+     *   따라서 커서가 윈도우를 벗어나지 않았던 이전 시점의 위치를 캐싱함으로써 위와 같은 문제 방지.
+     */
+    CachedMouseX = PrevMouseState.ScreenX;
+    CachedMouseY = PrevMouseState.ScreenY;
 }
 
-void APlayerInput::SetMousePos()
+void APlayerInput::FixMouseCursor()
 {
-    POINT Pts;
-    if (GetCursorPos(&Pts))
-    {
-        FVector PtV = FVector(Pts.x , Pts.y, 0);
-        SetMousePos(PtV);
-    }
+    CurrentMouseState.ScreenX = PrevMouseState.ScreenX;
+    CurrentMouseState.ScreenY = PrevMouseState.ScreenY;
+    SetCursorPos(CachedMouseX, CachedMouseY);
 }
-
-void APlayerInput::ExpireOnce()
-{
-    for (bool& i : _onceMouse)
-    {
-        i = false;
-    }
-
-    for (bool& m : _onceKeys)
-    {
-        m = false;
-    }
-}
-
-FVector APlayerInput::CalNDCPos(FVector MousePos, FVector WindowSize)
-{
-    return {( MousePos.X / ( WindowSize.X / 2 ) ) - 1, ( MousePos.Y / ( WindowSize.Y / 2 ) ) - 1, 0};
-}
-
-void APlayerInput::HandleMouseInput(HWND hWnd, LPARAM lParam, bool isDown, bool isRight)
-{
-    POINTS Pts = MAKEPOINTS(lParam);
-    FVector WH = GetWndWH(hWnd);
-    if (isDown)
-    {
-        MouseKeyDown(FVector(Pts.x , Pts.y , 0), FVector(WH.X , WH.Y , 0), isRight);
-    }else
-    {
-        MouseKeyUp(FVector(Pts.x , Pts.y , 0), FVector(WH.X , WH.Y , 0), isRight);
-    }
-}
-
-void APlayerInput::HandleMouseWheel(WPARAM wParam)
-{
-    SetMouseWheel(GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA);
-}
-

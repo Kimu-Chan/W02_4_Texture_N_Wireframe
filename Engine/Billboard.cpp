@@ -44,10 +44,11 @@ void UBillboard::Render()
 
 void UBillboard::Tick(float DeltaTime)
 {
-    UE_LOG("Billboard Position: %f, %f, %f", RelativeTransform.GetPosition().X, RelativeTransform.GetPosition().Y, RelativeTransform.GetPosition().Z);
-   // UE_LOG("Billboard Scale: %f, %f", RelativeTransform.GetScale().X, RelativeTransform.GetScale().Y, );
-    //UE_LOG("Billboard Position: %f, %f", RelativeTransform.GetPosition().X, RelativeTransform.GetPosition().Y);
-
+    FVector Rotation = RelativeTransform.GetRotation().GetEuler();
+    //UE_LOG("Billboard Position: %f, %f, %f", RelativeTransform.GetPosition().X, RelativeTransform.GetPosition().Y, RelativeTransform.GetPosition().Z);
+    //UE_LOG("Billboard Scale: %f, %f", RelativeTransform.GetScale().X, RelativeTransform.GetScale().Y, );
+    //UE_LOG("Billboard Rotation: %f, %f, %f", Rotation.X, Rotation.Y, Rotation.Z);
+    
     Super::Tick(DeltaTime);
 
 	FVector Position = FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition();
@@ -58,3 +59,4 @@ void UBillboard::SetTexture(ID3D11ShaderResourceView* InTexture)
 {
     Texture = InTexture;
 }
+

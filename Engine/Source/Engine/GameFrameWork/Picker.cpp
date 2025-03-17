@@ -9,6 +9,7 @@
 #include "Camera.h"
 #include "Core/Math/Ray.h"
 #include "World.h"
+#include "Input/PlayerController.h"
 #include "Static/EditorManager.h"
 
 REGISTER_CLASS(APicker);
@@ -43,18 +44,22 @@ void APicker::LateTick(float DeltaTime)
 {
     AActor::LateTick(DeltaTime);
 
-    if (APlayerInput::Get().GetMouseDown(false))    //좌클릭
+    if (APlayerController::Get().IsUiInput())
+    {
+        return;
+    }
+
+    if (APlayerInput::Get().IsMousePressed(false))    //좌클릭
     {
         if (!PickByColor())
         {
             PickByRay();
         }
-
     }
 
 
     // 기즈모 핸들링
-    if (APlayerInput::Get().IsPressedMouse(false))    //좌클릭
+    if (APlayerInput::Get().IsMouseDown(false))    //좌클릭
     {
 		HandleGizmo();
     }
@@ -74,22 +79,16 @@ const char* APicker::GetTypeName()
 
 bool APicker::PickByColor()
 {
-    bool bIsPicked = false;
-    POINT pt;
-    GetCursorPos(&pt);
-    ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
+    int32 X = 0;
+    int32 Y = 0;
+    APlayerInput::Get().GetMousePosition(X, Y);
 
-    //float ratioX = 1920 / (float)UEngine::Get().GetScreenWidth();
-    //float ratioY = 1080 / (float)UEngine::Get().GetScreenHeight();
-    //pt.x = pt.x * ratioX;
-    //pt.y = pt.y * ratioY;
-
-    FVector4 color = UEngine::Get().GetRenderer()->GetPixel(FVector(pt.x, pt.y, 0));
-
+    FVector4 color = UEngine::Get().GetRenderer()->GetPixel(FVector(X, Y, 0));
     uint32_t UUID = DecodeUUID(color);
 
     UActorComponent* PickedComponent = UEngine::Get().GetObjectByUUID<UActorComponent>(UUID);
 
+    bool bIsPicked = false;
     if (PickedComponent != nullptr)
     {
         bIsPicked = true;
@@ -145,10 +144,11 @@ bool APicker::PickByRay()
 
 void APicker::HandleGizmo()
 {
-    POINT pt;
-    GetCursorPos(&pt);
-    ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
-    FVector4 color = UEngine::Get().GetRenderer()->GetPixel(FVector(pt.x, pt.y, 0));
+    int32 X = 0;
+    int32 Y = 0;
+    APlayerInput::Get().GetMousePosition(X, Y);
+    
+    FVector4 color = UEngine::Get().GetRenderer()->GetPixel(FVector(X, Y, 0.f));
     uint32_t UUID = DecodeUUID(color);
 
     UActorComponent* PickedComponent = UEngine::Get().GetObjectByUUID<UActorComponent>(UUID);

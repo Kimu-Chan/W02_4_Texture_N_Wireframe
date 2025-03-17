@@ -3,13 +3,14 @@
 #define _TCHAR_DEFINED
 
 #include "BufferCache.h"
+#include "ShaderCache.h"
 #include "UI.h"
 #include "Core/Math/Vector.h"
 #include "Core/Math/Matrix.h"
 #include "Core/Math/Plane.h"
 #include "Primitive/PrimitiveVertices.h"
-#include "Engine/Engine.h"
 #include "RendererDefine.h"
+#include "Constants.h"
 
 struct FVertexSimple;
 struct FVector4;
@@ -18,60 +19,6 @@ class ACamera;
 
 class URenderer
 {
-private:
-	// 한 프레임 동안 렌더할 각 오브젝트마다 바뀌는 값
-	struct alignas(16) FCbChangeEveryObject
-	{
-		FMatrix WorldMatrix;
-		FVector4 CustomColor;
-		// true인 경우 Vertex Color를 사용하고, false인 경우 CustomColor를 사용합니다.
-		uint32 bUseVertexColor;
-	};
-
-	// 한 프레임에 한번 바뀌는 값
-	struct alignas(16) FCbChangeEveryFrame
-	{
-		FMatrix ViewMatrix;
-		FVector ViewPosition;
-	};
-
-	// 화면 크기가 바뀌거나 FOV값이 바뀌는 특정 상황에만 바뀌는 값
-	struct alignas(16) FCbChangeOnResizeAndFov
-	{
-		FMatrix ProjectionMatrix;
-		float NearClip;
-		float FarClip;
-	};
-	
-	struct alignas(16) FPickingConstants
-	{
-		FVector4 UUIDColor;
-	};
-
-	struct alignas(16) FDepthConstants{
-		unsigned int DepthOffset;
-		int nearPlane;
-		int farPlane;
-	};
-
-	struct alignas(16) FTextureConstants
-	{
-		FMatrix WorldViewProj;
-		float u, v;
-	};
-	
-    struct ConstantUpdateInfo
-    {
-        const FMatrix& TransformMatrix;
-		const FVector4& Color;
-		bool bUseVertexColor;
-	};
-
-	struct FVertexGrid
-	{
-		FVector Location;
-	};
-
 public:
 	/** Renderer를 초기화 합니다. */
 	void Create(HWND hWindow);
@@ -198,6 +145,8 @@ protected:
 
 	void CreateBufferCache();
 
+	void CreateShaderCache();
+
 	void InitMatrix();
 
 	void CreateBlendState();
@@ -221,7 +170,7 @@ private:
 	void CreateDebugLineVertexBuffer(uint32 NewSize);
 
 protected:
-	HWND hWnd = nullptr;                                    // 렌더러가 사용할 윈도우 핸들indow = nullptr;                                 // 렌더러가 사용할 윈도우 핸들
+	HWND hWnd = nullptr;                                    // 렌더러가 사용할 윈도우 핸들
 	// Direct3D 11 장치(Device)와 장치 컨텍스트(Device Context) 및 스왑 체인(Swap Chain)을 관리하기 위한 포인터들
 	ID3D11Device* Device = nullptr;                         // GPU와 통신하기 위한 Direct3D 장치
 	ID3D11Debug* debugDevice = nullptr;						// 디버깅을 위한 디버그 장치
@@ -246,21 +195,10 @@ protected:
 	FLOAT ClearColor[4] = { 0.025f, 0.025f, 0.025f, 1.0f }; // 화면을 초기화(clear)할 때 사용할 색상 (RGBA)
 	D3D11_VIEWPORT ViewportInfo = {};                       // 렌더링 영역을 정의하는 뷰포트 정보
 
-	// Shader를 렌더링할 때 사용되는 변수들
-	ID3D11VertexShader* SimpleVertexShader = nullptr;       // Vertex 데이터를 처리하는 Vertex 셰이더
-	ID3D11PixelShader* SimplePixelShader = nullptr;         // Pixel의 색상을                                                                      결정하는 Pixel 셰이더
-
-	ID3D11InputLayout* SimpleInputLayout = nullptr;         // Vertex 셰이더 입력 레이아웃 정의
-	unsigned int Stride = 0;                                // Vertex 버퍼의 각 요소 크기
-
-	ID3D11VertexShader* GridVertexShader = nullptr;         // World Gird 용 버텍스 쉐이더
-	ID3D11PixelShader* GridPixelShader = nullptr;           // World Grid 용 픽셀 쉐이더
-	
-	ID3D11InputLayout* GridInputLayout = nullptr;           // World Grid 용 인풋 레이아웃
-	uint32 GridStride = 0;
-
 	ID3D11BlendState* GridBlendState = nullptr;
-
+	
+	uint32 Stride = 0;                                // Vertex 버퍼의 각 요소 크기
+	uint32 GridStride = 0;
 	// Depth Stenil Buffer
 	ID3D11Texture2D* DepthStencilBuffer = nullptr;          // DepthStencil버퍼 역할을 하는 텍스쳐
 	ID3D11DepthStencilView* DepthStencilView = nullptr;     // DepthStencil버퍼를 렌더 타겟으로 사용하는 뷰
@@ -270,6 +208,9 @@ protected:
 	// Buffer Cache
 	std::unique_ptr<class FBufferCache> BufferCache;
 	ID3D11Buffer* DynamicVertexBuffer = nullptr;
+
+	// Shader Cache
+	std::unique_ptr<class FShaderCache> ShaderCache;
 
 	FMatrix WorldMatrix;
 	FMatrix ViewMatrix;
@@ -304,9 +245,6 @@ private:
 	// 현재 버퍼의 크기로 그릴 수 있는 선의 최대 개수로, 그려야 할 선의 개수와는 다름에 주의.
 	uint32 DebugLineCurrentMaxNum = 0;
 	uint32 DebugLineNumStep = 5;
-
-	ID3D11VertexShader* DebugLineVertexShader = nullptr;
-	ID3D11PixelShader* DebugLinePixelShader = nullptr;
 	
 #pragma region picking
 protected:

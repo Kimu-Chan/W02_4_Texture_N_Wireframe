@@ -32,10 +32,12 @@
 // D3D include
 #pragma comment(lib, "user32")
 #pragma comment(lib, "d3d11")
-#pragma comment(lib, "d3dcompiler")
+#pragma comment(lib, "d3dcompiler.lib")
+#pragma comment(lib, "dxguid.lib")
 
 #include <d3d11.h>
 #include <d3dcompiler.h>
+
 #include <wrl.h>
 #include <wrl/client.h>
 
