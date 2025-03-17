@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Engine/Engine.h"
 #include "CoreUObject/Object.h"
@@ -43,6 +43,7 @@ public:
 	void RenderBoundingBoxes(URenderer& Renderer);
 	void RenderWorldGrid(URenderer& Renderer);
 	void RenderDebugLines(URenderer& Renderer, float DeltaTime);
+	void RenderBillboard(URenderer& Renderer);
 
 	void ClearWorld();
 	void LoadWorld(const char* SceneName);
@@ -55,6 +56,10 @@ public:
 	// render
 	void AddRenderComponent(class UPrimitiveComponent* Component) { RenderComponents.Add(Component); }
 	void RemoveRenderComponent(class UPrimitiveComponent* Component) { RenderComponents.Remove(Component); }
+
+	// billboard
+	void AddBillboardComponent(class UBillboard* Component) { BillboardComponents.Add(Component); }
+	void RemoveBillboardComponent(class UBillboard* Component) { BillboardComponents.Remove(Component); }
 
 	TArray<AActor*> GetActors() const { return Actors; };
 	
@@ -81,6 +86,7 @@ public:
 protected:
 	TArray<AActor*> Actors;
 	TArray<UPrimitiveComponent*> ZIgnoreRenderComponents;
+	TArray<UBillboard*> BillboardComponents;
 	TArray<AActor*> ActorsToSpawn;
 	TArray<AActor*> PendingDestroyActors; // TODO: 추후에 TQueue로 변경
 	TSet<UPrimitiveComponent*> RenderComponents;

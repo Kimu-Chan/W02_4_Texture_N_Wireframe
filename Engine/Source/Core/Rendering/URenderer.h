@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #define _TCHAR_DEFINED
 
@@ -103,9 +103,9 @@ public:
 	// Texture
 	void CreateTextureBuffer();
 
-	void PrepareTexture();
+	void PrepareBillboard();
 
-	void RenderTexture();
+	void RenderBillboard();
 
 	void UpdateTextureConstantBuffer(const FMatrix& World, float u, float v);
 
@@ -153,6 +153,9 @@ protected:
 
 	void ReleaseBlendState();
 
+	void CreateTextureSamplerState();
+
+	void ReleaseTextureSamplerState();
 	/**
 	 * 필요한 선의 개수에 맞게 버퍼 크기 조정
 	 * @param LineNum 필요한 선의 개수
@@ -212,7 +215,6 @@ protected:
 	// Shader Cache
 	std::unique_ptr<class FShaderCache> ShaderCache;
 
-	FMatrix WorldMatrix;
 	FMatrix ViewMatrix;
 	FMatrix ProjectionMatrix;
 
@@ -228,6 +230,7 @@ protected:
 	ID3D11PixelShader* TexturePixelShader = nullptr;        // 텍스처용 픽셀 쉐이더
 	ID3D11InputLayout* TextureInputLayout = nullptr;        // 텍스처용 인풋 레이아웃
 	ID3D11Buffer* TextureConstantBuffer = nullptr;
+	ID3D11SamplerState* SamplerState = nullptr;				// 텍스쳐 샘플러 스테이트
 
 private:
 	// Debug Line

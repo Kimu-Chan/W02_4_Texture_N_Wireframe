@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "CoreUObject/Components/PrimitiveComponent.h"
 class UBillboard : public UPrimitiveComponent
 {
@@ -8,13 +8,14 @@ public:
 	UBillboard();
 	virtual ~UBillboard() = default;
 
+	virtual void BeginPlay() override;
 	virtual void Render() override;
 	virtual void Tick(float DeltaTime) override;
-	void SetTexture(ID3D11ShaderResourceView* InTexture);
+	virtual void EndPlay(const EEndPlayReason::Type Reason);
+	void SetTexture(class ID3D11ShaderResourceView* InTexture);
 
 private:
 	ID3D11ShaderResourceView* Texture = nullptr;
-	ID3D11SamplerState* SamplerState = nullptr;
 	int32 TotalCols = 1;
 	int32 TotalRows = 1;
 };

@@ -20,6 +20,7 @@ void URenderer::Create(HWND hWindow)
     CreatePickingFrameBuffer();
 
     CreateTextureBuffer();
+    CreateTextureSamplerState();
 
     AdjustDebugLineVertexBuffer(DebugLineNumStep);
     InitMatrix();
@@ -779,8 +780,6 @@ void URenderer::CreateShaderCache()
 
 void URenderer::InitMatrix()
 {
-    WorldMatrix = FMatrix::Identity;
-    ViewMatrix = FMatrix::Identity;
     ProjectionMatrix = FMatrix::Identity;
 }
 
@@ -805,6 +804,30 @@ void URenderer::ReleaseBlendState()
     {
         GridBlendState->Release();
         GridBlendState = nullptr;
+    }
+}
+
+void URenderer::CreateTextureSamplerState()
+{
+    // 샘플러 상태 생성
+    D3D11_SAMPLER_DESC SamplerDesc = {};
+    SamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+    SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+    SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+    SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+    SamplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+    SamplerDesc.MinLOD = 0;
+    SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+    URenderer* Renderer = UEngine::Get().GetRenderer();
+    Renderer->GetDevice()->CreateSamplerState(&SamplerDesc, &SamplerState);
+}
+
+void URenderer::ReleaseTextureSamplerState()
+{
+    if (SamplerState)
+    {
+        SamplerState->Release();
     }
 }
 
@@ -935,7 +958,7 @@ void URenderer::CreateTextureBuffer()
 {
 	D3D11_BUFFER_DESC TextureBufferDesc = {};
 	TextureBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-    TextureBufferDesc.ByteWidth = sizeof(UVQuadVertices) * 6;
+    TextureBufferDesc.ByteWidth = sizeof(FVertexUV) * 6;
 	TextureBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
 	D3D11_SUBRESOURCE_DATA TextureBufferInitData = {};
@@ -944,7 +967,7 @@ void URenderer::CreateTextureBuffer()
     Device->CreateBuffer(&TextureBufferDesc, &TextureBufferInitData, &TextureVertexBuffer);
 }
 
-void URenderer::PrepareTexture()
+void URenderer::PrepareBillboard()
 {
     UINT Stride = sizeof(FVertexUV);
     UINT Offset = 0;
@@ -953,12 +976,11 @@ void URenderer::PrepareTexture()
     DeviceContext->IASetInputLayout(ShaderCache->GetInputLayout(L"ShaderTexture"));
     DeviceContext->VSSetShader(ShaderCache->GetVertexShader(L"ShaderTexture"), nullptr, 0);
     DeviceContext->PSSetShader(ShaderCache->GetPixelShader(L"ShaderTexture"), nullptr, 0);
+    DeviceContext->PSSetSamplers(0, 1, &SamplerState);
 }
 
-void URenderer::RenderTexture()
+void URenderer::RenderBillboard()
 {
-	PrepareTexture();
-
 	DeviceContext->Draw(6, 0);
 }
 
@@ -970,7 +992,7 @@ void URenderer::UpdateTextureConstantBuffer(const FMatrix& World, float u, float
         return;
 
     FTextureConstants* BufferData = reinterpret_cast<FTextureConstants*>(MappedResource.pData);
-    BufferData->WorldViewProj =FMatrix::Transpose(World * ViewMatrix  * ProjectionMatrix);
+    BufferData->WorldViewProj =FMatrix::Transpose(World * ViewMatrix * ProjectionMatrix);
     BufferData->u = u;
 	BufferData->v = v;
 
@@ -1132,6 +1154,7 @@ void URenderer::PreparePickingShader() const
 {
 	ID3D11PixelShader* PickingPixelShader = ShaderCache->GetPixelShader(L"ShaderPicking");
     DeviceContext->PSSetShader(PickingPixelShader, nullptr, 0);
+
 }
 
 void URenderer::UpdateConstantPicking(FVector4 UUIDColor) const
@@ -1298,9 +1321,10 @@ void URenderer::UpdateViewMatrix(const FTransform& CameraTransform)
     D3D11_MAPPED_SUBRESOURCE ConstantBufferMSR;
     DeviceContext->Map(CbChangeEveryFrame, 0, D3D11_MAP_WRITE_DISCARD, 0, &ConstantBufferMSR);
     // 매핑된 메모리를 캐스팅
+    ViewMatrix = CameraTransform.GetViewMatrix();
     if (FCbChangeEveryFrame* Constants = static_cast<FCbChangeEveryFrame*>(ConstantBufferMSR.pData))
     {
-        Constants->ViewMatrix = FMatrix::Transpose(CameraTransform.GetViewMatrix());
+        Constants->ViewMatrix = FMatrix::Transpose(ViewMatrix);
         Constants->ViewPosition = CameraTransform.GetPosition();
     }
     // UnMap해서 GPU에 값이 전달 될 수 있게 함

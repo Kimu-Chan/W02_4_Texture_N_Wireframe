@@ -1,11 +1,13 @@
-﻿#include "pch.h" 
+#include "pch.h" 
 #include "PlayerController.h"
 
 #include "Static/EditorManager.h"
 #include "PlayerInput.h"
 #include "Core/Math/Plane.h"
+#include "Engine/Engine.h"
 #include "Engine/GameFrameWork/Camera.h"
 #include "Engine/EngineConfig.h"
+#include "Rendering/URenderer.h"
 
 APlayerController::APlayerController()
     : CurrentSpeed(3.f)
@@ -98,7 +100,7 @@ void APlayerController::HandleCameraMovement(float DeltaTime)
     
     SaveCameraProperties(Camera);
 	
-
+	UEngine::Get().GetRenderer()->UpdateViewMatrix(CameraTransform);
 }
 
 void APlayerController::HandleGizmoMovement(float DeltaTime)

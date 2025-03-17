@@ -1,4 +1,4 @@
-﻿#include "pch.h" 
+#include "pch.h" 
 #include "Actor.h"
 #include "CoreUObject/World.h"
 #include "CoreUObject/Components/SceneComponent.h"
@@ -20,7 +20,8 @@ void AActor::BeginPlay()
 
 		if (UPrimitiveComponent* PrimitiveComponent = dynamic_cast<UPrimitiveComponent*>(Component))
 		{
-			PrimitiveComponent->RegisterComponentWithWorld(World);
+			if(PrimitiveComponent->bCanBeRendered)
+				PrimitiveComponent->RegisterComponentWithWorld(World);
 
 			if (bUseBoundingBox)
 			{
@@ -117,7 +118,6 @@ FTransform AActor::GetActorTransform() const
 
 void AActor::SetActorTransform(const FTransform& InTransform)
 {
-	// InTransform�� ���� ������
 	if (RootComponent)
 	{
 		RootComponent->SetRelativeTransform(InTransform);

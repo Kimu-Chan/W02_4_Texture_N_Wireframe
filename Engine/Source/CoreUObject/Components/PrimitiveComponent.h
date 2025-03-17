@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Engine/Engine.h"
 #include "CoreUObject/Components/SceneComponent.h"
@@ -51,9 +51,9 @@ public:
 public:
 	virtual void InitBoundingBox() override;
 	virtual void UpdateBoundingBox() override;
+	bool bCanBeRendered = false;
 
 protected:
-	bool bCanBeRendered = false;
 	bool bUseVertexColor = true;
 	bool bIsOrthoGraphic = false;
 	FVector4 CustomColor = FVector4(1.0f, 1.0f, 1.0f, 1.0f);

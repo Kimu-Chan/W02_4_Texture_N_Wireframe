@@ -268,6 +268,7 @@ void UEngine::InitWorld()
 		Camera->SetActorTransform(CameraTransform);
 		float CameraSpeed = EngineConfig->GetEngineConfigValue<float>(EEngineConfigValueType::EEC_EditorCameraSpeed, 1.f);
         APlayerController::Get().SetCurrentSpeed(CameraSpeed);
+        Renderer->UpdateViewMatrix(CameraTransform);
     }
 
     //// Test
