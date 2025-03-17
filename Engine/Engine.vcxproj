@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -156,6 +156,8 @@
   <ItemGroup>
     <ClInclude Include="Source\Core\Rendering\ShaderCache.h" />
     <ClInclude Include="Source\Core\Rendering\Constants.h" />
+    <ClInclude Include="Source\CoreUObject\NameTypes.h" />
+    <ClInclude Include="Source\CoreUObject\Name.h" />
     <ClInclude Include="Source\ThirdParty\IniParser\iniparser.hpp" />
     <ClInclude Include="Source\Core\AbstractClass\UClass.h" />
     <ClInclude Include="Source\Core\Rendering\RendererDefine.h" />
@@ -237,6 +239,7 @@
     <ClCompile Include="Source\CoreUObject\Components\SceneComponent.cpp" />
     <ClCompile Include="Source\CoreUObject\Object.cpp" />
     <ClCompile Include="Source\CoreUObject\ObjectFactory.cpp" />
+    <ClCompile Include="Source\CoreUObject\Name.cpp" />
     <ClCompile Include="Source\CoreUObject\World.cpp" />
     <ClCompile Include="Source\Core\AbstractClass\UClass.cpp" />
     <ClCompile Include="Source\Core\Container\String.cpp" />

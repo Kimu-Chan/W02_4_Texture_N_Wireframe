@@ -61,6 +61,36 @@ public:
 
 	template <EAllocationType AllocType>
 	static uint64 GetAllocationCount();
+
+	/** Copies count bytes of characters from Src to Dest. If some regions of the source
+	 * area and the destination overlap, memmove ensures that the original source bytes
+	 * in the overlapping region are copied before being overwritten.  NOTE: make sure
+	 * that the destination buffer is the same size or larger than the source buffer!
+	 */
+	static FORCEINLINE void* Memmove(void* Dest, const void* Src, SIZE_T Count)
+	{
+		return memmove(Dest, Src, Count);
+	}
+
+	static FORCEINLINE int32 Memcmp(const void* Buf1, const void* Buf2, SIZE_T Count)
+	{
+		return memcmp(Buf1, Buf2, Count);
+	}
+
+	static FORCEINLINE void* Memset(void* Dest, uint8 Char, SIZE_T Count)
+	{
+		return memset(Dest, Char, Count);
+	}
+
+	static FORCEINLINE void* Memzero(void* Dest, SIZE_T Count)
+	{
+		return memset(Dest, 0, Count);
+	}
+
+	static FORCEINLINE void* Memcpy(void* Dest, const void* Src, SIZE_T Count)
+	{
+		return memcpy(Dest, Src, Count);
+	}
 };
 
 
