@@ -23,15 +23,15 @@ public:
 	void OnUpdateWindowSize(UINT InScreenWidth, UINT InScreenHeight);
 
 public:// UIWindows
-	void RenderControlPanelWindow();
+	void RenderControlPanelWindow(bool& bOutHovered);
 	void RenderMemoryUsage();
 	void RenderPrimitiveSelection();
 	void RenderCameraSettings();
 	void RenderRenderMode();
-	void RenderPropertyWindow();
+	void RenderPropertyWindow(bool& bOutHovered);
 	void RenderGridGap();
 	void RenderDebugRaycast();
-	void RenderSceneManager();
+	void RenderSceneManagerWindow(bool& bOutHovered);
 
 private:
 	void PreferenceStyle();

@@ -8,9 +8,13 @@
 #include "CoreUObject/ObjectFactory.h"
 #include "CoreUObject/World.h"
 #include "Gizmo/Axis.h"
-#include "Debugging/DebugConsole.h"
 #include "GameFrameWork/Camera.h"
-#include "GameFrameWork/Sphere.h"
+
+#ifdef _DEBUG
+#pragma comment(lib, "DirectXTK/Libs/x64/Debug/DirectXTK.lib")
+#else
+#pragma comment(lib, "DirectXTK/Libs/x64/Release/DirectXTK.lib")
+#endif
 
 
 class AArrow;
@@ -33,39 +37,31 @@ LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         PostQuitMessage(0);
         return 0;
 
-        // Handle Key Input
-    case WM_KEYDOWN:    //@TODO: WinApi의 AysncKeyState로 교체 검토
-        APlayerInput::Get().KeyDown(static_cast<EKeyCode>(wParam));
-        if ((lParam >> 30) % 2 != 0)
-        {
-            APlayerInput::Get().KeyOnceUp(static_cast<EKeyCode>(wParam));
-        }
-        break;
-    case WM_KEYUP:
-        APlayerInput::Get().KeyUp(static_cast<EKeyCode>(wParam));
-        break;
+    // Begin Handle Input
+    case WM_MOUSEMOVE:
     case WM_LBUTTONDOWN:
-        APlayerInput::Get().HandleMouseInput(hWnd, lParam, true, false);
-        break;
     case WM_LBUTTONUP:
-        APlayerInput::Get().HandleMouseInput(hWnd, lParam, false, false);
-        break;
     case WM_RBUTTONDOWN:
-        APlayerInput::Get().HandleMouseInput(hWnd, lParam, true, true);
-        break;
     case WM_RBUTTONUP:
-        APlayerInput::Get().HandleMouseInput(hWnd, lParam, false, true);
-        break;
     case WM_MOUSEWHEEL:
-        APlayerInput::Get().HandleMouseWheel(wParam);
+        DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
         break;
 
+    case WM_KEYDOWN:
+    case WM_KEYUP:
+    case WM_SYSKEYDOWN:
+    case WM_SYSKEYUP:
+        DirectX::Keyboard::ProcessMessage(uMsg, wParam, lParam);
+        break;
+    // End Handle Input
+    
     case WM_SIZE:
-        if (wParam == SIZE_MINIMIZED)
         {
-            return 0;
-        }
-        {
+            // 다른 case에서 아래의 변수에 접근하지 못하도록 스코프 제한
+            if (wParam == SIZE_MINIMIZED)
+            {
+                return 0;
+            }
             int32 Width = static_cast<int32>(LOWORD(lParam));
             int32 Height = static_cast<int32>(HIWORD(lParam));
             UEngine::Get().ResizeWidth = Width;
@@ -105,6 +101,8 @@ void UEngine::Initialize(HINSTANCE hInstance, const WCHAR* InWindowTitle, const 
 	ScreenWidth = ClientRect.right - ClientRect.left;
 	ScreenHeight = ClientRect.bottom - ClientRect.top;
 
+    APlayerInput::Get().SetWindowSize(ScreenWidth, ScreenHeight);
+
     InitRenderer();
 
     InitializedScreenWidth = ScreenWidth;
@@ -138,9 +136,6 @@ void UEngine::Run()
 
         const float DeltaTime = static_cast<float>(StartTime.QuadPart - EndTime.QuadPart) / static_cast<float>(Frequency.QuadPart);
 
-		// Input PreProcess //
-        APlayerInput::Get().PreProcessInput();
-        
 		// Message Loop //
         MSG Msg;
         while (PeekMessage(&Msg, nullptr, 0, 0, PM_REMOVE))
@@ -158,10 +153,6 @@ void UEngine::Run()
         // Handle window being minimized or screen locked
         if (Renderer->IsOccluded()) continue;
 
-        // Handle window resize (we don't resize directly in the WM_SIZE handler)
-        if (ResizeWidth != 0 && ResizeHeight != 0)
-			UpdateWindowSize(ResizeWidth, ResizeHeight);
-
         // Renderer Update
         Renderer->PrepareRender();
         Renderer->PrepareShader();
@@ -173,15 +164,13 @@ void UEngine::Run()
             World->Render(DeltaTime);
             World->LateTick(DeltaTime);
         }
-
-        //각 Actor에서 TickActor() -> PlayerTick() -> TickPlayerInput() 호출하는데 지금은 Message에서 처리하고 있다.
-        APlayerInput::Get().TickPlayerInput();  //@TODO: TickPlayerInput을 옮기자.
-        
-        // TickPlayerInput
-        APlayerController::Get().ProcessPlayerInput(DeltaTime);
         
         // ui Update
         ui.Update();
+
+        // UI입력을 우선으로 처리
+        APlayerInput::Get().UpdateInput();
+        APlayerController::Get().ProcessPlayerInput(DeltaTime);
 
         Renderer->SwapBuffer();
 
@@ -273,7 +262,8 @@ void UEngine::InitWorld()
 		FTransform CameraTransform = FTransform(CameraPos, CameraRot, FVector(1,1,1));
 
 		Camera->SetActorTransform(CameraTransform);
-		Camera->CameraSpeed = EngineConfig->GetEngineConfigValue<float>(EEngineConfigValueType::EEC_EditorCameraSpeed, 1.f);
+		float CameraSpeed = EngineConfig->GetEngineConfigValue<float>(EEngineConfigValueType::EEC_EditorCameraSpeed, 1.f);
+        APlayerController::Get().SetCurrentSpeed(CameraSpeed);
     }
 
     //// Test
@@ -315,6 +305,8 @@ void UEngine::UpdateWindowSize(const uint32 InScreenWidth, const uint32 InScreen
         ui.OnUpdateWindowSize(InScreenWidth, InScreenHeight);
     }
 	ResizeWidth = ResizeHeight = 0;
+
+    APlayerInput::Get().SetWindowSize(ScreenWidth, ScreenHeight);
 
 	EngineConfig->SaveEngineConfig<int>(EEngineConfigValueType::EEC_ScreenWidth, ScreenWidth);
 	EngineConfig->SaveEngineConfig<int>(EEngineConfigValueType::EEC_ScreenHeight, ScreenHeight);

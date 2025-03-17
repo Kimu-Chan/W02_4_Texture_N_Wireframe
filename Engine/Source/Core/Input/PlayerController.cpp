@@ -7,66 +7,84 @@
 #include "Engine/GameFrameWork/Camera.h"
 #include "Engine/EngineConfig.h"
 
-APlayerController::APlayerController() {
+APlayerController::APlayerController()
+    : CurrentSpeed(3.f)
+    , MaxSpeed(10.f)
+    , MinSpeed(1.0f)
+    , MouseSensitivity(10.f)
+{}
 
-}
-
-void APlayerController::HandleCameraMovement(float DeltaTime) {
-
-	//@TODO: ImGuiIO.WantCaptureMouse를 이용하여 UI 조작중에는 카메라 조작을 막아야함
-    FVector NewVelocity(0, 0, 0);
-
-    if (APlayerInput::Get().IsPressedMouse(true) == false)
+void APlayerController::HandleCameraMovement(float DeltaTime)
+{
+    if (bUiCaptured)
     {
-        // Camera->SetVelocity(NewVelocity);
         return;
     }
+    
+    if (!APlayerInput::Get().IsMouseDown(true))
+    {
+        if (APlayerInput::Get().IsMouseReleased(true))
+        {
+            /**
+             * ShowCursor 함수는 참조 카운트를 하므로, 정확한 횟수만큼 Show 및 Hide 하지 않으면
+             * 의도대로 작동하지 않는 문제가 발생함으로 매우 주의해야 함.
+             */
+            ShowCursor(true);
+        }
+        return;
+    }
+    
+    FVector NewVelocity(0, 0, 0);
 
     ACamera* Camera = FEditorManager::Get().GetCamera();
-
-    // Camera Speed //
-    float MouseWheel = APlayerInput::Get().GetMouseWheel();
-
-    float CameraSpeed = Camera->CameraSpeed;
-    CameraSpeed += MouseWheel * 0.1f;
-    CameraSpeed = FMath::Clamp(CameraSpeed, 0.1f, 5.0f);
-
-    Camera->CameraSpeed = CameraSpeed;
-
-    APlayerInput::Get().SetMouseWheel(0.0f);    // Reset MouseWheel After Set Camera Speed
-
-    // Last Frame Mouse Position
-    FVector MousePrePos = APlayerInput::Get().GetMousePrePos();
-    FVector MousePos = APlayerInput::Get().GetMousePos();
-    FVector DeltaPos = MousePos - MousePrePos;
-    //FQuat CameraRot = FEditorManager::Get().GetCamera()->GetActorTransform().GetRotation();
-
     FTransform CameraTransform = Camera->GetActorTransform();
 
-    FVector TargetRotation = CameraTransform.GetRotation().GetEuler();
-    TargetRotation.Y += Camera->CameraSpeed * DeltaPos.Y * DeltaTime * 2.0f;    //@TODO: CameraRotaionSpeed를 나중에 조절할 수 있도록 수정
-    TargetRotation.Z += Camera->CameraSpeed * DeltaPos.X * DeltaTime * 2.0f;
+    // Look
+    int32 DeltaX = 0;
+    int32 DeltaY = 0;
+    APlayerInput::Get().GetMouseDelta(DeltaX, DeltaY);
+        
+    FVector NewRotation = CameraTransform.GetRotation().GetEuler();
+    NewRotation.Y += MouseSensitivity * static_cast<float>(DeltaY) * DeltaTime; // Pitch
+    NewRotation.Z += MouseSensitivity * static_cast<float>(DeltaX) * DeltaTime; // Yaw
 
-    TargetRotation.Y = FMath::Clamp(TargetRotation.Y, -Camera->MaxYDegree, Camera->MaxYDegree);
-    CameraTransform.SetRotation(TargetRotation);
+    NewRotation.Y = FMath::Clamp(NewRotation.Y, -Camera->MaxYDegree, Camera->MaxYDegree);
+    CameraTransform.SetRotation(NewRotation);
 
-    if (APlayerInput::Get().IsPressedKey(EKeyCode::A)) {
+    if (APlayerInput::Get().IsMousePressed(true))
+    {
+        // Press 이벤트 발생시 커서 위치를 캐싱하여 해당 위치로 커서를 고정시킴.
+        APlayerInput::Get().CacheCursorPosition();
+        ShowCursor(false);
+    }
+    APlayerInput::Get().FixMouseCursor();
+    
+    // Move
+    int32 MouseWheel = APlayerInput::Get().GetMouseWheelDelta();
+    CurrentSpeed += static_cast<float>(MouseWheel) * 0.005f;
+    CurrentSpeed = FMath::Clamp(CurrentSpeed, MinSpeed, MaxSpeed);
+
+    if (APlayerInput::Get().IsKeyDown(DirectX::Keyboard::Keys::A))
+    {
         NewVelocity -= Camera->GetRight();
     }
-    if (APlayerInput::Get().IsPressedKey(EKeyCode::D)) {
+    if (APlayerInput::Get().IsKeyDown(DirectX::Keyboard::Keys::D))
+    {
         NewVelocity += Camera->GetRight();
     }
-    if (APlayerInput::Get().IsPressedKey(EKeyCode::W)) {
+    if (APlayerInput::Get().IsKeyDown(DirectX::Keyboard::Keys::W))
+    {
         NewVelocity += Camera->GetForward();
     }
-    if (APlayerInput::Get().IsPressedKey(EKeyCode::S)) {
+    if (APlayerInput::Get().IsKeyDown(DirectX::Keyboard::Keys::S))
+        {
         NewVelocity -= Camera->GetForward();
     }
-    if (APlayerInput::Get().IsPressedKey(EKeyCode::Q))
+    if (APlayerInput::Get().IsKeyDown(DirectX::Keyboard::Keys::Q))
     {
         NewVelocity -= {0.0f, 0.0f, 1.0f};
     }
-    if (APlayerInput::Get().IsPressedKey(EKeyCode::E))
+    if (APlayerInput::Get().IsKeyDown(DirectX::Keyboard::Keys::E))
     {
         NewVelocity += {0.0f, 0.0f, 1.0f};
     }
@@ -75,10 +93,9 @@ void APlayerController::HandleCameraMovement(float DeltaTime) {
         NewVelocity = NewVelocity.GetSafeNormal();
     }
 
-    //회전이랑 마우스클릭 구현 카메라로 해야할듯?
-    CameraTransform.Translate(NewVelocity * DeltaTime * Camera->CameraSpeed);
+    CameraTransform.Translate(NewVelocity * DeltaTime * CurrentSpeed);
     Camera->SetActorTransform(CameraTransform);
-    // FCamera::Get().SetVelocity(NewVelocity);
+    
     SaveCameraProperties(Camera);
 	
 
@@ -86,7 +103,9 @@ void APlayerController::HandleCameraMovement(float DeltaTime) {
 
 void APlayerController::HandleGizmoMovement(float DeltaTime)
 {
-    if (APlayerInput::Get().IsPressedMouse(false) == false)
+    bIsHandlingGizmo = false;
+    
+    if (APlayerInput::Get().IsMousePressed(false) == false)
     {
         return;
     }
@@ -99,34 +118,52 @@ void APlayerController::HandleGizmoMovement(float DeltaTime)
         return;
     }
 
-
+    bIsHandlingGizmo = true;
 }
 
 void APlayerController::SaveCameraProperties(ACamera* Camera)
 {
-	FEngineConfig* EngineConfig = UEngine::Get().GetEngineConfig();
-	FTransform CameraTransform = Camera->GetActorTransform();
+    FEngineConfig* EngineConfig = UEngine::Get().GetEngineConfig();
+    FTransform CameraTransform = Camera->GetActorTransform();
 
-	float FOV = Camera->GetFieldOfView();
-	float NearClip = Camera->GetNearClip();
-	float FarClip = Camera->GetFarClip();
-	float CameraSpeed = Camera->CameraSpeed;
+    float FOV = Camera->GetFieldOfView();
+    float NearClip = Camera->GetNearClip();
+    float FarClip = Camera->GetFarClip();
+    float CameraSpeed = CurrentSpeed;
 
     UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraPosX, CameraTransform.GetPosition().X);
     UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraPosY, CameraTransform.GetPosition().Y);
     UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraPosZ, CameraTransform.GetPosition().Z);
 
-	UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraRotX, CameraTransform.GetRotation().X);
-	UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraRotY, CameraTransform.GetRotation().Y);
-	UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraRotZ, CameraTransform.GetRotation().Z);
-	UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraRotW, CameraTransform.GetRotation().W);
+    UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraRotX, CameraTransform.GetRotation().X);
+    UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraRotY, CameraTransform.GetRotation().Y);
+    UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraRotZ, CameraTransform.GetRotation().Z);
+    UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraRotW, CameraTransform.GetRotation().W);
 
-	UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraSpeed, CameraSpeed);
+    UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraSpeed, CameraSpeed);
 
 }
 
-void APlayerController::ProcessPlayerInput(float DeltaTime) {
-
-    HandleGizmoMovement(DeltaTime);
+void APlayerController::ProcessPlayerInput(float DeltaTime)
+{
+    if (bUiInput)
+    {
+        if (APlayerInput::Get().IsMouseDown(true) || APlayerInput::Get().IsMouseDown(false))
+        {
+            bUiCaptured = true;
+        }
+        return;
+    }
+    if (bUiCaptured)
+    {
+        if (!APlayerInput::Get().IsMouseDown(true) && !APlayerInput::Get().IsMouseDown(false))
+        {
+            bUiCaptured = false;
+        }
+        return;
+    }
+    
+    // TODO: 기즈모 조작시에는 카메라 입력 무시
+    // HandleGizmoMovement(DeltaTime); // TODO: 의미없는 함수인듯
     HandleCameraMovement(DeltaTime);
 }
