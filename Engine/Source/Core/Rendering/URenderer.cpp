@@ -75,8 +75,8 @@ void URenderer::CreateConstantBuffer()
     if (FAILED(hr))
         return;
 
-    DynamicConstantBufferDesc.ByteWidth = sizeof(FCbChangeEveryFrame) + 0xf & 0xfffffff0;  // 16byte의 배수로 올림
-    hr = Device->CreateBuffer(&DynamicConstantBufferDesc, nullptr, &CbChangeEveryFrame);
+    DynamicConstantBufferDesc.ByteWidth = sizeof(FCbChangeOnCameraMove) + 0xf & 0xfffffff0;  // 16byte의 배수로 올림
+    hr = Device->CreateBuffer(&DynamicConstantBufferDesc, nullptr, &CbChangeOnCameraMove);
     if (FAILED(hr))
         return;
     
@@ -122,11 +122,11 @@ void URenderer::CreateConstantBuffer()
      * 따라서 초기화 단계에서 모두 바인딩.
      */
     DeviceContext->VSSetConstantBuffers(0, 1, &CbChangeEveryObject);
-    DeviceContext->VSSetConstantBuffers(1, 1, &CbChangeEveryFrame);
+    DeviceContext->VSSetConstantBuffers(1, 1, &CbChangeOnCameraMove);
     DeviceContext->VSSetConstantBuffers(2, 1, &CbChangeOnResizeAndFov);
     DeviceContext->VSSetConstantBuffers(5, 1, &TextureConstantBuffer);
 
-    DeviceContext->PSSetConstantBuffers(1, 1, &CbChangeEveryFrame);
+    DeviceContext->PSSetConstantBuffers(1, 1, &CbChangeOnCameraMove);
     DeviceContext->PSSetConstantBuffers(2, 1, &CbChangeOnResizeAndFov);
     DeviceContext->PSSetConstantBuffers(3, 1, &ConstantPickingBuffer);
     DeviceContext->PSSetConstantBuffers(4, 1, &ConstantsDepthBuffer);
@@ -140,10 +140,10 @@ void URenderer::ReleaseConstantBuffer()
         CbChangeEveryObject = nullptr;
     }
 
-    if (CbChangeEveryFrame)
+    if (CbChangeOnCameraMove)
     {
-        CbChangeEveryFrame->Release();
-        CbChangeEveryFrame = nullptr;
+        CbChangeOnCameraMove->Release();
+        CbChangeOnCameraMove = nullptr;
     }
 
     if (CbChangeOnResizeAndFov)
@@ -977,6 +977,7 @@ void URenderer::PrepareBillboard()
     DeviceContext->VSSetShader(ShaderCache->GetVertexShader(L"ShaderTexture"), nullptr, 0);
     DeviceContext->PSSetShader(ShaderCache->GetPixelShader(L"ShaderTexture"), nullptr, 0);
     DeviceContext->PSSetSamplers(0, 1, &SamplerState);
+    DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);
 }
 
 void URenderer::RenderBillboard()
@@ -1319,16 +1320,16 @@ void URenderer::UpdateViewMatrix(const FTransform& CameraTransform)
 {
     // Update Constant Buffer
     D3D11_MAPPED_SUBRESOURCE ConstantBufferMSR;
-    DeviceContext->Map(CbChangeEveryFrame, 0, D3D11_MAP_WRITE_DISCARD, 0, &ConstantBufferMSR);
+    DeviceContext->Map(CbChangeOnCameraMove, 0, D3D11_MAP_WRITE_DISCARD, 0, &ConstantBufferMSR);
     // 매핑된 메모리를 캐스팅
     ViewMatrix = CameraTransform.GetViewMatrix();
-    if (FCbChangeEveryFrame* Constants = static_cast<FCbChangeEveryFrame*>(ConstantBufferMSR.pData))
+    if (FCbChangeOnCameraMove* Constants = static_cast<FCbChangeOnCameraMove*>(ConstantBufferMSR.pData))
     {
         Constants->ViewMatrix = FMatrix::Transpose(ViewMatrix);
         Constants->ViewPosition = CameraTransform.GetPosition();
     }
     // UnMap해서 GPU에 값이 전달 될 수 있게 함
-    DeviceContext->Unmap(CbChangeEveryFrame, 0);
+    DeviceContext->Unmap(CbChangeOnCameraMove, 0);
 }
 
 void URenderer::UpdateProjectionMatrix(ACamera* Camera)
@@ -1444,4 +1445,9 @@ void URenderer::RenderPickingTexture()
 	}
     DeviceContext->CopyResource(backBuffer, PickingFrameBuffer);
     backBuffer->Release();
+}
+
+FMatrix URenderer::GetProjectionMatrix() const
+{
+    return ProjectionMatrix;
 }

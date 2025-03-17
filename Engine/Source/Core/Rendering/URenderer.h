@@ -7,7 +7,6 @@
 #include "UI.h"
 #include "Core/Math/Vector.h"
 #include "Core/Math/Matrix.h"
-#include "Core/Math/Plane.h"
 #include "Primitive/PrimitiveVertices.h"
 #include "RendererDefine.h"
 #include "Constants.h"
@@ -192,7 +191,7 @@ protected:
 	EViewModeIndex CurrentRasterizerStateType = EViewModeIndex::ERS_Solid; // 현재 사용중인 레스터라이즈 상태 타입
 
 	ID3D11Buffer* CbChangeEveryObject = nullptr;                 // 쉐이더에 데이터를 전달하기 위한 상수 버퍼
-	ID3D11Buffer* CbChangeEveryFrame = nullptr;                  // 쉐이더에 데이터를 전달하기 위한 상수 버퍼
+	ID3D11Buffer* CbChangeOnCameraMove = nullptr;                  // 쉐이더에 데이터를 전달하기 위한 상수 버퍼
 	ID3D11Buffer* CbChangeOnResizeAndFov = nullptr;              // 쉐이더에 데이터를 전달하기 위한 상수 버퍼
 
 	FLOAT ClearColor[4] = { 0.025f, 0.025f, 0.025f, 1.0f }; // 화면을 초기화(clear)할 때 사용할 색상 (RGBA)
@@ -277,6 +276,7 @@ public:
 	FVector4 GetPixel(FVector MPos);
 
 	void RenderPickingTexture();
-	FMatrix GetProjectionMatrix() const { return ProjectionMatrix; }
+	FMatrix GetProjectionMatrix() const;
+	
 #pragma endregion picking
 };
