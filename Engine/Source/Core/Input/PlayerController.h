@@ -6,7 +6,7 @@ class APlayerController : public TSingleton<APlayerController>
 {
 	// TODO: 카메라는 플레이어 컨트롤러가 가지고있어야 함.
 	
-	public :
+public :
 	APlayerController();
 
 	void ProcessPlayerInput(float DeltaTime);

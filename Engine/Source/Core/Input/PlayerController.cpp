@@ -9,14 +9,18 @@
 APlayerController::APlayerController()
     : CurrentSpeed(3.f)
     , MaxSpeed(10.f)
-    , MinSpeed(0.1f)
+    , MinSpeed(1.0f)
     , MouseSensitivity(10.f)
 {}
 
 void APlayerController::HandleCameraMovement(float DeltaTime)
 {
-    if (!APlayerInput::Get().GetMouseDown(true))
+    if (!APlayerInput::Get().IsMouseDown(true))
     {
+        if (APlayerInput::Get().IsMouseReleased(true))
+        {
+            ShowCursor(true);
+        }
         return;
     }
     
@@ -37,33 +41,41 @@ void APlayerController::HandleCameraMovement(float DeltaTime)
 
     NewRotation.Y = FMath::Clamp(NewRotation.Y, -Camera->MaxYDegree, Camera->MaxYDegree);
     CameraTransform.SetRotation(NewRotation);
+
+    if (APlayerInput::Get().IsMousePressed(true))
+    {
+        // Press 이벤트 발생시 커서 위치를 캐싱하여 해당 위치로 커서를 고정시킴.
+        APlayerInput::Get().CacheCursorPosition();
+        ShowCursor(false);
+    }
+    APlayerInput::Get().FixMouseCursor();
     
     // Move
     int32 MouseWheel = APlayerInput::Get().GetMouseWheelDelta();
-    CurrentSpeed += static_cast<float>(MouseWheel) * 0.001f;
+    CurrentSpeed += static_cast<float>(MouseWheel) * 0.005f;
     CurrentSpeed = FMath::Clamp(CurrentSpeed, MinSpeed, MaxSpeed);
 
-    if (APlayerInput::Get().GetKeyDown(DirectX::Keyboard::Keys::A))
+    if (APlayerInput::Get().IsKeyDown(DirectX::Keyboard::Keys::A))
     {
         NewVelocity -= Camera->GetRight();
     }
-    if (APlayerInput::Get().GetKeyDown(DirectX::Keyboard::Keys::D))
+    if (APlayerInput::Get().IsKeyDown(DirectX::Keyboard::Keys::D))
     {
         NewVelocity += Camera->GetRight();
     }
-    if (APlayerInput::Get().GetKeyDown(DirectX::Keyboard::Keys::W))
+    if (APlayerInput::Get().IsKeyDown(DirectX::Keyboard::Keys::W))
     {
         NewVelocity += Camera->GetForward();
     }
-    if (APlayerInput::Get().GetKeyDown(DirectX::Keyboard::Keys::S))
+    if (APlayerInput::Get().IsKeyDown(DirectX::Keyboard::Keys::S))
         {
         NewVelocity -= Camera->GetForward();
     }
-    if (APlayerInput::Get().GetKeyDown(DirectX::Keyboard::Keys::Q))
+    if (APlayerInput::Get().IsKeyDown(DirectX::Keyboard::Keys::Q))
     {
         NewVelocity -= {0.0f, 0.0f, 1.0f};
     }
-    if (APlayerInput::Get().GetKeyDown(DirectX::Keyboard::Keys::E))
+    if (APlayerInput::Get().IsKeyDown(DirectX::Keyboard::Keys::E))
     {
         NewVelocity += {0.0f, 0.0f, 1.0f};
     }
@@ -80,7 +92,7 @@ void APlayerController::HandleGizmoMovement(float DeltaTime)
 {
     bIsHandlingGizmo = false;
     
-    if (APlayerInput::Get().IsPressedMouse(false) == false)
+    if (APlayerInput::Get().IsMousePressed(false) == false)
     {
         return;
     }

@@ -43,7 +43,7 @@ void APicker::LateTick(float DeltaTime)
 {
     AActor::LateTick(DeltaTime);
 
-    if (APlayerInput::Get().IsPressedMouse(false))    //좌클릭
+    if (APlayerInput::Get().IsMousePressed(false))    //좌클릭
     {
         if (!PickByColor())
         {
@@ -53,7 +53,7 @@ void APicker::LateTick(float DeltaTime)
 
 
     // 기즈모 핸들링
-    if (APlayerInput::Get().GetMouseDown(false))    //좌클릭
+    if (APlayerInput::Get().IsMouseDown(false))    //좌클릭
     {
 		HandleGizmo();
     }
