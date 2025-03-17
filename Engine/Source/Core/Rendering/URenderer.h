@@ -215,6 +215,7 @@ protected:
 	// Shader Cache
 	std::unique_ptr<class FShaderCache> ShaderCache;
 
+	FMatrix ViewMatrix;
 	FMatrix ProjectionMatrix;
 
 	D3D_PRIMITIVE_TOPOLOGY CurrentTopology = D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED;

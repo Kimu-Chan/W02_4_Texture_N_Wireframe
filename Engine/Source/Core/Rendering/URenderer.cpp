@@ -992,7 +992,6 @@ void URenderer::UpdateTextureConstantBuffer(const FMatrix& World, float u, float
         return;
 
     FTextureConstants* BufferData = reinterpret_cast<FTextureConstants*>(MappedResource.pData);
-    FMatrix ViewMatrix = FEditorManager::Get().GetCamera()->GetViewMatrix();
     BufferData->WorldViewProj =FMatrix::Transpose(World * ViewMatrix * ProjectionMatrix);
     BufferData->u = u;
 	BufferData->v = v;
@@ -1322,9 +1321,10 @@ void URenderer::UpdateViewMatrix(const FTransform& CameraTransform)
     D3D11_MAPPED_SUBRESOURCE ConstantBufferMSR;
     DeviceContext->Map(CbChangeEveryFrame, 0, D3D11_MAP_WRITE_DISCARD, 0, &ConstantBufferMSR);
     // 매핑된 메모리를 캐스팅
+    ViewMatrix = CameraTransform.GetViewMatrix();
     if (FCbChangeEveryFrame* Constants = static_cast<FCbChangeEveryFrame*>(ConstantBufferMSR.pData))
     {
-        Constants->ViewMatrix = FMatrix::Transpose(CameraTransform.GetViewMatrix());
+        Constants->ViewMatrix = FMatrix::Transpose(ViewMatrix);
         Constants->ViewPosition = CameraTransform.GetPosition();
     }
     // UnMap해서 GPU에 값이 전달 될 수 있게 함
