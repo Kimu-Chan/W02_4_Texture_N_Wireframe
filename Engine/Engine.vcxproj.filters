@@ -143,6 +143,12 @@
       <Filter>Source Files\Core\AbstractClass</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\EngineConfig.cpp" />
+    <ClCompile Include="Source\Core\Rendering\ShaderCache.cpp">
+      <Filter>Source Files\Core\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Shaders\ShaderPicking.hlsl">
+      <Filter>Shaders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Core\HAL\PlatformType.h">
@@ -354,6 +360,12 @@
     </ClInclude>
     <ClInclude Include="Source\ThirdParty\IniParser\iniparser.hpp">
       <Filter>ThirdParty\IniParser</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Rendering\Constants.h">
+      <Filter>Header Files\Core\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Rendering\ShaderCache.h">
+      <Filter>Header Files\Core\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

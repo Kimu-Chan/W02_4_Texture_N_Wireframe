@@ -1,6 +1,5 @@
 ﻿#include "pch.h" 
 #include "URenderer.h"
-#include "Core/Rendering/BufferCache.h"
 #include "Static/EditorManager.h"
 #include "Core/Math/Transform.h"
 #include "Engine/GameFrameWork/Camera.h"
@@ -14,6 +13,7 @@ void URenderer::Create(HWND hWindow)
     CreateFrameBuffer();
     CreateRasterizerState();
     CreateBufferCache();
+    CreateShaderCache();
     CreateDepthStencilBuffer();
     CreateDepthStencilState();
     CreateBlendState();
@@ -55,154 +55,28 @@ void URenderer::CreateShader()
     *   - SIZE_T GetBufferSize
     *     - 버퍼의 크기(바이트 갯수)를 돌려준다
     */
-    ID3DBlob* VertexShaderCSO;
-    ID3DBlob* PixelShaderCSO;
+    //ID3DBlob* VertexShaderCSO;
+    //ID3DBlob* PixelShaderCSO;
+    //ID3DBlob* PickingShaderCSO;
 
-    ID3DBlob* PickingShaderCSO;
+    //ID3DBlob* ErrorMsg = nullptr;
 
-    ID3DBlob* ErrorMsg = nullptr;
-
-    // Compile Shader //
-    D3DCompileFromFile(L"Shaders/ShaderMain.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &VertexShaderCSO, &ErrorMsg);
-    Device->CreateVertexShader(VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), nullptr, &SimpleVertexShader);
-
-    D3DCompileFromFile(L"Shaders/ShaderMain.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &PixelShaderCSO, &ErrorMsg);
-    Device->CreatePixelShader(PixelShaderCSO->GetBufferPointer(), PixelShaderCSO->GetBufferSize(), nullptr, &SimplePixelShader);
-
-    D3DCompileFromFile(L"Shaders/ShaderMain.hlsl", nullptr, nullptr, "PickingPS", "ps_5_0", 0, 0, &PickingShaderCSO, nullptr);
-    Device->CreatePixelShader(PickingShaderCSO->GetBufferPointer(), PickingShaderCSO->GetBufferSize(), nullptr, &PickingPixelShader);
-
-    if (ErrorMsg)
+    if (ShaderCache == nullptr)
     {
-        std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
-        ErrorMsg->Release();
+        return;
     }
 
-    // Input Layout //
-    D3D11_INPUT_ELEMENT_DESC Layout[] =
-    {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    };
-
-    Device->CreateInputLayout(Layout, ARRAYSIZE(Layout), VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), &SimpleInputLayout);
-
-    VertexShaderCSO->Release();
-    PixelShaderCSO->Release();
-    PickingShaderCSO->Release();
+	ShaderCache->CreateShaders(ShaderCache->GetShaderNames(L"Shaders"));
 
     // unit byte
     Stride = sizeof(FVertexSimple);
-
-    
-    ////////
-    // Grid
-    ////////
-    // Compile Shader //
-    ID3DBlob* GridVertexCSO;
-    ID3DBlob* GridPixelCSO;
-    HRESULT hr = S_OK;
-    hr = D3DCompileFromFile(L"Shaders/ShaderGrid.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &GridVertexCSO, &ErrorMsg);
-    if (FAILED(hr))
-        return;
-    hr = Device->CreateVertexShader(GridVertexCSO->GetBufferPointer(), GridVertexCSO->GetBufferSize(), nullptr, &GridVertexShader);
-    if (FAILED(hr))
-        return;
-    hr = D3DCompileFromFile(L"Shaders/ShaderGrid.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &GridPixelCSO, &ErrorMsg);
-    if (FAILED(hr))
-        return;
-    hr = Device->CreatePixelShader(GridPixelCSO->GetBufferPointer(), GridPixelCSO->GetBufferSize(), nullptr, &GridPixelShader);
-    if (FAILED(hr))
-        return;
-    if (ErrorMsg)
-    {
-        std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
-        ErrorMsg->Release();
-    }
-    
-    // Input Layout //
-    D3D11_INPUT_ELEMENT_DESC GridLayout[] =
-    {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    };
-
-    hr = Device->CreateInputLayout(GridLayout, ARRAYSIZE(GridLayout), GridVertexCSO->GetBufferPointer(), GridVertexCSO->GetBufferSize(), &GridInputLayout);
-    if (FAILED(hr))
-        return;
-    GridVertexCSO->Release();
-    GridPixelCSO->Release();
-
     GridStride = sizeof(FVertexGrid);
 
-    ////////
-    // Debug Line
-    ////////
-    // Compile Shader //
-    ID3DBlob* DebugLineVertexCSO;
-    ID3DBlob* DebugLinePixelCSO;
-    hr = D3DCompileFromFile(L"Shaders/ShaderDebugLine.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &DebugLineVertexCSO, &ErrorMsg);
-    if (ErrorMsg)
-    {
-        std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
-        ErrorMsg->Release();
-    }
-    if (FAILED(hr))
-        return;
-    hr = Device->CreateVertexShader(DebugLineVertexCSO->GetBufferPointer(), DebugLineVertexCSO->GetBufferSize(), nullptr, &DebugLineVertexShader);
-    if (FAILED(hr))
-        return;
-    hr = D3DCompileFromFile(L"Shaders/ShaderDebugLine.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &DebugLinePixelCSO, &ErrorMsg);
-    if (FAILED(hr))
-        return;
-    hr = Device->CreatePixelShader(DebugLinePixelCSO->GetBufferPointer(), DebugLinePixelCSO->GetBufferSize(), nullptr, &DebugLinePixelShader);
-    if (FAILED(hr))
-        return;
-    if (ErrorMsg)
-    {
-        std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
-        ErrorMsg->Release();
-    }
-    DebugLineVertexCSO->Release();
-    DebugLinePixelCSO->Release();
 }
 
 void URenderer::ReleaseShader()
 {
-    if (SimpleInputLayout)
-    {
-        SimpleInputLayout->Release();
-        SimpleInputLayout = nullptr;
-    }
 
-    if (SimplePixelShader)
-    {
-        SimplePixelShader->Release();
-        SimplePixelShader = nullptr;
-    }
-
-    if (SimpleVertexShader)
-    {
-        SimpleVertexShader->Release();
-        SimpleVertexShader = nullptr;
-    }
-
-    if (GridInputLayout)
-    {
-        GridInputLayout->Release();
-        GridInputLayout = nullptr;
-    }
-
-    if (GridVertexShader)
-    {
-        GridVertexShader->Release();
-        GridVertexShader = nullptr;
-    }
-
-    if (GridPixelShader)
-    {
-        GridPixelShader->Release();
-        GridPixelShader = nullptr;
-    }
 }
 
 void URenderer::CreateConstantBuffer()
@@ -342,9 +216,12 @@ void URenderer::PrepareRender()
 void URenderer::PrepareShader() const
 {
     // 기본 셰이더랑 InputLayout을 설정
-    DeviceContext->VSSetShader(SimpleVertexShader, nullptr, 0);
-    DeviceContext->PSSetShader(SimplePixelShader, nullptr, 0);
-    DeviceContext->IASetInputLayout(SimpleInputLayout);
+	ID3D11VertexShader* MainVertexShader = ShaderCache->GetVertexShader(L"ShaderMain");
+	ID3D11PixelShader* MainPixelShader = ShaderCache->GetPixelShader(L"ShaderMain");
+	ID3D11InputLayout* MainInputLayout = ShaderCache->GetInputLayout(L"ShaderMain");
+    DeviceContext->VSSetShader(MainVertexShader, nullptr, 0);
+    DeviceContext->PSSetShader(MainPixelShader, nullptr, 0);
+    DeviceContext->IASetInputLayout(MainInputLayout);
 }
 
 void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp)
@@ -465,9 +342,14 @@ void URenderer::PrepareWorldGrid()
     DeviceContext->OMSetBlendState(GridBlendState, nullptr, 0xFFFFFFFF);
     
     DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
-    DeviceContext->IASetInputLayout(GridInputLayout);
-    DeviceContext->VSSetShader(GridVertexShader, nullptr, 0);
-    DeviceContext->PSSetShader(GridPixelShader, nullptr, 0);
+
+	ID3D11VertexShader* ShaderGridVS = ShaderCache->GetVertexShader(L"ShaderGrid");
+	ID3D11PixelShader* ShaderGridPS = ShaderCache->GetPixelShader(L"ShaderGrid");
+	ID3D11InputLayout* InputLayoutGrid = ShaderCache->GetInputLayout(L"ShaderGrid");
+
+	DeviceContext->VSSetShader(ShaderGridVS, nullptr, 0);
+	DeviceContext->PSSetShader(ShaderGridPS, nullptr, 0);
+	DeviceContext->IASetInputLayout(InputLayoutGrid);
 }
 
 void URenderer::RenderWorldGrid()
@@ -898,6 +780,11 @@ void URenderer::CreateBufferCache()
     BufferCache = std::make_unique<FBufferCache>();
 }
 
+void URenderer::CreateShaderCache()
+{
+	ShaderCache = std::make_unique<FShaderCache>();
+}
+
 void URenderer::InitMatrix()
 {
     WorldMatrix = FMatrix::Identity;
@@ -1129,9 +1016,14 @@ void URenderer::PrepareDebugLines()
     DeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
     
     DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
-    DeviceContext->IASetInputLayout(SimpleInputLayout);
-    DeviceContext->VSSetShader(DebugLineVertexShader, nullptr, 0);
-    DeviceContext->PSSetShader(DebugLinePixelShader, nullptr, 0);
+    
+	ID3D11InputLayout* InputLayout = ShaderCache->GetInputLayout(L"ShaderMain");
+	ID3D11VertexShader* VertexShader = ShaderCache->GetVertexShader(L"ShaderDebugLine");
+	ID3D11PixelShader* PixelShader = ShaderCache->GetPixelShader(L"ShaderDebugLine");
+
+    DeviceContext->IASetInputLayout(InputLayout);
+    DeviceContext->VSSetShader(VertexShader, nullptr, 0);
+    DeviceContext->PSSetShader(PixelShader, nullptr, 0);
 }
 
 void URenderer::CreatePickingFrameBuffer()
@@ -1200,6 +1092,7 @@ void URenderer::PreparePicking()
 
 void URenderer::PreparePickingShader() const
 {
+	ID3D11PixelShader* PickingPixelShader = ShaderCache->GetPixelShader(L"ShaderPicking");
     DeviceContext->PSSetShader(PickingPixelShader, nullptr, 0);
 }
 
@@ -1257,13 +1150,13 @@ void URenderer::PrepareMain()
     DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);                // DepthStencil 상태 설정. StencilRef: 스텐실 테스트 결과의 레퍼런스
     DeviceContext->OMSetRenderTargets(1, &FrameBufferRTV, DepthStencilView);
     DeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
-    DeviceContext->IASetInputLayout(SimpleInputLayout);
+    DeviceContext->IASetInputLayout(ShaderCache->GetInputLayout(L"ShaderMain"));
 }
 
 void URenderer::PrepareMainShader()
 {
-    DeviceContext->VSSetShader(SimpleVertexShader, nullptr, 0);
-    DeviceContext->PSSetShader(SimplePixelShader, nullptr, 0);
+    DeviceContext->VSSetShader(ShaderCache->GetVertexShader(L"ShaderMain"), nullptr, 0);
+    DeviceContext->PSSetShader(ShaderCache->GetPixelShader(L"ShaderMain"), nullptr, 0);
 }
 
 FVector4 URenderer::GetPixel(FVector MPos)
