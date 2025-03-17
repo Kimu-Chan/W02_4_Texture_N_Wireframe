@@ -95,9 +95,6 @@ void UEngine::Initialize(HINSTANCE hInstance, const WCHAR* InWindowTitle, const 
 
     InitWindow(ScreenWidth, ScreenHeight);
 
-	EngineConfig->SaveEngineConfig<int>(EEngineConfigValueType::EEC_ScreenWidth, ScreenWidth);
-	EngineConfig->SaveEngineConfig<int>(EEngineConfigValueType::EEC_ScreenHeight, ScreenHeight);
-
 	// Get Client Rect
 	RECT ClientRect;
 	GetClientRect(WindowHandle, &ClientRect);
@@ -315,6 +312,7 @@ void UEngine::UpdateWindowSize(const uint32 InScreenWidth, const uint32 InScreen
     ScreenWidth = InScreenWidth;
     ScreenHeight = InScreenHeight;
 
+
     if(Renderer)
     {
         Renderer->OnUpdateWindowSize(InScreenWidth, InScreenHeight);
@@ -328,8 +326,17 @@ void UEngine::UpdateWindowSize(const uint32 InScreenWidth, const uint32 InScreen
 
     APlayerInput::Get().SetWindowSize(ScreenWidth, ScreenHeight);
 
-	EngineConfig->SaveEngineConfig<int>(EEngineConfigValueType::EEC_ScreenWidth, ScreenWidth);
-	EngineConfig->SaveEngineConfig<int>(EEngineConfigValueType::EEC_ScreenHeight, ScreenHeight);
+
+    RECT windowRect;
+
+    // 전체 윈도우 영역 가져오기
+    GetWindowRect(WindowHandle, &windowRect);
+
+    UINT TotalWidth = windowRect.right - windowRect.left;
+    UINT TotalHeignt = windowRect.bottom - windowRect.top;
+
+	EngineConfig->SaveEngineConfig<int>(EEngineConfigValueType::EEC_ScreenWidth, TotalWidth);
+	EngineConfig->SaveEngineConfig<int>(EEngineConfigValueType::EEC_ScreenHeight, TotalHeignt);
 }
 
 UObject* UEngine::GetObjectByUUID(uint32 InUUID) const
