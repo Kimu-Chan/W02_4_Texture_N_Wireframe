@@ -494,7 +494,7 @@ void UI::RenderSceneManager()
             
             if (bHasPrimitive)
             {
-                ImGui::Text(*Actor->GetName());
+                ImGui::Text(*Actor->GetName().ToString());
             }
         }
         
