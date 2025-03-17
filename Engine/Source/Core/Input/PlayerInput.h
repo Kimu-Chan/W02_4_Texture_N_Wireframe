@@ -34,7 +34,7 @@ public:
 	// 윈도우 상대적인 마우스 위치 값
 	void GetMousePosition(int32& OutX, int32& OutY) const;
 
-	void GetMousePositionNDC(int32& OutX, int32& OutY) const;
+	void GetMousePositionNDC(float& OutX, float& OutY) const;
 
 	int32 GetMouseWheel() const;
 

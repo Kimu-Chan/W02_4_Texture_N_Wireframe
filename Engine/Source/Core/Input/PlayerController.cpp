@@ -17,7 +17,7 @@ void APlayerController::HandleCameraMovement(float DeltaTime)
 {
     if (bIsHandlingGizmo)
     {
-        return;
+        //return;
     }
     
 	//@TODO: ImGuiIO.WantCaptureMouse를 이용하여 UI 조작중에는 카메라 조작을 막아야함
@@ -102,6 +102,6 @@ void APlayerController::HandleGizmoMovement(float DeltaTime)
 void APlayerController::ProcessPlayerInput(float DeltaTime)
 {
     // TODO: 기즈모 조작시에는 카메라 입력 무시
-    HandleGizmoMovement(DeltaTime);
+    // HandleGizmoMovement(DeltaTime);
     HandleCameraMovement(DeltaTime);
 }

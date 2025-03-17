@@ -22,13 +22,6 @@ void APlayerInput::UpdateInput()
     auto Kb = Keyboard->GetState();
     KeyboardTracker.Update(Kb);
 
-    if (Kb.Escape) {
-        OutputDebugStringA("ESC Pressed\n");
-    }
-    if (KeyboardTracker.pressed.Space) {
-        OutputDebugStringA("Space Pressed\n");
-    }
-
     // 마우스 상태 가져오기
     auto MouseState = Mouse->GetState();
     MouseTracker.Update(MouseState);
@@ -85,12 +78,12 @@ void APlayerInput::GetMousePosition(int32& OutX, int32& OutY) const
     OutY = CurrentMouseState.Y;
 }
 
-void APlayerInput::GetMousePositionNDC(int32& OutX, int32& OutY) const
+void APlayerInput::GetMousePositionNDC(float& OutX, float& OutY) const
 {
-    int32 HalfWidth = static_cast<int32>(WindowWidth) / 2;
-    int32 HalfHeight = static_cast<int32>(WindowHeight) / 2;
-    OutX = (CurrentMouseState.X - HalfWidth) / HalfWidth;
-    OutY = (CurrentMouseState.Y - HalfHeight) / HalfHeight * -1;
+    float HalfWidth = static_cast<float>(WindowWidth) / 2.f;
+    float HalfHeight = static_cast<float>(WindowHeight) / 2.f;
+    OutX = (static_cast<float>(CurrentMouseState.X) - HalfWidth) / HalfWidth;
+    OutY = (static_cast<float>(CurrentMouseState.Y) - HalfHeight) / HalfHeight * -1.f;
 }
 
 int32 APlayerInput::GetMouseWheel() const

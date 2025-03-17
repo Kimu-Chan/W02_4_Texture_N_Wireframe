@@ -138,17 +138,8 @@ void UEngine::Run()
             }
         }
 
-        APlayerInput::Get().UpdateInput();
-
         // Handle window being minimized or screen locked
         if (Renderer->IsOccluded()) continue;
-
-        // Handle window resize (we don't resize directly in the WM_SIZE handler)
-        if (ResizeWidth != 0 && ResizeHeight != 0)
-        {
-			//UpdateWindowSize(ResizeWidth, ResizeHeight);
-            
-        }
 
         // Renderer Update
         Renderer->PrepareRender();
@@ -161,12 +152,12 @@ void UEngine::Run()
             World->Render(DeltaTime);
             World->LateTick(DeltaTime);
         }
-
-        // TickPlayerInput
-        APlayerController::Get().ProcessPlayerInput(DeltaTime);
         
         // ui Update
-        ui.Update(); // TODO: 입력 받기 전으로 옮겨보기
+        ui.Update();
+
+        APlayerInput::Get().UpdateInput();
+        APlayerController::Get().ProcessPlayerInput(DeltaTime);
 
         Renderer->SwapBuffer();
 
@@ -281,6 +272,8 @@ void UEngine::UpdateWindowSize(const uint32 InScreenWidth, const uint32 InScreen
         ui.OnUpdateWindowSize(InScreenWidth, InScreenHeight);
     }
 	ResizeWidth = ResizeHeight = 0;
+
+    APlayerInput::Get().SetWindowSize(ScreenWidth, ScreenHeight);
 }
 
 UObject* UEngine::GetObjectByUUID(uint32 InUUID) const
