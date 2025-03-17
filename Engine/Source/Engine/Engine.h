@@ -82,14 +82,15 @@ private:
     HWND WindowHandle = nullptr;
     HINSTANCE WindowInstance = nullptr;
 
-    int InitializedScreenWidth = 0;
-    int InitializedScreenHeight = 0;
+    uint32 InitializedScreenWidth = 0;
+    uint32 InitializedScreenHeight = 0;
 
-    int ScreenWidth = 0;
-    int ScreenHeight = 0;
+    uint32 ScreenWidth = 0;
+    uint32 ScreenHeight = 0;
 
-    int ResizeWidth = 0;
-	int ResizeHeight = 0;
+    // TODO: remove
+    uint32 ResizeWidth = 0;
+	uint32 ResizeHeight = 0;
 
 private:
 	std::unique_ptr<URenderer> Renderer;

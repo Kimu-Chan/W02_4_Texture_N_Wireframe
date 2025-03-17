@@ -43,18 +43,17 @@ void APicker::LateTick(float DeltaTime)
 {
     AActor::LateTick(DeltaTime);
 
-    if (APlayerInput::Get().GetMouseDown(false))    //좌클릭
+    if (APlayerInput::Get().IsPressedMouse(false))    //좌클릭
     {
         if (!PickByColor())
         {
             PickByRay();
         }
-
     }
 
 
     // 기즈모 핸들링
-    if (APlayerInput::Get().IsPressedMouse(false))    //좌클릭
+    if (APlayerInput::Get().GetMouseDown(false))    //좌클릭
     {
 		HandleGizmo();
     }

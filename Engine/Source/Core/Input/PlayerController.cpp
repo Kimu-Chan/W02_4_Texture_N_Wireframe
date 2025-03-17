@@ -13,57 +13,60 @@ APlayerController::APlayerController()
     , MouseSensitivity(10.f)
 {}
 
-void APlayerController::HandleCameraMovement(float DeltaTime) {
-
+void APlayerController::HandleCameraMovement(float DeltaTime)
+{
+    if (bIsHandlingGizmo)
+    {
+        return;
+    }
+    
 	//@TODO: ImGuiIO.WantCaptureMouse를 이용하여 UI 조작중에는 카메라 조작을 막아야함
     FVector NewVelocity(0, 0, 0);
 
     ACamera* Camera = FEditorManager::Get().GetCamera();
     FTransform CameraTransform = Camera->GetActorTransform();
 
-    if (APlayerInput::Get().IsPressedMouse(true))
+    if (APlayerInput::Get().GetMouseDown(true))
     {
         // Last Frame Mouse Position
-        FVector MousePrePos = APlayerInput::Get().GetMousePrePos();
-        FVector MousePos = APlayerInput::Get().GetMousePos();
-        FVector DeltaPos = MousePos - MousePrePos;
-
+        int32 DeltaX = 0;
+        int32 DeltaY = 0;
+        APlayerInput::Get().GetMouseDelta(DeltaX, DeltaY);
+        
         FVector NewRotation = CameraTransform.GetRotation().GetEuler();
-        NewRotation.Y += MouseSensitivity * DeltaPos.Y * DeltaTime; // Pitch
-        NewRotation.Z += MouseSensitivity * DeltaPos.X * DeltaTime; // Yaw
+        NewRotation.Y += MouseSensitivity * static_cast<float>(DeltaY) * DeltaTime; // Pitch
+        NewRotation.Z += MouseSensitivity * static_cast<float>(DeltaX) * DeltaTime; // Yaw
 
         NewRotation.Y = FMath::Clamp(NewRotation.Y, -Camera->MaxYDegree, Camera->MaxYDegree);
         CameraTransform.SetRotation(NewRotation);
     }
 
     // Camera Speed //
-    float MouseWheel = APlayerInput::Get().GetMouseWheel();
-    CurrentSpeed += MouseWheel * 0.1f;
+    int32 MouseWheel = APlayerInput::Get().GetMouseWheelDelta();
+    CurrentSpeed += static_cast<float>(MouseWheel) * 0.001f;
     CurrentSpeed = FMath::Clamp(CurrentSpeed, MinSpeed, MaxSpeed);
 
-    APlayerInput::Get().SetMouseWheel(0.0f);    // Reset MouseWheel After Set Camera Speed
-
-    if (APlayerInput::Get().IsPressedKey(EKeyCode::A))
+    if (APlayerInput::Get().GetKeyDown(DirectX::Keyboard::Keys::A))
     {
         NewVelocity -= Camera->GetRight();
     }
-    if (APlayerInput::Get().IsPressedKey(EKeyCode::D))
+    if (APlayerInput::Get().GetKeyDown(DirectX::Keyboard::Keys::D))
     {
         NewVelocity += Camera->GetRight();
     }
-    if (APlayerInput::Get().IsPressedKey(EKeyCode::W))
+    if (APlayerInput::Get().GetKeyDown(DirectX::Keyboard::Keys::W))
     {
         NewVelocity += Camera->GetForward();
     }
-    if (APlayerInput::Get().IsPressedKey(EKeyCode::S))
+    if (APlayerInput::Get().GetKeyDown(DirectX::Keyboard::Keys::S))
         {
         NewVelocity -= Camera->GetForward();
     }
-    if (APlayerInput::Get().IsPressedKey(EKeyCode::Q))
+    if (APlayerInput::Get().GetKeyDown(DirectX::Keyboard::Keys::Q))
     {
         NewVelocity -= {0.0f, 0.0f, 1.0f};
     }
-    if (APlayerInput::Get().IsPressedKey(EKeyCode::E))
+    if (APlayerInput::Get().GetKeyDown(DirectX::Keyboard::Keys::E))
     {
         NewVelocity += {0.0f, 0.0f, 1.0f};
     }
@@ -78,6 +81,8 @@ void APlayerController::HandleCameraMovement(float DeltaTime) {
 
 void APlayerController::HandleGizmoMovement(float DeltaTime)
 {
+    bIsHandlingGizmo = false;
+    
     if (APlayerInput::Get().IsPressedMouse(false) == false)
     {
         return;
@@ -90,10 +95,13 @@ void APlayerController::HandleGizmoMovement(float DeltaTime)
     {
         return;
     }
+
+    bIsHandlingGizmo = true;
 }
 
-void APlayerController::ProcessPlayerInput(float DeltaTime) {
-
+void APlayerController::ProcessPlayerInput(float DeltaTime)
+{
+    // TODO: 기즈모 조작시에는 카메라 입력 무시
     HandleGizmoMovement(DeltaTime);
     HandleCameraMovement(DeltaTime);
 }

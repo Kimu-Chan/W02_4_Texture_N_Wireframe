@@ -29,4 +29,6 @@ protected:
 	float MinSpeed;
 
 	float MouseSensitivity;
+
+	bool bIsHandlingGizmo;
 };

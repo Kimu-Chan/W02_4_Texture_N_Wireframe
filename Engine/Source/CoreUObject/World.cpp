@@ -75,7 +75,7 @@ void UWorld::Render(float DeltaTime)
     ACamera* cam = FEditorManager::Get().GetCamera();
     Renderer->UpdateViewMatrix(cam->GetActorTransform());
         
-    if (APlayerInput::Get().GetMouseDown(false))
+    if (APlayerInput::Get().IsPressedMouse(false))
     {
         RenderPickingTexture(*Renderer);
     }

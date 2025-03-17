@@ -101,7 +101,7 @@ void AGizmoHandle::Tick(float DeltaTime)
 		}
 	}
 
-    if (APlayerInput::Get().GetKeyDown(EKeyCode::Space))
+    if (APlayerInput::Get().GetKeyDown(DirectX::Keyboard::Keys::Space))
     {
         int type = static_cast<int>(GizmoType);
         type = (type + 1) % static_cast<int>(EGizmoType::Max);
