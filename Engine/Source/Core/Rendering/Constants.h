@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 struct FMatrix;
 struct FVector;
 #include "Engine/Engine.h"
@@ -13,7 +13,7 @@ struct alignas(16) FCbChangeEveryObject
 };
 
 // 한 프레임에 한번 바뀌는 값
-struct alignas(16) FCbChangeEveryFrame
+struct alignas(16) FCbChangeOnCameraMove
 {
 	FMatrix ViewMatrix;
 	FVector ViewPosition;

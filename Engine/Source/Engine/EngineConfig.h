@@ -36,6 +36,7 @@ enum class EEngineConfigValueType
 	EEC_EditorCameraRotW,
 
 	EEC_EditorCameraSpeed,
+	EEC_EditorCameraSensitivity,
 
 	EEC_Max,
 };
@@ -83,7 +84,8 @@ static const ConfigMapping ConfigMappings[] = {
 	CONFIG_MAPPING(EEC_EditorCameraRotZ, "EditorCameraRotZ", Float, ECS_Camera),
 	CONFIG_MAPPING(EEC_EditorCameraRotW, "EditorCameraRotW", Float, ECS_Camera),
 
-	CONFIG_MAPPING(EEC_EditorCameraSpeed, "EditorCameraSpeed", Float, ECS_Camera)
+	CONFIG_MAPPING(EEC_EditorCameraSpeed, "EditorCameraSpeed", Float, ECS_Camera),
+	CONFIG_MAPPING(EEC_EditorCameraSensitivity, "EditorCameraSensitivity", Float, ECS_Camera)
 	// !TODO : EngineConfig 추가시 추가
 };
 
