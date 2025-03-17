@@ -21,7 +21,7 @@ cbuffer ChangeOnResizeAndFov : register(b2)
 ////////
 struct VS_INPUT
 {
-    float4 Position : POSITION;
+    float3 Position : POSITION;
     float4 Color : COLOR;
 };
 
@@ -37,7 +37,8 @@ struct PS_INPUT
 PS_INPUT mainVS(VS_INPUT input)
 {
     PS_INPUT output;
-    output.Position = input.Position;
+    
+    output.Position = float4(input.Position.xyz, 1.0f);
     output.Position = mul(output.Position, ViewMatrix);
     output.Position = mul(output.Position, ProjectionMatrix);
 

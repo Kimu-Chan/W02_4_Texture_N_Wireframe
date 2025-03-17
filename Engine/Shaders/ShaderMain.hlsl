@@ -37,7 +37,7 @@ cbuffer Depth : register(b4){
 ////////
 struct VS_INPUT
 {
-    float4 position : POSITION; // Input position from vertex buffer
+    float3 position : POSITION; // Input position from vertex buffer
     float4 color : COLOR;       // Input color from vertex buffer
 };
 
@@ -59,7 +59,7 @@ struct PS_OUTPUT
 PS_INPUT mainVS(VS_INPUT input)
 {
     PS_INPUT output;
-    output.position = input.position;
+    output.position = float4(input.position.xyz, 1.0f);
     output.position = mul(output.position, WorldMatrix);
     output.position = mul(output.position, ViewMatrix);
     output.position = mul(output.position, ProjectionMatrix);

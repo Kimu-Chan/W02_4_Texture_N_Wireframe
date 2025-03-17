@@ -28,7 +28,7 @@ cbuffer ChangeOnResizeAndFov : register(b2)
 ////////
 struct VS_INPUT
 {
-    float4 Position : POSITION; // Input position from vertex buffer
+    float3 Position : POSITION; // Input position from vertex buffer
 };
 
 struct PS_INPUT
@@ -50,7 +50,7 @@ struct PS_OUTPUT
 PS_INPUT mainVS(VS_INPUT input)
 {
     PS_INPUT output;
-    output.Position = input.Position;
+    output.Position = float4(input.Position.xyz, 1.0f);
     output.Position = mul(output.Position, WorldMatrix);
     output.WorldPosition = output.Position;
     output.Position = mul(output.Position, ViewMatrix);

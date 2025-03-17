@@ -529,5 +529,6 @@
     <FxCompile Include="Shaders\ShaderDebugLine.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="Shaders\ShaderTexture.hlsl" />
   </ItemGroup>
 </Project>
