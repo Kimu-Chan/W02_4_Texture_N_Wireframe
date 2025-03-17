@@ -15,9 +15,9 @@ APlayerController::APlayerController()
 
 void APlayerController::HandleCameraMovement(float DeltaTime)
 {
-    if (bIsHandlingGizmo)
+    if (!APlayerInput::Get().GetMouseDown(true))
     {
-        //return;
+        return;
     }
     
 	//@TODO: ImGuiIO.WantCaptureMouse를 이용하여 UI 조작중에는 카메라 조작을 막아야함
@@ -26,22 +26,19 @@ void APlayerController::HandleCameraMovement(float DeltaTime)
     ACamera* Camera = FEditorManager::Get().GetCamera();
     FTransform CameraTransform = Camera->GetActorTransform();
 
-    if (APlayerInput::Get().GetMouseDown(true))
-    {
-        // Last Frame Mouse Position
-        int32 DeltaX = 0;
-        int32 DeltaY = 0;
-        APlayerInput::Get().GetMouseDelta(DeltaX, DeltaY);
+    // Look
+    int32 DeltaX = 0;
+    int32 DeltaY = 0;
+    APlayerInput::Get().GetMouseDelta(DeltaX, DeltaY);
         
-        FVector NewRotation = CameraTransform.GetRotation().GetEuler();
-        NewRotation.Y += MouseSensitivity * static_cast<float>(DeltaY) * DeltaTime; // Pitch
-        NewRotation.Z += MouseSensitivity * static_cast<float>(DeltaX) * DeltaTime; // Yaw
+    FVector NewRotation = CameraTransform.GetRotation().GetEuler();
+    NewRotation.Y += MouseSensitivity * static_cast<float>(DeltaY) * DeltaTime; // Pitch
+    NewRotation.Z += MouseSensitivity * static_cast<float>(DeltaX) * DeltaTime; // Yaw
 
-        NewRotation.Y = FMath::Clamp(NewRotation.Y, -Camera->MaxYDegree, Camera->MaxYDegree);
-        CameraTransform.SetRotation(NewRotation);
-    }
-
-    // Camera Speed //
+    NewRotation.Y = FMath::Clamp(NewRotation.Y, -Camera->MaxYDegree, Camera->MaxYDegree);
+    CameraTransform.SetRotation(NewRotation);
+    
+    // Move
     int32 MouseWheel = APlayerInput::Get().GetMouseWheelDelta();
     CurrentSpeed += static_cast<float>(MouseWheel) * 0.001f;
     CurrentSpeed = FMath::Clamp(CurrentSpeed, MinSpeed, MaxSpeed);
