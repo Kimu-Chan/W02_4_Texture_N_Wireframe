@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "Debugging/DebugConsole.h"
+#include "Editor/Windows/ConsoleWindow.h"
 #include <cstdarg>
 #include <algorithm>
 #include <format>
@@ -63,7 +64,7 @@ void Debug::ShowConsole(bool bWasWindowSizeUpdated, ImVec2 PreRatio, ImVec2 CurR
              items.push_back("> " + inputStr);
              history.push_back(inputStr);
              historyPos = (int)history.size();
-             ProcessCommand(inputStr, items);
+             ProcCommand(inputStr);//, items);
          }
          inputBuf[0] = '\0';
          reclaimFocus = true;
