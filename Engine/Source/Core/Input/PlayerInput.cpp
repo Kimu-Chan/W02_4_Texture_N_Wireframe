@@ -46,6 +46,16 @@ bool APlayerInput::IsKeyPressed(DirectX::Keyboard::Keys InKey) const
     return KeyboardTracker.pressed.IsKeyDown(InKey);
 }
 
+bool APlayerInput::IsKeyReleased(DirectX::Keyboard::Keys InKey) const
+{
+    return KeyboardTracker.released.IsKeyDown(InKey);
+}
+
+bool APlayerInput::IsKeyDown(DirectX::Keyboard::Keys InKey) const
+{
+    return Keyboard->GetState().IsKeyDown(InKey);
+}
+
 bool APlayerInput::IsMousePressed(bool isRight) const
 {
     if (isRight)
@@ -71,11 +81,6 @@ bool APlayerInput::IsMouseDown(bool isRight) const
         return CurrentMouseState.RightDown;
     }
     return CurrentMouseState.LeftDown;
-}
-
-bool APlayerInput::IsKeyDown(DirectX::Keyboard::Keys InKey) const
-{
-    return Keyboard->GetState().IsKeyDown(InKey);
 }
 
 void APlayerInput::GetMouseDelta(int32& OutX, int32& OutY) const

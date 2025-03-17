@@ -156,6 +156,7 @@ void UEngine::Run()
         // ui Update
         ui.Update();
 
+        // UI입력을 우선으로 처리
         APlayerInput::Get().UpdateInput();
         APlayerController::Get().ProcessPlayerInput(DeltaTime);
 

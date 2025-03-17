@@ -9,6 +9,7 @@
 #include "Camera.h"
 #include "Core/Math/Ray.h"
 #include "World.h"
+#include "Input/PlayerController.h"
 #include "Static/EditorManager.h"
 
 REGISTER_CLASS(APicker);
@@ -42,6 +43,11 @@ void APicker::Tick(float DeltaTime)
 void APicker::LateTick(float DeltaTime)
 {
     AActor::LateTick(DeltaTime);
+
+    if (APlayerController::Get().IsUiInput())
+    {
+        return;
+    }
 
     if (APlayerInput::Get().IsMousePressed(false))    //좌클릭
     {

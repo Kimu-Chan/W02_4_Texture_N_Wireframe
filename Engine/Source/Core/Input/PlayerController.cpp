@@ -15,16 +15,24 @@ APlayerController::APlayerController()
 
 void APlayerController::HandleCameraMovement(float DeltaTime)
 {
+    if (bUiCaptured)
+    {
+        return;
+    }
+    
     if (!APlayerInput::Get().IsMouseDown(true))
     {
         if (APlayerInput::Get().IsMouseReleased(true))
         {
+            /**
+             * ShowCursor 함수는 참조 카운트를 하므로, 정확한 횟수만큼 Show 및 Hide 하지 않으면
+             * 의도대로 작동하지 않는 문제가 발생함으로 매우 주의해야 함.
+             */
             ShowCursor(true);
         }
         return;
     }
     
-	//@TODO: ImGuiIO.WantCaptureMouse를 이용하여 UI 조작중에는 카메라 조작을 막아야함
     FVector NewVelocity(0, 0, 0);
 
     ACamera* Camera = FEditorManager::Get().GetCamera();
@@ -110,7 +118,24 @@ void APlayerController::HandleGizmoMovement(float DeltaTime)
 
 void APlayerController::ProcessPlayerInput(float DeltaTime)
 {
+    if (bUiInput)
+    {
+        if (APlayerInput::Get().IsMouseDown(true) || APlayerInput::Get().IsMouseDown(false))
+        {
+            bUiCaptured = true;
+        }
+        return;
+    }
+    if (bUiCaptured)
+    {
+        if (!APlayerInput::Get().IsMouseDown(true) && !APlayerInput::Get().IsMouseDown(false))
+        {
+            bUiCaptured = false;
+        }
+        return;
+    }
+    
     // TODO: 기즈모 조작시에는 카메라 입력 무시
-    // HandleGizmoMovement(DeltaTime);
+    // HandleGizmoMovement(DeltaTime); // TODO: 의미없는 함수인듯
     HandleCameraMovement(DeltaTime);
 }

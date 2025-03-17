@@ -14,7 +14,7 @@
 #include "Engine/GameFrameWork/Cube.h"
 #include "Engine/GameFrameWork/Cylinder.h"
 #include "Engine/GameFrameWork/Sphere.h"
-
+#include "Input/PlayerController.h"
 
 
 REGISTER_CLASS(UWorld);
@@ -75,7 +75,7 @@ void UWorld::Render(float DeltaTime)
     ACamera* cam = FEditorManager::Get().GetCamera();
     Renderer->UpdateViewMatrix(cam->GetActorTransform());
         
-    if (APlayerInput::Get().IsMousePressed(false))
+    if (!APlayerController::Get().IsUiInput() && APlayerInput::Get().IsMousePressed(false))
     {
         RenderPickingTexture(*Renderer);
     }

@@ -23,13 +23,15 @@ public:
 	 */
 	bool IsKeyPressed(DirectX::Keyboard::Keys InKey) const;
 
+	bool IsKeyReleased(DirectX::Keyboard::Keys InKey) const;
+
+	bool IsKeyDown(DirectX::Keyboard::Keys InKey) const;
+
 	bool IsMousePressed(bool isRight) const;
 
 	bool IsMouseReleased(bool isRight) const;
 	
 	bool IsMouseDown(bool isRight) const;
-
-	bool IsKeyDown(DirectX::Keyboard::Keys InKey) const;
 
 	void GetMouseDelta(int32& OutX, int32& OutY) const;
 

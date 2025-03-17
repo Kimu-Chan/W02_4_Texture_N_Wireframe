@@ -23,6 +23,10 @@ public :
 	float GetMouseSensitivity() const { return MouseSensitivity; }
 	void SetMouseSensitivity(float InSensitivity) { MouseSensitivity = InSensitivity;}
 
+	// TODO: 함수랑 변수 이름 맘에 안듬
+	bool IsUiInput() const { return bUiInput; }
+	void SetIsUiInput(bool bInUiInput) { bUiInput = bInUiInput; }
+	
 protected:
 	float CurrentSpeed;
 	float MaxSpeed;
@@ -31,4 +35,7 @@ protected:
 	float MouseSensitivity;
 
 	bool bIsHandlingGizmo;
+
+	bool bUiInput = false;
+	bool bUiCaptured = false;
 };
