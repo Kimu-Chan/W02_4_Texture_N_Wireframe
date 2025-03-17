@@ -1,4 +1,4 @@
-﻿#include "pch.h" 
+#include "pch.h" 
 #include "UI.h"
 
 #include "Axis.h"
@@ -428,7 +428,6 @@ void UI::RenderPropertyWindow(bool& bOutHovered)
             FVector DeltaEulerAngle = UIEulerAngle - PrevEulerAngle;
 
             selectedTransform.Rotate(DeltaEulerAngle);
-            UE_LOG("Rotation: %.2f, %.2f, %.2f", DeltaEulerAngle.X, DeltaEulerAngle.Y, DeltaEulerAngle.Z);
             selectedActor->SetActorTransform(selectedTransform);
         }
         if (ImGui::DragFloat3("Scale", scale, 0.1f))

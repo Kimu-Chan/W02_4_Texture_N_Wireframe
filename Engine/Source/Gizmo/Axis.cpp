@@ -1,4 +1,4 @@
-﻿#include "pch.h" 
+#include "pch.h" 
 #include "Axis.h"
 #include "Engine/Engine.h"
 #include "World.h"
@@ -19,11 +19,6 @@ AAxis::AAxis()
     LineX->SetCustomColor(FVector4(1.0f, 0.0f, 0.0f, 1.0f));
 
     FVector Euler = LineX->GetComponentTransform().GetRotation().GetEuler();
-    UE_LOG("LineX Rot: %f, %f, %f", 
-        Euler.X,
-        Euler.Y,
-        Euler.Z
-    );
 
     RootComponent = LineX;
 
@@ -36,11 +31,6 @@ AAxis::AAxis()
 
 
     Euler = LineY->GetComponentTransform().GetRotation().GetEuler();
-    UE_LOG("LineY Rot: %f, %f, %f",
-        Euler.X,
-        Euler.Y,
-        Euler.Z
-    );
 
     ULineComp* LineZ = AddComponent<ULineComp>();
     FTransform ZTransform = LineZ->GetComponentTransform();
@@ -50,11 +40,6 @@ AAxis::AAxis()
     LineZ->SetCustomColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
 
     Euler = LineZ->GetComponentTransform().GetRotation().GetEuler();
-    UE_LOG("LineZ Rot: %f, %f, %f",
-        Euler.X,
-        Euler.Y,
-        Euler.Z
-    );
 
     UEngine::Get().GetWorld()->AddZIgnoreComponent(LineX);
     UEngine::Get().GetWorld()->AddZIgnoreComponent(LineY);

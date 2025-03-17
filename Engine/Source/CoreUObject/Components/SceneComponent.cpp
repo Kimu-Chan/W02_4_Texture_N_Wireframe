@@ -1,4 +1,4 @@
-﻿#include "pch.h" 
+#include "pch.h" 
 #include "SceneComponent.h"
 #include "PrimitiveComponent.h"
 #include "Debugging/DebugConsole.h"
@@ -39,6 +39,21 @@ void USceneComponent::SetRelativeTransform(const FTransform& InTransform)
 {
     // 로컬 트랜스폼 갱신
     RelativeTransform = InTransform;
+    UpdateBoundingBox();
+}
+
+void USceneComponent::SetWorldTransform(const FTransform& InTransform)
+{
+	// !TODO 구현 필요
+	//if (Parent)
+	//{
+ //       FTransform ParentInverse = Parent->GetWorldTransform().Inverse();
+ //       RelativeTransform = ParentInverse * InTransform;
+	//}
+	//else
+	//{
+	//	RelativeTransform = InTransform;
+	//}
     UpdateBoundingBox();
 }
 

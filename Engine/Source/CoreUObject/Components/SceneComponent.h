@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Core/Container/Set.h"
 #include "CoreUObject/Components/ActorComponent.h"
@@ -28,6 +28,7 @@ public:
 	const FTransform GetWorldTransform();
 
 	void SetRelativeTransform(const FTransform& InTransform);
+	void SetWorldTransform(const FTransform& InTransform);
 
 	void Pick(bool bPicked);
 public:
