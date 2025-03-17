@@ -326,7 +326,7 @@ void URenderer::CreateConstantBuffer()
     DeviceContext->VSSetConstantBuffers(0, 1, &CbChangeEveryObject);
     DeviceContext->VSSetConstantBuffers(1, 1, &CbChangeEveryFrame);
     DeviceContext->VSSetConstantBuffers(2, 1, &CbChangeOnResizeAndFov);
-    DeviceContext->VSSetConstantBuffers(3, 1, &TextureConstantBuffer);
+    DeviceContext->VSSetConstantBuffers(5, 1, &TextureConstantBuffer);
 
     DeviceContext->PSSetConstantBuffers(1, 1, &CbChangeEveryFrame);
     DeviceContext->PSSetConstantBuffers(2, 1, &CbChangeOnResizeAndFov);
@@ -1125,7 +1125,7 @@ void URenderer::CreateTextureBuffer()
 {
 	D3D11_BUFFER_DESC TextureBufferDesc = {};
 	TextureBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-    TextureBufferDesc.ByteWidth = sizeof(UVQuadVertices);
+    TextureBufferDesc.ByteWidth = sizeof(UVQuadVertices) * 6;
 	TextureBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
 	D3D11_SUBRESOURCE_DATA TextureBufferInitData = {};
@@ -1136,8 +1136,9 @@ void URenderer::CreateTextureBuffer()
 
 void URenderer::PrepareTexture()
 {
-    UINT stride = sizeof(FVertexUV);
-    DeviceContext->IASetVertexBuffers(0, 1, &TextureVertexBuffer, &stride, nullptr);
+    UINT Stride = sizeof(FVertexUV);
+    UINT Offset = 0;
+    DeviceContext->IASetVertexBuffers(0, 1, &TextureVertexBuffer, &Stride, &Offset);
     DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     DeviceContext->IASetInputLayout(TextureInputLayout);
     DeviceContext->VSSetShader(TextureVertexShader, nullptr, 0);
@@ -1159,7 +1160,7 @@ void URenderer::UpdateTextureConstantBuffer(const FMatrix& World, float u, float
         return;
 
     FTextureConstants* BufferData = reinterpret_cast<FTextureConstants*>(MappedResource.pData);
-    BufferData->WorldViewProj = ProjectionMatrix * ViewMatrix * World;
+    BufferData->WorldViewProj =FMatrix::Transpose(World * ViewMatrix  * ProjectionMatrix);
     BufferData->u = u;
 	BufferData->v = v;
 

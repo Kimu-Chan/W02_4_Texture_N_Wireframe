@@ -22,6 +22,13 @@ extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam
 
 LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+ 
+    AllocConsole(); // 콘솔 창 생성
+    freopen_s((FILE**)stdout, "CONOUT$", "w", stdout); // 표준 출력 연결
+    freopen_s((FILE**)stdin, "CONIN$", "r", stdin);   // 표준 입력 연결
+    freopen_s((FILE**)stderr, "CONOUT$", "w", stderr); // 표준 에러 연결
+    std::cout << "콘솔 창이 열렸습니다!" << std::endl;
+
     // Handle ImGui Msg
     if (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
     {

@@ -9,6 +9,7 @@ public:
 	virtual ~UBillboard() = default;
 
 	virtual void Render() override;
+	virtual void Tick(float DeltaTime) override;
 	void SetTexture(ID3D11ShaderResourceView* InTexture);
 
 private:

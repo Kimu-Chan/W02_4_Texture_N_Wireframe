@@ -1,4 +1,4 @@
-﻿#include "pch.h" 
+#include "pch.h" 
 #include "World.h"
 
 #include "WorldGrid.h"
@@ -31,7 +31,9 @@ void UWorld::BeginPlay()
     Billboard->SetTexture(UEngine::Get().GetTextureInfo(L"Cat")->ShaderResourceView);
     Actor->SetRootComponent(Billboard);
     Actor->SetWorld(this);
+	AddRenderComponent(Billboard);
 	Actors.Add(Actor);
+	Actor->SetActorTransform(FTransform(FVector(1.f, 1.f, 1.f), FVector(0.f, 0.f, 0.f), FVector(1.f, 1.f, 1.f)));
 }
 
 void UWorld::Tick(float DeltaTime)
