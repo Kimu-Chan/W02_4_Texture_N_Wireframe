@@ -107,6 +107,10 @@ private:
 private:
 	UI ui;
 
+public:
+    bool GetShowPrimitives() const { return bShowPrimitives; }
+    void SetShowPrimitives(bool InShowPrimitives) { bShowPrimitives = InShowPrimitives; }
+
 private:
     class UWorld* World;
     
@@ -132,6 +136,8 @@ private:
      *   따라서 양쪽으로 길이 1씩 추가해서 402로 설정.
      */
     int32 WorldGridCellPerSide = 402;
+
+    bool bShowPrimitives = true;
     
 public:
     // TArray<std::shared_ptr<UObject>> GObjects;

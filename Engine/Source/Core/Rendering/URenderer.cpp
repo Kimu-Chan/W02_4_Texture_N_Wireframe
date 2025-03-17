@@ -75,8 +75,8 @@ void URenderer::CreateConstantBuffer()
     if (FAILED(hr))
         return;
 
-    DynamicConstantBufferDesc.ByteWidth = sizeof(FCbChangeEveryFrame) + 0xf & 0xfffffff0;  // 16byte의 배수로 올림
-    hr = Device->CreateBuffer(&DynamicConstantBufferDesc, nullptr, &CbChangeEveryFrame);
+    DynamicConstantBufferDesc.ByteWidth = sizeof(FCbChangeOnCameraMove) + 0xf & 0xfffffff0;  // 16byte의 배수로 올림
+    hr = Device->CreateBuffer(&DynamicConstantBufferDesc, nullptr, &CbChangeOnCameraMove);
     if (FAILED(hr))
         return;
     
@@ -97,15 +97,6 @@ void URenderer::CreateConstantBuffer()
     hr = Device->CreateBuffer(&ConstantBufferDescPicking, nullptr, &ConstantPickingBuffer);
     if (FAILED(hr))
         return;
-    
-    D3D11_BUFFER_DESC ConstantBufferDescDepth = {};
-    ConstantBufferDescDepth.Usage = D3D11_USAGE_DYNAMIC;                        // 매 프레임 CPU에서 업데이트 하기 위해
-    ConstantBufferDescDepth.BindFlags = D3D11_BIND_CONSTANT_BUFFER;             // 상수 버퍼로 설정
-    ConstantBufferDescDepth.ByteWidth = sizeof(FDepthConstants) + 0xf & 0xfffffff0;  // 16byte의 배수로 올림
-    ConstantBufferDescDepth.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;            // CPU에서 쓰기 접근이 가능하게 설정
-    hr = Device->CreateBuffer(&ConstantBufferDescDepth, nullptr, &ConstantsDepthBuffer);
-    if (FAILED(hr))
-        return;
 
     D3D11_BUFFER_DESC TextureConstantBufferDesc = {};
     TextureConstantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -122,14 +113,13 @@ void URenderer::CreateConstantBuffer()
      * 따라서 초기화 단계에서 모두 바인딩.
      */
     DeviceContext->VSSetConstantBuffers(0, 1, &CbChangeEveryObject);
-    DeviceContext->VSSetConstantBuffers(1, 1, &CbChangeEveryFrame);
+    DeviceContext->VSSetConstantBuffers(1, 1, &CbChangeOnCameraMove);
     DeviceContext->VSSetConstantBuffers(2, 1, &CbChangeOnResizeAndFov);
     DeviceContext->VSSetConstantBuffers(5, 1, &TextureConstantBuffer);
 
-    DeviceContext->PSSetConstantBuffers(1, 1, &CbChangeEveryFrame);
+    DeviceContext->PSSetConstantBuffers(1, 1, &CbChangeOnCameraMove);
     DeviceContext->PSSetConstantBuffers(2, 1, &CbChangeOnResizeAndFov);
     DeviceContext->PSSetConstantBuffers(3, 1, &ConstantPickingBuffer);
-    DeviceContext->PSSetConstantBuffers(4, 1, &ConstantsDepthBuffer);
 }
 
 void URenderer::ReleaseConstantBuffer()
@@ -140,10 +130,10 @@ void URenderer::ReleaseConstantBuffer()
         CbChangeEveryObject = nullptr;
     }
 
-    if (CbChangeEveryFrame)
+    if (CbChangeOnCameraMove)
     {
-        CbChangeEveryFrame->Release();
-        CbChangeEveryFrame = nullptr;
+        CbChangeOnCameraMove->Release();
+        CbChangeOnCameraMove = nullptr;
     }
 
     if (CbChangeOnResizeAndFov)
@@ -156,12 +146,6 @@ void URenderer::ReleaseConstantBuffer()
     {
         ConstantPickingBuffer->Release();
         ConstantPickingBuffer = nullptr;
-    }
-
-    if (ConstantsDepthBuffer)
-    {
-        ConstantsDepthBuffer->Release();
-        ConstantsDepthBuffer = nullptr;
     }
 }
 
@@ -176,6 +160,9 @@ void URenderer::PrepareRender()
     // Clear Screen
 	DeviceContext->ClearRenderTargetView(FrameBufferRTV, ClearColor);
     DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+    DeviceContext->ClearRenderTargetView(PickingFrameBufferRTV, PickingClearColor);
+    DeviceContext->ClearDepthStencilView(PickingDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
     // InputAssembler의 Vertex 해석 방식을 설정
     DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -643,6 +630,37 @@ void URenderer::CreateDepthStencilBuffer()
 		MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
 		return;
 	}
+
+    D3D11_TEXTURE2D_DESC PickingDepthBufferDesc = {};
+    PickingDepthBufferDesc.Width = static_cast<UINT>(ViewportInfo.Width);
+    PickingDepthBufferDesc.Height = static_cast<UINT>(ViewportInfo.Height);
+    PickingDepthBufferDesc.MipLevels = 1;
+    PickingDepthBufferDesc.ArraySize = 1;
+    PickingDepthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;            // 32비트 중 24비트는 깊이, 8비트는 스텐실
+    PickingDepthBufferDesc.SampleDesc.Count = 1;
+    PickingDepthBufferDesc.SampleDesc.Quality = 0;
+    PickingDepthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+    PickingDepthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;              // 텍스쳐 바인딩 플래그를 DepthStencil로 설정
+    PickingDepthBufferDesc.CPUAccessFlags = 0;
+    PickingDepthBufferDesc.MiscFlags = 0;
+
+    result = Device->CreateTexture2D(&PickingDepthBufferDesc, nullptr, &PickingDepthStencilBuffer);
+    if (FAILED(result))
+    {
+        wchar_t errorMsg[256];
+        swprintf_s(errorMsg, L"Failed to create Depth Stencil Buffer! HRESULT: 0x%08X", result);
+        MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
+        return;
+    }
+
+    result = Device->CreateDepthStencilView(PickingDepthStencilBuffer, &dsvDesc, &PickingDepthStencilView);
+    if (FAILED(result))
+    {
+        wchar_t errorMsg[256];
+        swprintf_s(errorMsg, L"Failed to create Depth Stencil View! HRESULT: 0x%08X", result);
+        MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
+        return;
+    }
 }
 
 void URenderer::CreateDepthStencilState()
@@ -701,6 +719,17 @@ void URenderer::ReleaseDepthStencilBuffer()
     {
         DepthStencilView->Release();
         DepthStencilView = nullptr;
+    }
+    
+    if (PickingDepthStencilBuffer)
+    {
+        PickingDepthStencilBuffer->Release();
+        PickingDepthStencilBuffer = nullptr;
+    }
+    if (PickingDepthStencilView)
+    {
+        PickingDepthStencilView->Release();
+        PickingDepthStencilView = nullptr;
     }
 }
 
@@ -922,7 +951,6 @@ void URenderer::RenderDebugLines(float DeltaTime)
     DeviceContext->Map(DebugLineVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedSubresource);
     if (FVertexSimple* VertexSimple = reinterpret_cast<FVertexSimple*>(MappedSubresource.pData))
     {
-        // TODO: DebugLineVertexBuffer에 디버그 라인 정점 정보 넣기.
         int32 BufferIdx = 0;
         for (int32 i = 0; i < DebugLines.Num(); ++i)
         {
@@ -977,6 +1005,7 @@ void URenderer::PrepareBillboard()
     DeviceContext->VSSetShader(ShaderCache->GetVertexShader(L"ShaderTexture"), nullptr, 0);
     DeviceContext->PSSetShader(ShaderCache->GetPixelShader(L"ShaderTexture"), nullptr, 0);
     DeviceContext->PSSetSamplers(0, 1, &SamplerState);
+    DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);
 }
 
 void URenderer::RenderBillboard()
@@ -1107,6 +1136,26 @@ void URenderer::CreatePickingFrameBuffer()
 		return;
 	}
 
+    D3D11_TEXTURE2D_DESC stagingDesc = {};
+    stagingDesc.Width = 1; // 픽셀 1개만 복사
+    stagingDesc.Height = 1;
+    stagingDesc.MipLevels = 1;
+    stagingDesc.ArraySize = 1;
+    stagingDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // 원본 텍스처 포맷과 동일
+    stagingDesc.SampleDesc.Count = 1;
+    stagingDesc.Usage = D3D11_USAGE_STAGING;
+    stagingDesc.BindFlags = 0;
+    stagingDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+
+    result = Device->CreateTexture2D(&stagingDesc, nullptr, &PickingFrameBufferStaging);
+    if (FAILED(result))
+    {
+        wchar_t errorMsg[256];
+        swprintf_s(errorMsg, L"Failed to create Staging Texture! HRESULT: 0x%08X", result);
+        MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
+        return;
+    }
+
     D3D11_RENDER_TARGET_VIEW_DESC PickingFrameBufferRTVDesc = {};
     PickingFrameBufferRTVDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;      // 색상 포맷
     PickingFrameBufferRTVDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D; // 2D 텍스처
@@ -1128,6 +1177,11 @@ void URenderer::ReleasePickingFrameBuffer()
         PickingFrameBuffer->Release();
         PickingFrameBuffer = nullptr;
     }
+    if (PickingFrameBufferStaging)
+    {
+        PickingFrameBufferStaging->Release();
+        PickingFrameBufferStaging = nullptr;
+    }
     if (PickingFrameBufferRTV)
     {
         PickingFrameBufferRTV->Release();
@@ -1143,7 +1197,7 @@ void URenderer::PrepareZIgnore()
 void URenderer::PreparePicking()
 {
     // 렌더 타겟 바인딩
-    DeviceContext->OMSetRenderTargets(1, &PickingFrameBufferRTV, DepthStencilView);
+    DeviceContext->OMSetRenderTargets(1, &PickingFrameBufferRTV, PickingDepthStencilView);
     DeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
     DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);                // DepthStencil 상태 설정. StencilRef: 스텐실 테스트 결과의 레퍼런스
 
@@ -1180,32 +1234,6 @@ void URenderer::UpdateConstantPicking(FVector4 UUIDColor) const
     DeviceContext->Unmap(ConstantPickingBuffer, 0);
 }
 
-void URenderer::UpdateConstantDepth(int Depth) const
-{
-    if (!ConstantsDepthBuffer) return;
-
-    ACamera* Cam = FEditorManager::Get().GetCamera();
-
-    D3D11_MAPPED_SUBRESOURCE ConstantBufferMSR;
-
-    HRESULT result = DeviceContext->Map(ConstantsDepthBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &ConstantBufferMSR);
-	if (FAILED(result))
-	{
-		wchar_t errorMsg[256];
-		swprintf_s(errorMsg, L"Failed to map Constant Depth Buffer! HRESULT: 0x%08X", result);
-		MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
-		return;
-	}
-	{
-        FDepthConstants* Constants = static_cast<FDepthConstants*>(ConstantBufferMSR.pData);
-        Constants->DepthOffset = Depth;
-        //@TODO: nP/fP Constant 전달시, float -> int 문제 없는가?
-        Constants->nearPlane = Cam->GetNearClip();
-        Constants->farPlane = Cam->GetFarClip();
-    }
-    DeviceContext->Unmap(ConstantsDepthBuffer, 0);
-}
-
 void URenderer::PrepareMain()
 {
     DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);                // DepthStencil 상태 설정. StencilRef: 스텐실 테스트 결과의 레퍼런스
@@ -1220,62 +1248,39 @@ void URenderer::PrepareMainShader()
     DeviceContext->PSSetShader(ShaderCache->GetPixelShader(L"ShaderMain"), nullptr, 0);
 }
 
-FVector4 URenderer::GetPixel(FVector MPos)
+FVector4 URenderer::GetPixel(int32 X, int32 Y)
 {
-    FVector TempMPos;
+    FVector4 color{ 1, 1, 1, 1 };
+    
+    if (PickingFrameBufferStaging == nullptr)
+        return color;
 
     // Bound Check, 화면 크기에 1px의 패딩을 줌
-    TempMPos.X = FMath::Clamp(MPos.X, 1.0f, ViewportInfo.Width - 1);
-    TempMPos.Y = FMath::Clamp(MPos.Y, 1.0f, ViewportInfo.Height - 1);
-    // 1. Staging 텍스처 생성 (1x1 픽셀)
-    D3D11_TEXTURE2D_DESC stagingDesc = {};
-    stagingDesc.Width = 1; // 픽셀 1개만 복사
-    stagingDesc.Height = 1;
-    stagingDesc.MipLevels = 1;
-    stagingDesc.ArraySize = 1;
-    stagingDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // 원본 텍스처 포맷과 동일
-    stagingDesc.SampleDesc.Count = 1;
-    stagingDesc.Usage = D3D11_USAGE_STAGING;
-    stagingDesc.BindFlags = 0;
-    stagingDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-
-    ID3D11Texture2D* stagingTexture = nullptr;
-    HRESULT result = Device->CreateTexture2D(&stagingDesc, nullptr, &stagingTexture);
-	if (FAILED(result))
-	{
-		wchar_t errorMsg[256];
-		swprintf_s(errorMsg, L"Failed to create Staging Texture! HRESULT: 0x%08X", result);
-		MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
-		return FVector4();
-	}
-
-    // 2. 복사할 영역 정의 (D3D11_BOX)
+    X = FMath::Clamp(X, 1, static_cast<int32>(ViewportInfo.Width - 1));
+    Y = FMath::Clamp(Y, 1, static_cast<int32>(ViewportInfo.Height - 1));
+    
+    // 복사할 영역 정의 (D3D11_BOX)
     D3D11_BOX srcBox = {};
-    srcBox.left = static_cast<UINT>(TempMPos.X);
+    srcBox.left = X;
     srcBox.right = srcBox.left + 1; // 1픽셀 너비
-    srcBox.top = static_cast<UINT>(TempMPos.Y);
+    srcBox.top = Y;
     srcBox.bottom = srcBox.top + 1; // 1픽셀 높이
     srcBox.front = 0;
     srcBox.back = 1;
-    FVector4 color{ 1, 1, 1, 1 };
-
-    if (stagingTexture == nullptr)
-        return color;
 
     D3D11_TEXTURE2D_DESC originalDesc;
     PickingFrameBuffer->GetDesc(&originalDesc);
 
     if (srcBox.left >= originalDesc.Width || srcBox.right > originalDesc.Width ||
         srcBox.top >= originalDesc.Height || srcBox.bottom > originalDesc.Height) {
-        // srcBox가 원본 텍스처의 범위를 벗어났습니다.
-        // 적절한 오류 처리를 수행합니다.
+        // srcBox가 원본 텍스처의 범위를 벗어남
         MessageBox(hWnd, L"srcBox coordinates are out of the original texture bounds.", L"Error", MB_ICONERROR | MB_OK);
         return FVector4();
     }
 
     // 3. 특정 좌표만 복사
     DeviceContext->CopySubresourceRegion(
-        stagingTexture, // 대상 텍스처
+        PickingFrameBufferStaging, // 대상 텍스처
         0,              // 대상 서브리소스
         0, 0, 0,        // 대상 좌표 (x, y, z)
         PickingFrameBuffer, // 원본 텍스처
@@ -1285,7 +1290,7 @@ FVector4 URenderer::GetPixel(FVector MPos)
 
     // 4. 데이터 매핑
     D3D11_MAPPED_SUBRESOURCE mapped = {};
-    result = DeviceContext->Map(stagingTexture, 0, D3D11_MAP_READ, 0, &mapped);
+    HRESULT result = DeviceContext->Map(PickingFrameBufferStaging, 0, D3D11_MAP_READ, 0, &mapped);
 	if (FAILED(result))
 	{
 		wchar_t errorMsg[256];
@@ -1309,8 +1314,7 @@ FVector4 URenderer::GetPixel(FVector MPos)
         << " Z: " << color.Z << " A: " << color.W << "\n";
 
     // 6. 매핑 해제 및 정리
-    DeviceContext->Unmap(stagingTexture, 0);
-    stagingTexture->Release();
+    DeviceContext->Unmap(PickingFrameBufferStaging, 0);
 
     return color;
 }
@@ -1319,16 +1323,16 @@ void URenderer::UpdateViewMatrix(const FTransform& CameraTransform)
 {
     // Update Constant Buffer
     D3D11_MAPPED_SUBRESOURCE ConstantBufferMSR;
-    DeviceContext->Map(CbChangeEveryFrame, 0, D3D11_MAP_WRITE_DISCARD, 0, &ConstantBufferMSR);
+    DeviceContext->Map(CbChangeOnCameraMove, 0, D3D11_MAP_WRITE_DISCARD, 0, &ConstantBufferMSR);
     // 매핑된 메모리를 캐스팅
     ViewMatrix = CameraTransform.GetViewMatrix();
-    if (FCbChangeEveryFrame* Constants = static_cast<FCbChangeEveryFrame*>(ConstantBufferMSR.pData))
+    if (FCbChangeOnCameraMove* Constants = static_cast<FCbChangeOnCameraMove*>(ConstantBufferMSR.pData))
     {
         Constants->ViewMatrix = FMatrix::Transpose(ViewMatrix);
         Constants->ViewPosition = CameraTransform.GetPosition();
     }
     // UnMap해서 GPU에 값이 전달 될 수 있게 함
-    DeviceContext->Unmap(CbChangeEveryFrame, 0);
+    DeviceContext->Unmap(CbChangeOnCameraMove, 0);
 }
 
 void URenderer::UpdateProjectionMatrix(ACamera* Camera)
@@ -1444,4 +1448,9 @@ void URenderer::RenderPickingTexture()
 	}
     DeviceContext->CopyResource(backBuffer, PickingFrameBuffer);
     backBuffer->Release();
+}
+
+FMatrix URenderer::GetProjectionMatrix() const
+{
+    return ProjectionMatrix;
 }

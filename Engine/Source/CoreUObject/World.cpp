@@ -97,8 +97,7 @@ void UWorld::Render(float DeltaTime)
         
     RenderMainTexture(*Renderer);
 	RenderBoundingBoxes(*Renderer);
-
-
+    
     RenderDebugLines(*Renderer, DeltaTime);
 	RenderBillboard(*Renderer);
 
@@ -112,10 +111,6 @@ void UWorld::RenderPickingTexture(URenderer& Renderer)
 
     for (auto& RenderComponent : RenderComponents)
     {
-        if (RenderComponent->GetOwner()->GetDepth() > 0)
-        {
-                continue;
-        }
         uint32 UUID = RenderComponent->GetUUID();
         RenderComponent->UpdateConstantPicking(Renderer, APicker::EncodeUUID(UUID));
         RenderComponent->Render();
@@ -126,7 +121,6 @@ void UWorld::RenderPickingTexture(URenderer& Renderer)
     {
         uint32 UUID = RenderComponent->GetUUID();
         RenderComponent->UpdateConstantPicking(Renderer, APicker::EncodeUUID(UUID));
-        uint32 depth = RenderComponent->GetOwner()->GetDepth();
         RenderComponent->Render();
     }
 }
@@ -135,21 +129,20 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 {
     Renderer.PrepareMain();
     Renderer.PrepareMainShader();
+
+    bool bRenderPrimitives = UEngine::Get().GetShowPrimitives();
     for (auto& RenderComponent : RenderComponents)
     {
-        if (RenderComponent->GetOwner()->GetDepth() > 0)
+        if (!bRenderPrimitives && !RenderComponent->GetOwner()->IsGizmoActor())
         {
-                continue;
+            continue;
         }
-        uint32 depth = RenderComponent->GetOwner()->GetDepth();
-        // RenderComponent->UpdateConstantDepth(Renderer, depth);
         RenderComponent->Render();
     }
 
     Renderer.PrepareZIgnore();
     for (auto& RenderComponent: ZIgnoreRenderComponents)
     {
-        uint32 depth = RenderComponent->GetOwner()->GetDepth();
         RenderComponent->Render();
     }
 }
@@ -159,7 +152,9 @@ void UWorld::RenderBoundingBoxes(URenderer& Renderer)
     for (FBox* Box : BoundingBoxes)
     {
         if (Box && Box->bCanBeRendered && Box->IsValidBox())
+        {
             Renderer.RenderBox(*Box);
+        }
     }
 }
 
@@ -181,7 +176,9 @@ void UWorld::RenderBillboard(URenderer& Renderer)
 	for (UBillboard* Billboard : BillboardComponents)
 	{
         if(Billboard)
+        {
             Billboard->Render();
+        }
 	}
 }
 
@@ -197,7 +194,7 @@ void UWorld::ClearWorld()
     {
         if (!Actor->IsGizmoActor())
         {
-                DestroyActor(Actor);
+            DestroyActor(Actor);
         }
     }
 

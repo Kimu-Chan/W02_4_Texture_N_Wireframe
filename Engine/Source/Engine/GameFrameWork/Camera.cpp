@@ -15,19 +15,9 @@ ACamera::ACamera()
 
     RootComponent = AddComponent<USceneComponent>();
 
+    FTransform StartTransform = GetActorTransform();
     FVector StartLocation(3.f, -2.f, 2.f);
-    
-   /* FVector Delta = (FVector::ZeroVector - StartLocation).GetSafeNormal();
-    float Pitch = FMath::RadiansToDegrees(asinf(Delta.Z)) * -1;
-    float Yaw = FMath::RadiansToDegrees(atan2(Delta.Y, Delta.X));
-    FVector StartRotation(0.f, Pitch, Yaw);
-
-    FTransform StartTransform = GetActorTransform();
-
-    StartTransform.SetPosition(StartLocation);
-    StartTransform.SetRotation(StartRotation);*/
-    
-    FTransform StartTransform = GetActorTransform();
+    StartTransform.Translate(StartLocation);
 	StartTransform.LookAt(FVector::ZeroVector);
     SetActorTransform(StartTransform);
 }

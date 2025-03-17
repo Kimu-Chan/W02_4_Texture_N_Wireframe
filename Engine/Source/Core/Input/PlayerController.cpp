@@ -14,7 +14,13 @@ APlayerController::APlayerController()
     , MaxSpeed(10.f)
     , MinSpeed(1.0f)
     , MouseSensitivity(10.f)
+    , MaxSensitivity(20.f)
+    , MinSensitivity(1.f)
 {}
+
+APlayerController::~APlayerController()
+{
+}
 
 void APlayerController::HandleCameraMovement(float DeltaTime)
 {
@@ -141,9 +147,18 @@ void APlayerController::SaveCameraProperties(ACamera* Camera)
     UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraRotY, CameraTransform.GetRotation().Y);
     UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraRotZ, CameraTransform.GetRotation().Z);
     UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraRotW, CameraTransform.GetRotation().W);
+}
 
-    UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraSpeed, CameraSpeed);
+void APlayerController::SetCurrentSpeed(float InSpeed)
+{
+    CurrentSpeed = FMath::Clamp(InSpeed, MinSpeed, MaxSpeed);
+    UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraSpeed, CurrentSpeed);
+}
 
+void APlayerController::SetMouseSensitivity(float InSensitivity)
+{
+    MouseSensitivity = FMath::Clamp(InSensitivity, MinSensitivity, MaxSensitivity);
+    UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraSensitivity, MouseSensitivity);
 }
 
 void APlayerController::ProcessPlayerInput(float DeltaTime)

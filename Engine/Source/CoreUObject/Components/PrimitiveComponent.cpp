@@ -21,11 +21,6 @@ void UPrimitiveComponent::UpdateConstantPicking(const URenderer& Renderer, const
     Renderer.UpdateConstantPicking(UUIDColor);
 }
 
-void UPrimitiveComponent::UpdateConstantDepth(const URenderer& Renderer, const int Depth)const
-{
-    Renderer.UpdateConstantDepth(Depth);
-}
-
 void UPrimitiveComponent::Render()
 {
     URenderer* Renderer = UEngine::Get().GetRenderer();
