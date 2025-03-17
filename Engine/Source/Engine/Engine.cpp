@@ -296,6 +296,7 @@ void UEngine::InitTextureLoader()
 
 	// Texture Load
     LoadTexture(L"ASCII", L"ASCII.png", 16, 16);
+    LoadTexture(L"Cat", L"Cat.jpg", 1, 1);
 
 	const TextureInfo* TextureInfo = GetTextureInfo(L"ASCII");
 

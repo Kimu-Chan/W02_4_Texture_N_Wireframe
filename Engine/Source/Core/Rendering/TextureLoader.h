@@ -5,7 +5,7 @@
 
 struct TextureInfo
 {
-	ComPtr<ID3D11ShaderResourceView> ShaderResourceView;
+	ID3D11ShaderResourceView* ShaderResourceView;
 	int32 Rows = 1; // 아틀라스 이미지 행 개수
 	int32 Cols = 1; // 아틀라스 이미지 열 개수
 };

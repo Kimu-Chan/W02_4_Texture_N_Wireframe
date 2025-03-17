@@ -14,6 +14,7 @@
 #include "Engine/GameFrameWork/Cube.h"
 #include "Engine/GameFrameWork/Cylinder.h"
 #include "Engine/GameFrameWork/Sphere.h"
+#include "Core/Rendering/TextureLoader.h"
 #include "../Billboard.h"
 REGISTER_CLASS(UWorld);
 void UWorld::BeginPlay()
@@ -22,8 +23,15 @@ void UWorld::BeginPlay()
     {
         Actor->BeginPlay();
     }
-    std::cout << "D3DCompiler Version: " << D3D_COMPILER_VERSION << std::endl;
-    //SpawnActor<
+    
+    // Billboard Test
+
+    AActor* Actor = new AActor();
+	Billboard = Actor->AddComponent<UBillboard>();
+    Billboard->SetTexture(UEngine::Get().GetTextureInfo(L"Cat")->ShaderResourceView);
+    Actor->SetRootComponent(Billboard);
+    Actor->SetWorld(this);
+	Actors.Add(Actor);
 }
 
 void UWorld::Tick(float DeltaTime)

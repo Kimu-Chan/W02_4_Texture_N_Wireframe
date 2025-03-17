@@ -24,8 +24,8 @@ bool TextureLoader::LoadTexture(const std::wstring& Name, const std::wstring& Fi
     std::wstring FullPath = GetFullPath(FileName);
 
     // DirectX 텍스처 로드
-    ComPtr<ID3D11ShaderResourceView> ShaderResourceView;
-    HRESULT Result = DirectX::CreateWICTextureFromFile(Device, Context, FullPath.c_str() , nullptr, ShaderResourceView.GetAddressOf());
+    ID3D11ShaderResourceView* ShaderResourceView;
+    HRESULT Result = DirectX::CreateWICTextureFromFile(Device, Context, FullPath.c_str() , nullptr, &ShaderResourceView);
 	if (FAILED(Result))
 	{
 		return false;
