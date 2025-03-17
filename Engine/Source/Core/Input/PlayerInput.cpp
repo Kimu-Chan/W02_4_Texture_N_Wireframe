@@ -25,8 +25,6 @@ void APlayerInput::UpdateInput()
     // 마우스 상태 가져오기
     auto MouseState = Mouse->GetState();
     MouseTracker.Update(MouseState);
-    int X = MouseState.x; // 윈도우에 상대적
-    int Y = MouseState.y;
 
     PrevMouseState = CurrentMouseState;
     
@@ -34,8 +32,8 @@ void APlayerInput::UpdateInput()
     CurrentMouseState.RightDown = MouseState.rightButton;
     CurrentMouseState.MiddleDown = MouseState.middleButton;
     CurrentMouseState.Wheel = MouseState.scrollWheelValue;
-    CurrentMouseState.X = X;
-    CurrentMouseState.Y = Y;
+    CurrentMouseState.X = MouseState.x; // 윈도우에 상대적
+    CurrentMouseState.Y = MouseState.y; // 윈도우에 상대적
 }
 
 bool APlayerInput::IsPressedKey(DirectX::Keyboard::Keys InKey) const
