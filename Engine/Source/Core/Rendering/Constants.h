@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 struct FMatrix;
 struct FVector;
 #include "Engine/Engine.h"
@@ -36,6 +36,13 @@ struct alignas(16) FDepthConstants {
 	unsigned int DepthOffset;
 	int nearPlane;
 	int farPlane;
+};
+
+struct alignas(16) FTextureConstants
+{
+	FMatrix WorldViewProj;
+	float u;
+	float v;
 };
 
 struct ConstantUpdateInfo

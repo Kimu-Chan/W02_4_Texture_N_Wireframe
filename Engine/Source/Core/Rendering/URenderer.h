@@ -100,6 +100,15 @@ public:
 
 	void RenderDebugLines(float DelatTime);
 
+	// Texture
+	void CreateTextureBuffer();
+
+	void PrepareTexture();
+
+	void RenderTexture();
+
+	void UpdateTextureConstantBuffer(const FMatrix& World, float u, float v);
+
 protected:
 	/** Direct3D Device 및 SwapChain을 생성합니다. */
 	void CreateDeviceAndSwapChain(HWND hWindow);
@@ -212,6 +221,13 @@ protected:
 	// World Grid
 	uint32 GridVertexNum = 0;
 	ID3D11Buffer* GridVertexBuffer = nullptr;
+
+	// Texture Shader & Buffer;
+	ID3D11Buffer* TextureVertexBuffer = nullptr;              // 텍스처 버퍼
+	ID3D11VertexShader* TextureVertexShader = nullptr;      // 텍스처용 버텍스 쉐이더
+	ID3D11PixelShader* TexturePixelShader = nullptr;        // 텍스처용 픽셀 쉐이더
+	ID3D11InputLayout* TextureInputLayout = nullptr;        // 텍스처용 인풋 레이아웃
+	ID3D11Buffer* TextureConstantBuffer = nullptr;
 
 private:
 	// Debug Line

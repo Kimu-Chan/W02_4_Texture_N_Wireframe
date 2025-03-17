@@ -9,6 +9,8 @@
 
 class UObject;
 class UWorld;
+class TextureLoader;
+struct TextureInfo;
 
 enum class EScreenMode : uint8
 {
@@ -56,6 +58,7 @@ private:
     void InitWindow(int InScreenWidth, int InScreenHeight);
     void InitRenderer();
     void InitWorld();
+    void InitTextureLoader();
     void ShutdownWindow();
     void UpdateWindowSize(uint32 InScreenWidth, uint32 InScreenHeight);
 
@@ -75,6 +78,8 @@ public:
 
     void SetWorldGridGap(float InWorldGridGap) { WorldGridGap = InWorldGridGap; }
 
+    bool LoadTexture(const std::wstring& Name, const std::wstring& FileName, int32 Rows = 1, int32 Columns = 1);
+    const TextureInfo* GetTextureInfo(const std::wstring& Name) const;
 private:
     bool bIsExit = false;
     EScreenMode ScreenMode = EScreenMode::Windowed;
@@ -94,6 +99,8 @@ private:
     uint32 ResizeWidth = 0;
 	uint32 ResizeHeight = 0;
 
+	// 텍스처 로더
+    TextureLoader* TextureLoaderInstance = nullptr;
 private:
 	std::unique_ptr<URenderer> Renderer;
 

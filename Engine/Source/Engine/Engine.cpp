@@ -1,4 +1,4 @@
-﻿#include "pch.h" 
+#include "pch.h" 
 #include "Engine.h"
 
 #include "WorldGrid.h"
@@ -15,6 +15,8 @@
 #else
 #pragma comment(lib, "DirectXTK/Libs/x64/Release/DirectXTK.lib")
 #endif
+#include "GameFrameWork/Sphere.h"
+#include "Core/Rendering/TextureLoader.h"
 
 
 class AArrow;
@@ -25,6 +27,7 @@ extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam
 
 LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+
     // Handle ImGui Msg
     if (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
     {
@@ -105,11 +108,12 @@ void UEngine::Initialize(HINSTANCE hInstance, const WCHAR* InWindowTitle, const 
 
     InitRenderer();
 
+    
+    InitTextureLoader();
+
     InitializedScreenWidth = ScreenWidth;
     InitializedScreenHeight = ScreenHeight;
-
     InitWorld();
-    
     ui.Initialize(WindowHandle, *Renderer, ScreenWidth, ScreenHeight);
     
     UE_LOG("Engine Initialized!");
@@ -277,6 +281,21 @@ void UEngine::InitWorld()
     World->BeginPlay();
 }
 
+void UEngine::InitTextureLoader()
+{
+    // TextureLoader 생성
+    TextureLoaderInstance = new TextureLoader(Renderer->GetDevice(), Renderer->GetDeviceContext());
+
+	// Texture Load
+    LoadTexture(L"ASCII", L"ASCII.png", 16, 16);
+    LoadTexture(L"Cat", L"Cat.jpg", 1, 1);
+
+	const TextureInfo* TextureInfo = GetTextureInfo(L"ASCII");
+
+    int b = 0;
+    
+}
+
 void UEngine::ShutdownWindow()
 {
     DestroyWindow(WindowHandle);
@@ -317,6 +336,24 @@ UObject* UEngine::GetObjectByUUID(uint32 InUUID) const
     if (const auto Obj = GObjects.Find(InUUID))
     {
         return Obj->get();
+    }
+    return nullptr;
+}
+
+bool UEngine::LoadTexture(const std::wstring& Name, const std::wstring& FileName, int32 Rows, int32 Columns)
+{
+	if (TextureLoaderInstance)
+	{
+		return TextureLoaderInstance->LoadTexture(Name, FileName, Rows, Columns);
+	}
+    return false;
+}
+
+const TextureInfo* UEngine::GetTextureInfo(const std::wstring& Name) const
+{
+    if (TextureLoaderInstance)
+    {
+		return TextureLoaderInstance->GetTextureInfo(Name);
     }
     return nullptr;
 }

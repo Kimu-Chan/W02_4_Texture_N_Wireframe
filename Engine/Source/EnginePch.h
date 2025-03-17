@@ -41,6 +41,8 @@
 #include <wrl.h>
 #include <wrl/client.h>
 
+#include "Core/HAL/PlatformType.h"
+
 using namespace Microsoft::WRL;
 
 template <typename T>
