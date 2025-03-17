@@ -9,15 +9,13 @@
 #include "CoreUObject/World.h"
 #include "Gizmo/Axis.h"
 #include "GameFrameWork/Camera.h"
+#include "Core/Rendering/TextureLoader.h"
 
 #ifdef _DEBUG
 #pragma comment(lib, "DirectXTK/Libs/x64/Debug/DirectXTK.lib")
 #else
 #pragma comment(lib, "DirectXTK/Libs/x64/Release/DirectXTK.lib")
 #endif
-#include "GameFrameWork/Sphere.h"
-#include "Core/Rendering/TextureLoader.h"
-
 
 class AArrow;
 class APicker;
@@ -65,8 +63,8 @@ LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             {
                 return 0;
             }
-            int32 Width = static_cast<int32>(LOWORD(lParam));
-            int32 Height = static_cast<int32>(HIWORD(lParam));
+            int32 Width = LOWORD(lParam);
+            int32 Height = HIWORD(lParam);
             UEngine::Get().ResizeWidth = Width;
             UEngine::Get().ResizeHeight = Height;
             UEngine::Get().UpdateWindowSize(Width, Height);
@@ -108,7 +106,6 @@ void UEngine::Initialize(HINSTANCE hInstance, const WCHAR* InWindowTitle, const 
 
     InitRenderer();
 
-    
     InitTextureLoader();
 
     InitializedScreenWidth = ScreenWidth;
