@@ -21,6 +21,7 @@ void URenderer::Create(HWND hWindow)
 
     CreateTextureBuffer();
     CreateTextureSamplerState();
+    CreateTextureBlendState();
 
     AdjustDebugLineVertexBuffer(DebugLineNumStep);
     InitMatrix();
@@ -805,6 +806,12 @@ void URenderer::ReleaseBlendState()
         GridBlendState->Release();
         GridBlendState = nullptr;
     }
+
+    if (TextureBlendState)
+    {
+        TextureBlendState->Release();
+        TextureBlendState = nullptr;
+    }
 }
 
 void URenderer::CreateTextureSamplerState()
@@ -967,6 +974,21 @@ void URenderer::CreateTextureBuffer()
     Device->CreateBuffer(&TextureBufferDesc, &TextureBufferInitData, &TextureVertexBuffer);
 }
 
+void URenderer::CreateTextureBlendState()
+{
+	D3D11_BLEND_DESC BlendState;
+	ZeroMemory(&BlendState, sizeof(D3D11_BLEND_DESC));
+	BlendState.RenderTarget[0].BlendEnable = TRUE;
+	BlendState.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	BlendState.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	BlendState.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	BlendState.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	BlendState.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	BlendState.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	BlendState.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	Device->CreateBlendState(&BlendState, &TextureBlendState);
+}
+
 void URenderer::PrepareBillboard()
 {
     UINT Stride = sizeof(FVertexUV);
@@ -977,6 +999,8 @@ void URenderer::PrepareBillboard()
     DeviceContext->VSSetShader(ShaderCache->GetVertexShader(L"ShaderTexture"), nullptr, 0);
     DeviceContext->PSSetShader(ShaderCache->GetPixelShader(L"ShaderTexture"), nullptr, 0);
     DeviceContext->PSSetSamplers(0, 1, &SamplerState);
+
+    DeviceContext->OMSetBlendState(TextureBlendState, nullptr, 0xffffffff);
 }
 
 void URenderer::RenderBillboard()
@@ -984,7 +1008,7 @@ void URenderer::RenderBillboard()
 	DeviceContext->Draw(6, 0);
 }
 
-void URenderer::UpdateTextureConstantBuffer(const FMatrix& World, float u, float v)
+void URenderer::UpdateTextureConstantBuffer(const FMatrix& World, float U, float V, float TotalCols, float TotalRows)
 {
     D3D11_MAPPED_SUBRESOURCE MappedResource;
     HRESULT hr = DeviceContext->Map(TextureConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
@@ -993,8 +1017,10 @@ void URenderer::UpdateTextureConstantBuffer(const FMatrix& World, float u, float
 
     FTextureConstants* BufferData = reinterpret_cast<FTextureConstants*>(MappedResource.pData);
     BufferData->WorldViewProj =FMatrix::Transpose(World * ViewMatrix * ProjectionMatrix);
-    BufferData->u = u;
-	BufferData->v = v;
+    BufferData->U = U;
+	BufferData->V = V;
+    BufferData->Cols = TotalCols;
+    BufferData->Rows = TotalRows;
 
     DeviceContext->Unmap(TextureConstantBuffer, 0);
 }

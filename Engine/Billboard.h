@@ -12,11 +12,14 @@ public:
 	virtual void Render() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void EndPlay(const EEndPlayReason::Type Reason);
-	void SetTexture(class ID3D11ShaderResourceView* InTexture);
+	void SetTexture(class ID3D11ShaderResourceView* InTexture, float Cols = 1.0f, float Rows = 1.0f);
+	void SetRenderUV(float Col, float Row);
 
 private:
 	ID3D11ShaderResourceView* Texture = nullptr;
-	int32 TotalCols = 1;
-	int32 TotalRows = 1;
+	float TotalCols = 1.0f;
+	float TotalRows = 1.0f;
+	float RenderCol = 1.0f;
+	float RenderRow = 1.0f;
 };
 

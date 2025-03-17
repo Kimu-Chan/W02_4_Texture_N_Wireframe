@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "TextureLoader.h"
 #include <DirectXTK/WICTextureLoader.h>
 
@@ -42,9 +42,9 @@ bool TextureLoader::LoadTexture(const std::wstring& Name, const std::wstring& Fi
     return true;
 }
 
-const TextureInfo* TextureLoader::GetTextureInfo(const std::wstring& Name) const
+TextureInfo* TextureLoader::GetTextureInfo(const std::wstring& Name) 
 {
-    std::unordered_map<std::wstring, TextureInfo>::const_iterator iter = TextureMap.find(Name);
+    std::unordered_map<std::wstring, TextureInfo>::iterator iter = TextureMap.find(Name);
     if (TextureMap.end() != iter)
     {
         return &iter->second;

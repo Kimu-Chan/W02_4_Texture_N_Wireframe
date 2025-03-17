@@ -155,7 +155,9 @@
     <ClCompile Include="Source\Core\Rendering\TextureLoader.cpp">
       <Filter>Source Files\Core\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Billboard.cpp" />
+    <ClCompile Include="Billboard.cpp">
+      <Filter>Source Files\Engine\GameFrameWork</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Core\HAL\PlatformType.h">
@@ -383,7 +385,9 @@
     <ClInclude Include="Source\Core\Rendering\TextureLoader.h">
       <Filter>Header Files\Core\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Billboard.h" />
+    <ClInclude Include="Billboard.h">
+      <Filter>Header Files\Engine\GameFrameWork</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">

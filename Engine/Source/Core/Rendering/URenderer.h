@@ -103,11 +103,13 @@ public:
 	// Texture
 	void CreateTextureBuffer();
 
+	void CreateTextureBlendState();
+
 	void PrepareBillboard();
 
 	void RenderBillboard();
 
-	void UpdateTextureConstantBuffer(const FMatrix& World, float u, float v);
+	void UpdateTextureConstantBuffer(const FMatrix& World, float U, float V, float TotalCols, float TotalRows);
 
 protected:
 	/** Direct3D Device 및 SwapChain을 생성합니다. */
@@ -231,6 +233,7 @@ protected:
 	ID3D11InputLayout* TextureInputLayout = nullptr;        // 텍스처용 인풋 레이아웃
 	ID3D11Buffer* TextureConstantBuffer = nullptr;
 	ID3D11SamplerState* SamplerState = nullptr;				// 텍스쳐 샘플러 스테이트
+	ID3D11BlendState* TextureBlendState = nullptr;
 
 private:
 	// Debug Line

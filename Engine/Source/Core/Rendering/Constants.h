@@ -41,8 +41,10 @@ struct alignas(16) FDepthConstants {
 struct alignas(16) FTextureConstants
 {
 	FMatrix WorldViewProj;
-	float u;
-	float v;
+	float U;
+	float V;
+	float Cols;
+	float Rows;
 };
 
 struct ConstantUpdateInfo

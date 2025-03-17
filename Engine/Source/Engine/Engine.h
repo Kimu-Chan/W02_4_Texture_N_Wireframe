@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Core/Container/Map.h"
 #include "Core/HAL/PlatformType.h"
@@ -79,7 +79,7 @@ public:
     void SetWorldGridGap(float InWorldGridGap) { WorldGridGap = InWorldGridGap; }
 
     bool LoadTexture(const std::wstring& Name, const std::wstring& FileName, int32 Rows = 1, int32 Columns = 1);
-    const TextureInfo* GetTextureInfo(const std::wstring& Name) const;
+    TextureInfo* GetTextureInfo(const std::wstring& Name) const;
 private:
     bool bIsExit = false;
     EScreenMode ScreenMode = EScreenMode::Windowed;
