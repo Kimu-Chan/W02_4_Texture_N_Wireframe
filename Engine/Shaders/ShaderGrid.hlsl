@@ -65,8 +65,8 @@ float4 mainPS(PS_INPUT input) : SV_TARGET
 {
     float Dist = length(input.WorldPosition.xyz - ViewPosition);
 
-    float MaxDist = FarClip * 0.8f;
-    float MinDist = MaxDist * 0.2f;
+    float MaxDist = FarClip * 1.2f;
+    float MinDist = MaxDist * 0.5f;
 
     // Fade out grid
     float Fade = saturate(1.f - (Dist - MinDist) / (MaxDist - MinDist));

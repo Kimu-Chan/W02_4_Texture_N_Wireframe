@@ -264,11 +264,14 @@ void UEngine::InitWorld()
 
 		FQuat CameraRot = FQuat(RotX, RotY, RotZ, RotW);
 		FTransform CameraTransform = FTransform(CameraPos, CameraRot, FVector(1,1,1));
-
 		Camera->SetActorTransform(CameraTransform);
+
 		float CameraSpeed = EngineConfig->GetEngineConfigValue<float>(EEngineConfigValueType::EEC_EditorCameraSpeed, 1.f);
         APlayerController::Get().SetCurrentSpeed(CameraSpeed);
         Renderer->UpdateViewMatrix(CameraTransform);
+
+        float CameraSensitivity = EngineConfig->GetEngineConfigValue<float>(EEngineConfigValueType::EEC_EditorCameraSensitivity, 10.f);
+        APlayerController::Get().SetMouseSensitivity(CameraSensitivity);
     }
 
     //// Test

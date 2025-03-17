@@ -922,7 +922,6 @@ void URenderer::RenderDebugLines(float DeltaTime)
     DeviceContext->Map(DebugLineVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedSubresource);
     if (FVertexSimple* VertexSimple = reinterpret_cast<FVertexSimple*>(MappedSubresource.pData))
     {
-        // TODO: DebugLineVertexBuffer에 디버그 라인 정점 정보 넣기.
         int32 BufferIdx = 0;
         for (int32 i = 0; i < DebugLines.Num(); ++i)
         {
@@ -1108,6 +1107,26 @@ void URenderer::CreatePickingFrameBuffer()
 		return;
 	}
 
+    D3D11_TEXTURE2D_DESC stagingDesc = {};
+    stagingDesc.Width = 1; // 픽셀 1개만 복사
+    stagingDesc.Height = 1;
+    stagingDesc.MipLevels = 1;
+    stagingDesc.ArraySize = 1;
+    stagingDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // 원본 텍스처 포맷과 동일
+    stagingDesc.SampleDesc.Count = 1;
+    stagingDesc.Usage = D3D11_USAGE_STAGING;
+    stagingDesc.BindFlags = 0;
+    stagingDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+
+    result = Device->CreateTexture2D(&stagingDesc, nullptr, &PickingFrameBufferStaging);
+    if (FAILED(result))
+    {
+        wchar_t errorMsg[256];
+        swprintf_s(errorMsg, L"Failed to create Staging Texture! HRESULT: 0x%08X", result);
+        MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
+        return;
+    }
+
     D3D11_RENDER_TARGET_VIEW_DESC PickingFrameBufferRTVDesc = {};
     PickingFrameBufferRTVDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;      // 색상 포맷
     PickingFrameBufferRTVDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D; // 2D 텍스처
@@ -1128,6 +1147,11 @@ void URenderer::ReleasePickingFrameBuffer()
     {
         PickingFrameBuffer->Release();
         PickingFrameBuffer = nullptr;
+    }
+    if (PickingFrameBufferStaging)
+    {
+        PickingFrameBufferStaging->Release();
+        PickingFrameBufferStaging = nullptr;
     }
     if (PickingFrameBufferRTV)
     {
@@ -1221,62 +1245,39 @@ void URenderer::PrepareMainShader()
     DeviceContext->PSSetShader(ShaderCache->GetPixelShader(L"ShaderMain"), nullptr, 0);
 }
 
-FVector4 URenderer::GetPixel(FVector MPos)
+FVector4 URenderer::GetPixel(int32 X, int32 Y)
 {
-    FVector TempMPos;
+    FVector4 color{ 1, 1, 1, 1 };
+    
+    if (PickingFrameBufferStaging == nullptr)
+        return color;
 
     // Bound Check, 화면 크기에 1px의 패딩을 줌
-    TempMPos.X = FMath::Clamp(MPos.X, 1.0f, ViewportInfo.Width - 1);
-    TempMPos.Y = FMath::Clamp(MPos.Y, 1.0f, ViewportInfo.Height - 1);
-    // 1. Staging 텍스처 생성 (1x1 픽셀)
-    D3D11_TEXTURE2D_DESC stagingDesc = {};
-    stagingDesc.Width = 1; // 픽셀 1개만 복사
-    stagingDesc.Height = 1;
-    stagingDesc.MipLevels = 1;
-    stagingDesc.ArraySize = 1;
-    stagingDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // 원본 텍스처 포맷과 동일
-    stagingDesc.SampleDesc.Count = 1;
-    stagingDesc.Usage = D3D11_USAGE_STAGING;
-    stagingDesc.BindFlags = 0;
-    stagingDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-
-    ID3D11Texture2D* stagingTexture = nullptr;
-    HRESULT result = Device->CreateTexture2D(&stagingDesc, nullptr, &stagingTexture);
-	if (FAILED(result))
-	{
-		wchar_t errorMsg[256];
-		swprintf_s(errorMsg, L"Failed to create Staging Texture! HRESULT: 0x%08X", result);
-		MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
-		return FVector4();
-	}
-
-    // 2. 복사할 영역 정의 (D3D11_BOX)
+    X = FMath::Clamp(X, 1, static_cast<int32>(ViewportInfo.Width - 1));
+    Y = FMath::Clamp(Y, 1, static_cast<int32>(ViewportInfo.Height - 1));
+    
+    // 복사할 영역 정의 (D3D11_BOX)
     D3D11_BOX srcBox = {};
-    srcBox.left = static_cast<UINT>(TempMPos.X);
+    srcBox.left = X;
     srcBox.right = srcBox.left + 1; // 1픽셀 너비
-    srcBox.top = static_cast<UINT>(TempMPos.Y);
+    srcBox.top = Y;
     srcBox.bottom = srcBox.top + 1; // 1픽셀 높이
     srcBox.front = 0;
     srcBox.back = 1;
-    FVector4 color{ 1, 1, 1, 1 };
-
-    if (stagingTexture == nullptr)
-        return color;
 
     D3D11_TEXTURE2D_DESC originalDesc;
     PickingFrameBuffer->GetDesc(&originalDesc);
 
     if (srcBox.left >= originalDesc.Width || srcBox.right > originalDesc.Width ||
         srcBox.top >= originalDesc.Height || srcBox.bottom > originalDesc.Height) {
-        // srcBox가 원본 텍스처의 범위를 벗어났습니다.
-        // 적절한 오류 처리를 수행합니다.
+        // srcBox가 원본 텍스처의 범위를 벗어남
         MessageBox(hWnd, L"srcBox coordinates are out of the original texture bounds.", L"Error", MB_ICONERROR | MB_OK);
         return FVector4();
     }
 
     // 3. 특정 좌표만 복사
     DeviceContext->CopySubresourceRegion(
-        stagingTexture, // 대상 텍스처
+        PickingFrameBufferStaging, // 대상 텍스처
         0,              // 대상 서브리소스
         0, 0, 0,        // 대상 좌표 (x, y, z)
         PickingFrameBuffer, // 원본 텍스처
@@ -1286,7 +1287,7 @@ FVector4 URenderer::GetPixel(FVector MPos)
 
     // 4. 데이터 매핑
     D3D11_MAPPED_SUBRESOURCE mapped = {};
-    result = DeviceContext->Map(stagingTexture, 0, D3D11_MAP_READ, 0, &mapped);
+    HRESULT result = DeviceContext->Map(PickingFrameBufferStaging, 0, D3D11_MAP_READ, 0, &mapped);
 	if (FAILED(result))
 	{
 		wchar_t errorMsg[256];
@@ -1310,8 +1311,7 @@ FVector4 URenderer::GetPixel(FVector MPos)
         << " Z: " << color.Z << " A: " << color.W << "\n";
 
     // 6. 매핑 해제 및 정리
-    DeviceContext->Unmap(stagingTexture, 0);
-    stagingTexture->Release();
+    DeviceContext->Unmap(PickingFrameBufferStaging, 0);
 
     return color;
 }

@@ -252,6 +252,7 @@ private:
 protected:
 	// 피킹용 버퍼들
 	ID3D11Texture2D* PickingFrameBuffer = nullptr;                 // 화면 출력용 텍스처
+	ID3D11Texture2D* PickingFrameBufferStaging = nullptr;
 	ID3D11RenderTargetView* PickingFrameBufferRTV = nullptr;       // 텍스처를 렌더 타겟으로 사용하는 뷰
 	ID3D11Buffer* ConstantPickingBuffer = nullptr;                 // 뷰 상수 버퍼
 	FLOAT PickingClearColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f }; //
@@ -273,7 +274,7 @@ public:
 	void PrepareMain();
 	void PrepareMainShader();
 
-	FVector4 GetPixel(FVector MPos);
+	FVector4 GetPixel(int32 X, int32 Y);
 
 	void RenderPickingTexture();
 	FMatrix GetProjectionMatrix() const;

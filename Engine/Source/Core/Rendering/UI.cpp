@@ -365,6 +365,14 @@ void UI::RenderCameraSettings()
         APlayerController::Get().SetCurrentSpeed(CurrentSpeed);
     }
 
+    float CurrentSensitivity = APlayerController::Get().GetMouseSensitivity();
+    const float CameraMaxSensitivity = APlayerController::Get().GetMaxSensitivity();
+    const float CameraMinSensitivity = APlayerController::Get().GetMinSensitivity();
+    if (ImGui::DragFloat("Camera Sensitivity", &CurrentSensitivity, 0.1f, CameraMinSensitivity, CameraMaxSensitivity))
+    {
+        APlayerController::Get().SetMouseSensitivity(CurrentSensitivity);
+    }
+
     FVector Forward = Camera->GetActorTransform().GetForward();
     FVector Up = Camera->GetActorTransform().GetUp();
     FVector Right = Camera->GetActorTransform().GetRight();
