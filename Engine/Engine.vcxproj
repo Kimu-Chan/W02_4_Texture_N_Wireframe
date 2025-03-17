@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -127,6 +127,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EntryPointSymbol>
       </EntryPointSymbol>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <BuildLog>
       <Path>$(IntDir)$(MSBuildProjectName).log</Path>
@@ -153,6 +154,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Core\Rendering\ShaderCache.h" />
+    <ClInclude Include="Source\Core\Rendering\Constants.h" />
+    <ClInclude Include="Source\CoreUObject\NameTypes.h" />
+    <ClInclude Include="Source\CoreUObject\Name.h" />
+    <ClInclude Include="Source\ThirdParty\IniParser\iniparser.hpp" />
     <ClInclude Include="Source\Core\AbstractClass\UClass.h" />
     <ClInclude Include="Source\Core\Rendering\RendererDefine.h" />
     <ClInclude Include="Source\CoreUObject\Components\ActorComponent.h" />
@@ -195,6 +201,7 @@
     <ClInclude Include="Source\Editor\Windows\ConsoleWindow.h" />
     <ClInclude Include="Source\EnginePch.h" />
     <ClInclude Include="Source\Engine\Engine.h" />
+    <ClInclude Include="Source\Engine\EngineConfig.h" />
     <ClInclude Include="Source\Engine\EngineStatics.h" />
     <ClInclude Include="Source\Engine\EngineTypes.h" />
     <ClInclude Include="Source\Engine\GameFrameWork\Actor.h" />
@@ -223,11 +230,16 @@
     <ClInclude Include="Source\Utils\JsonSaveHelper.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Shaders\ShaderPicking.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Source\Core\Rendering\ShaderCache.cpp" />
     <ClCompile Include="Source\CoreUObject\Components\ActorComponent.cpp" />
     <ClCompile Include="Source\CoreUObject\Components\PrimitiveComponent.cpp" />
     <ClCompile Include="Source\CoreUObject\Components\SceneComponent.cpp" />
     <ClCompile Include="Source\CoreUObject\Object.cpp" />
     <ClCompile Include="Source\CoreUObject\ObjectFactory.cpp" />
+    <ClCompile Include="Source\CoreUObject\Name.cpp" />
     <ClCompile Include="Source\CoreUObject\World.cpp" />
     <ClCompile Include="Source\Core\AbstractClass\UClass.cpp" />
     <ClCompile Include="Source\Core\Container\String.cpp" />
@@ -246,6 +258,7 @@
     <ClCompile Include="Source\Editor\Windows\ConsoleWindow.cpp" />
     <ClCompile Include="Source\EnginePch.cpp" />
     <ClCompile Include="Source\Engine\Engine.cpp" />
+    <ClCompile Include="Source\Engine\EngineConfig.cpp" />
     <ClCompile Include="Source\Engine\EngineStatics.cpp" />
     <ClCompile Include="Source\Engine\GameFrameWork\Actor.cpp" />
     <ClCompile Include="Source\Engine\GameFrameWork\Arrow.cpp" />
@@ -296,7 +309,9 @@
     <ClCompile Include="Source\Utils\JsonSaveHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\ShaderGrid.hlsl" />
+    <None Include="Shaders\ShaderGrid.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </None>
     <FxCompile Include="Shaders\ShaderDebugLine.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -304,6 +319,7 @@
     <FxCompile Include="Shaders\ShaderMain.hlsl">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">mainVS</EntryPointName>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">mainVS</EntryPointName>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

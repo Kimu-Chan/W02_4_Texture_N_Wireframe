@@ -151,9 +151,9 @@ public:
 	// InRotate는 Degree 단위
 	void Rotate(const FVector& InRotation)
 	{
-		RotateYaw(InRotation.Z);
-		RotatePitch(InRotation.Y);
 		RotateRoll(InRotation.X);
+		RotatePitch(InRotation.Y);
+		RotateYaw(InRotation.Z);
 	}
 
 	void RotateYaw(float Angle)
@@ -194,5 +194,13 @@ public:
 		NewTransform.Scale = Scale * InTransform.Scale;
 
 		return NewTransform; 
+	}
+	void LookAt(const FVector& Target)
+	{
+		FVector Dir = (Target - Position).GetSafeNormal();
+		float Pitch = FMath::RadiansToDegrees(FMath::Asin(Dir.Z)) * -1;
+		float Yaw = FMath::RadiansToDegrees(FMath::Atan2(Dir.Y, Dir.X));
+		
+		SetRotation(FVector(0, Pitch, Yaw));
 	}
 };

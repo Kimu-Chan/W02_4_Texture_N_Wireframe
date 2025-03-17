@@ -5,6 +5,7 @@
 #include "PlayerInput.h"
 #include "Core/Math/Plane.h"
 #include "Engine/GameFrameWork/Camera.h"
+#include "Engine/EngineConfig.h"
 
 APlayerController::APlayerController()
     : CurrentSpeed(3.f)
@@ -94,6 +95,10 @@ void APlayerController::HandleCameraMovement(float DeltaTime)
 
     CameraTransform.Translate(NewVelocity * DeltaTime * CurrentSpeed);
     Camera->SetActorTransform(CameraTransform);
+    
+    SaveCameraProperties(Camera);
+	
+
 }
 
 void APlayerController::HandleGizmoMovement(float DeltaTime)
@@ -114,6 +119,29 @@ void APlayerController::HandleGizmoMovement(float DeltaTime)
     }
 
     bIsHandlingGizmo = true;
+}
+
+void APlayerController::SaveCameraProperties(ACamera* Camera)
+{
+    FEngineConfig* EngineConfig = UEngine::Get().GetEngineConfig();
+    FTransform CameraTransform = Camera->GetActorTransform();
+
+    float FOV = Camera->GetFieldOfView();
+    float NearClip = Camera->GetNearClip();
+    float FarClip = Camera->GetFarClip();
+    float CameraSpeed = CurrentSpeed;
+
+    UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraPosX, CameraTransform.GetPosition().X);
+    UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraPosY, CameraTransform.GetPosition().Y);
+    UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraPosZ, CameraTransform.GetPosition().Z);
+
+    UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraRotX, CameraTransform.GetRotation().X);
+    UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraRotY, CameraTransform.GetRotation().Y);
+    UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraRotZ, CameraTransform.GetRotation().Z);
+    UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraRotW, CameraTransform.GetRotation().W);
+
+    UEngine::Get().GetEngineConfig()->SaveEngineConfig(EEngineConfigValueType::EEC_EditorCameraSpeed, CameraSpeed);
+
 }
 
 void APlayerController::ProcessPlayerInput(float DeltaTime)

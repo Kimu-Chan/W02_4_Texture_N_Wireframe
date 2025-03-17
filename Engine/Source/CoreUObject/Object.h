@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "NameTypes.h"
 #include "Core/HAL/PlatformType.h"
 #include "AbstractClass/UClass.h"
 
@@ -14,7 +15,7 @@ private:
 	uint32 UUID = 0;
 	uint32 InternalIndex; // Index of GUObjectArray
 
-	FString NamePrivate;
+	FName NamePrivate;
 
 public:
 	UObject();
@@ -24,7 +25,7 @@ public:
 	uint32 GetUUID() const { return UUID; }
 	uint32 GetInternalIndex() const { return InternalIndex; }
 
-	FString GetName() const { return NamePrivate; }
+	FName GetName() const { return NamePrivate; }
 	void SetName(const FString& InName) { NamePrivate = InName; }
 
 public:

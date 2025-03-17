@@ -313,7 +313,7 @@ void UI::RenderCameraSettings()
     if (ImGui::DragFloat("FOV", &FOV, 0.1f, 20.f, 150.f))
     {
         FOV = FMath::Clamp(FOV, 20.f, 150.f);
-        Camera->SetFieldOfVew(FOV);
+        Camera->SetFieldOfView(FOV);
 
         UEngine::Get().GetRenderer()->UpdateProjectionMatrix(Camera);
     }
@@ -513,7 +513,7 @@ void UI::RenderSceneManagerWindow(bool& bOutHovered)
             
             if (bHasPrimitive)
             {
-                ImGui::Text(*Actor->GetName());
+                ImGui::Text(*Actor->GetName().ToString());
             }
         }
         

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Core/AbstractClass/Singleton.h"
 
@@ -13,6 +13,7 @@ public :
 
 	void HandleCameraMovement(float DeltaTime);
 	void HandleGizmoMovement(float DeltaTime);
+	void SaveCameraProperties(class ACamera* Camera);
 
 	float GetCurrentSpeed() const { return CurrentSpeed; }
 	float GetMaxSpeed() const { return MaxSpeed; }
