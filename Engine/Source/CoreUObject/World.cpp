@@ -29,14 +29,13 @@ void UWorld::BeginPlay()
     
     // Billboard Test
 
-    AActor* Actor = new AActor();
+    AActor* Actor = SpawnActor<AActor>();
 	Billboard = Actor->AddComponent<UBillboard>();
     Billboard->SetTexture(UEngine::Get().GetTextureInfo(L"Cat")->ShaderResourceView);
+    Billboard->SetBoundingBoxRenderable(false);
     Actor->SetRootComponent(Billboard);
-    Actor->SetWorld(this);
-	AddRenderComponent(Billboard);
-	Actors.Add(Actor);
 	Actor->SetActorTransform(FTransform(FVector(1.f, 1.f, 1.f), FVector(0.f, 0.f, 0.f), FVector(1.f, 1.f, 1.f)));
+    Actor->BeginPlay();
 }
 
 void UWorld::Tick(float DeltaTime)
@@ -85,9 +84,6 @@ void UWorld::Render(float DeltaTime)
         return;
     }
 
-    ACamera* cam = FEditorManager::Get().GetCamera();
-    Renderer->UpdateViewMatrix(cam->GetActorTransform());
-        
     if (!APlayerController::Get().IsUiInput() && APlayerInput::Get().IsMousePressed(false))
     {
         RenderPickingTexture(*Renderer);
@@ -102,7 +98,9 @@ void UWorld::Render(float DeltaTime)
     RenderMainTexture(*Renderer);
 	RenderBoundingBoxes(*Renderer);
 
+
     RenderDebugLines(*Renderer, DeltaTime);
+	RenderBillboard(*Renderer);
 
     // DisplayPickingTexture(*Renderer);
 }
@@ -173,6 +171,18 @@ void UWorld::RenderWorldGrid(URenderer& Renderer)
 void UWorld::RenderDebugLines(URenderer& Renderer, float DeltaTime)
 {
     Renderer.RenderDebugLines(DeltaTime);
+}
+
+void UWorld::RenderBillboard(URenderer& Renderer)
+{
+    // 텍스처와 샘플러 상태를 셰이더에 설정
+    Renderer.PrepareBillboard();
+
+	for (UBillboard* Billboard : BillboardComponents)
+	{
+        if(Billboard)
+            Billboard->Render();
+	}
 }
 
 void UWorld::DisplayPickingTexture(URenderer& Renderer)
