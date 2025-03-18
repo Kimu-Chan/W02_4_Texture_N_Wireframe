@@ -66,18 +66,37 @@ public:
 		Components.Add(ObjectInstance);
 		ObjectInstance->SetOwner(this);
 
-		// 만약 SceneComponent를 상속 받았다면
-		//if constexpr (std::is_base_of_v<USceneComponent, T>)
-		//{
-		//	if (RootComponent == nullptr)
-		//	{
-		//		RootComponent = ObjectInstance;
-		//	}
-		//	else
-		//	{
-		//		ObjectInstance->SetupAttachment(RootComponent);
-		//	}
-		//}
+		FString ObjectName = ObjectInstance->GetClass()->Name;
+		if (ComponentNames.Contains(ObjectName))
+		{
+			uint32 Count = 0;
+			ObjectName += "_";
+			while (Count < UINT_MAX)
+			{
+				FString NumToStr = FString(std::to_string(Count));
+				FString TempName = ObjectName;
+				TempName += NumToStr;
+				if (!ComponentNames.Contains(TempName))
+				{
+					ObjectInstance->SetName(TempName);
+					ComponentNames.Add(TempName);
+					break;
+				}
+				++Count;
+			}
+
+			if (Count == UINT_MAX)
+			{
+				// TODO: 어떤 동작을 해야할지 고민해봐야 함.
+			}
+		}
+		else
+		{
+			ObjectInstance->SetName(ObjectName);
+			ComponentNames.Add(ObjectName);
+		}
+
+		UE_LOG("Component Added: %s", *ObjectName);
 
 		return ObjectInstance;
 	}
@@ -119,5 +138,7 @@ private:
 
 	class UTextBillboard* UUIDBillboard = nullptr;
 	bool bIsUUIDBillboard = false;
+
+	TSet<FString> ComponentNames;
 };
 
