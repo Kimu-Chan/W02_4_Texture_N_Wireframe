@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Box.h"
 
 #include "CoreUObject/Components/SceneComponent.h"
@@ -74,13 +74,6 @@ void FBox::Update(const FMatrix& InModelMatrix)
 
 	Min = NewOrigin - NewExtent;
 	Max = NewOrigin + NewExtent;
-
-    if (Owner->IsA<USphereComp>())
-    {
-		UE_LOG("Origin, %f, %f, %f", NewOrigin.X, NewOrigin.Y, NewOrigin.Z);
-		UE_LOG("Extent, %f, %f, %f", NewExtent.X, NewExtent.Y, NewExtent.Z);
-    }
-
 }
 
 void FBox::Init(USceneComponent* InOwner, const FVector& InMin, const FVector& InMax)

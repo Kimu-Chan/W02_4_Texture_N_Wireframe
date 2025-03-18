@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Engine/GameFrameWork/Actor.h"
 
@@ -45,5 +45,6 @@ public:
 
 private:
 	void DoTransform(FTransform& AT, FVector Result, AActor* Actor);
+	FVector CachedRayResult = FVector::ZeroVector;
 };
 

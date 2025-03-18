@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Core/Container/Set.h"
 #include "Core/Math/Transform.h"
@@ -45,6 +45,8 @@ public:
 
 	void SetBoundingBoxRenderable(bool bRenderable);
 
+protected:
+	virtual void InitUUIDBillboard();
 private:
 	virtual void Pick();
 	virtual void UnPick();
@@ -114,5 +116,8 @@ protected:
 private:
 	UWorld* World = nullptr;
 	TSet<UActorComponent*> Components;
+
+	class UBillboard* UUIDBillboard = nullptr;
+	bool bIsUUIDBillboard = false;
 };
 

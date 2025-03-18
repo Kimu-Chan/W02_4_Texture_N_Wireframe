@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Plane.h"
 #include "Matrix.h"
 
@@ -140,9 +140,14 @@ FQuat FQuat::MakeFromRotationMatrix(const FMatrix& M)
     return Q;
 }
 
-FQuat FQuat::Conjugate()
+FQuat FQuat::Conjugate() const
 {
 	return FQuat(-X, -Y, -Z, W);
+}
+
+static FQuat Conjugate(const FQuat& Q) 
+{
+	return FQuat(-Q.X, -Q.Y, -Q.Z, Q.W);
 }
 
 FVector FQuat::RotateVector(const FVector& InVector) const

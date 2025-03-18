@@ -92,10 +92,6 @@ void UWorld::Render(float DeltaTime)
         return;
     }
 
-    if (!APlayerController::Get().IsUiInput() && APlayerInput::Get().IsMousePressed(false))
-    {
-        RenderPickingTexture(*Renderer);
-    }
 
     /**
      * Axis는 Grid에 가려지면 안되므로 Grid 먼저 렌더.
@@ -103,11 +99,15 @@ void UWorld::Render(float DeltaTime)
      */
     RenderWorldGrid(*Renderer);
         
+    if (!APlayerController::Get().IsUiInput() && APlayerInput::Get().IsMousePressed(false))
+    {
+        RenderPickingTexture(*Renderer);
+    }
+	RenderBillboard(*Renderer);
     RenderMainTexture(*Renderer);
 	RenderBoundingBoxes(*Renderer);
     
     RenderDebugLines(*Renderer, DeltaTime);
-	RenderBillboard(*Renderer);
 
     // DisplayPickingTexture(*Renderer);
 }
@@ -121,7 +121,7 @@ void UWorld::RenderPickingTexture(URenderer& Renderer)
     {
         uint32 UUID = RenderComponent->GetUUID();
         RenderComponent->UpdateConstantPicking(Renderer, APicker::EncodeUUID(UUID));
-        RenderComponent->Render();
+        RenderComponent->Render(&Renderer);
     }
 
     Renderer.PrepareZIgnore();
@@ -129,7 +129,7 @@ void UWorld::RenderPickingTexture(URenderer& Renderer)
     {
         uint32 UUID = RenderComponent->GetUUID();
         RenderComponent->UpdateConstantPicking(Renderer, APicker::EncodeUUID(UUID));
-        RenderComponent->Render();
+        RenderComponent->Render(&Renderer);
     }
 }
 
@@ -145,13 +145,14 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
         {
             continue;
         }
-        RenderComponent->Render();
+        RenderComponent->Render(&Renderer);
     }
 
     Renderer.PrepareZIgnore();
     for (auto& RenderComponent: ZIgnoreRenderComponents)
     {
-        RenderComponent->Render();
+
+        RenderComponent->Render(&Renderer);
     }
 }
 
@@ -183,9 +184,9 @@ void UWorld::RenderBillboard(URenderer& Renderer)
 
 	for (UBillboard* Billboard : BillboardComponents)
 	{
-        if(Billboard)
+        if (Billboard)
         {
-            Billboard->Render();
+            Billboard->Render(&Renderer);
         }
 	}
 }

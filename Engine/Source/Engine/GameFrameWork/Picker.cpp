@@ -1,4 +1,4 @@
-﻿#include "pch.h" 
+#include "pch.h" 
 #include "Picker.h"
 #include "Core/HAL/PlatformType.h"
 #include "Core/Input/PlayerInput.h"
@@ -33,6 +33,10 @@ FVector4 APicker::EncodeUUID(unsigned int UUID)
 int APicker::DecodeUUID(FVector4 color)
 {
     return (static_cast<unsigned int>(color.W) << 24) | (static_cast<unsigned int>(color.Z) << 16) | (static_cast<unsigned int>(color.Y) << 8) | (static_cast<unsigned int>(color.X));
+}
+
+void APicker::BeginPlay()
+{
 }
 
 void APicker::Tick(float DeltaTime)

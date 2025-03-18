@@ -1,6 +1,9 @@
-﻿#include "pch.h" 
+#include "pch.h" 
 #include "Sphere.h"
 #include "CoreUObject/Components/PrimitiveComponent.h"
+#include "../../../Billboard.h"
+#include "Engine/Engine.h"
+
 
 REGISTER_CLASS(ASphere);
 ASphere::ASphere()
@@ -9,8 +12,6 @@ ASphere::ASphere()
 
     USphereComp* SphereComponent = AddComponent<USphereComp>();
     RootComponent = SphereComponent;
-        
-    SetActorTransform(FTransform());
 }
 
 void ASphere::BeginPlay()

@@ -6,6 +6,10 @@
 #include "Debugging/DebugConsole.h"
 #include "Editor/Windows/ConsoleWindow.h"
 #include "Static/EditorManager.h"
+#include "../../../Billboard.h"
+#include "Core/Rendering/TextureLoader.h"
+#include "Sphere.h"
+#include "Camera.h"
 
 REGISTER_CLASS(AActor);
 AActor::AActor() : Depth{ 0 }
@@ -31,6 +35,8 @@ void AActor::BeginPlay()
 
 		}
 	}
+	if(IsGizmoActor() == false)
+		InitUUIDBillboard();
 }
 
 void AActor::Tick(float DeltaTime)
@@ -41,6 +47,15 @@ void AActor::Tick(float DeltaTime)
 		{
 			Component->Tick(DeltaTime);
 		}
+	}
+
+	if (UUIDBillboard)
+	{
+		FTransform BillboardTransform = UUIDBillboard->GetWorldTransform();
+		FVector BillboardPosition = GetActorTransform().GetPosition() + FVector(0.f, 0.f, 2.f);
+		BillboardTransform.SetPosition(BillboardPosition);
+		BillboardTransform.LookAt(FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition());
+		UUIDBillboard->SetRelativeTransform(BillboardTransform);
 	}
 }
 
@@ -86,6 +101,14 @@ void AActor::SetBoundingBoxRenderable(bool bRenderable)
 			PrimitiveComponent->SetBoundingBoxRenderable(bRenderable);
 		}
 	}
+}
+
+void AActor::InitUUIDBillboard()
+{
+	UUIDBillboard = AddComponent<UBillboard>();
+	UUIDBillboard->SetTexture(UEngine::Get().GetTextureInfo(L"Cat")->ShaderResourceView);
+	UUIDBillboard->SetBoundingBoxRenderable(false);
+	UUIDBillboard->BeginPlay();
 }
 
 void AActor::Pick()

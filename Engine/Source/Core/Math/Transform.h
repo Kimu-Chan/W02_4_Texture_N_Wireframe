@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Vector.h"
 #include "Matrix.h"
@@ -60,6 +60,11 @@ public:
 	inline virtual void SetRotation(float x, float y, float z)
 	{
 		SetRotation(FVector(x, y, z));
+	}
+
+	inline virtual void SetRotation(const FQuat& InQuat)
+	{
+		Rotation = InQuat;
 	}
 
 	inline void SetScale(FVector InScale)

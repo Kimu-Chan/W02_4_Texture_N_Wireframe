@@ -1,4 +1,4 @@
-﻿#include "pch.h" 
+#include "pch.h" 
 #include "GizmoHandle.h"
 
 #include "Engine/GameFrameWork/Camera.h"
@@ -57,6 +57,11 @@ void AGizmoHandle::Tick(float DeltaTime)
 
     AActor::Tick(DeltaTime);
 
+	if (APlayerInput::Get().IsMouseReleased(false))
+	{
+		SelectedAxis = ESelectedAxis::None;
+		CachedRayResult = FVector::ZeroVector;
+	}
     if (SelectedAxis != ESelectedAxis::None)
     {
         if (AActor* Actor = FEditorManager::Get().GetSelectedActor())
@@ -93,12 +98,25 @@ void AGizmoHandle::Tick(float DeltaTime)
 
 			float Distance = FVector::Distance(RayOrigin, Actor->GetActorTransform().GetPosition());
 
+            // 이전 프레임의 Result가 있어야 함
 			FVector Result = RayOrigin + RayDir * Distance;
 
+			if (CachedRayResult == FVector::ZeroVector)
+			{
+				CachedRayResult = Result;
+                return;
+			}
+
+			FVector Delta = Result - CachedRayResult;
+            CachedRayResult = Result;
             FTransform AT = Actor->GetActorTransform();
 
-			DoTransform(AT, Result, Actor);
+			DoTransform(AT, Delta, Actor);
 		}
+        else
+        {
+			CachedRayResult = FVector::ZeroVector;
+        }
 	}
 
     if (APlayerInput::Get().IsKeyPressed(DirectX::Keyboard::Keys::Space))
@@ -150,22 +168,22 @@ const char* AGizmoHandle::GetTypeName()
     return "GizmoHandle";
 }
 
-void AGizmoHandle::DoTransform(FTransform& AT, FVector Result, AActor* Actor)
+void AGizmoHandle::DoTransform(FTransform& ActorTransform, FVector Delta, AActor* Actor)
 {
-    const FVector& AP = AT.GetPosition();
+    const FVector& Position = ActorTransform.GetPosition();
 
     if (SelectedAxis == ESelectedAxis::X)
     {
         switch (GizmoType)
         {
         case EGizmoType::Translate:
-            AT.SetPosition({ Result.X, AP.Y, AP.Z });
+            ActorTransform.SetPosition({ Position.X + Delta.X, Position.Y, Position.Z });
             break;
         case EGizmoType::Rotate:
-            AT.RotatePitch(Result.X);
+            ActorTransform.RotatePitch(Delta.X * 10.f);
             break;
         case EGizmoType::Scale:
-            AT.AddScale({ Result.X * .1f, 0, AP.Z * .1f });
+            ActorTransform.AddScale({ Delta.X, 0, 0});
             break;
         }
     }
@@ -174,13 +192,13 @@ void AGizmoHandle::DoTransform(FTransform& AT, FVector Result, AActor* Actor)
         switch (GizmoType)
         {
         case EGizmoType::Translate:
-            AT.SetPosition({ AP.X, Result.Y, AP.Z });
+            ActorTransform.SetPosition({ Position.X, Position.Y + Delta.Y, Position.Z });
             break;
         case EGizmoType::Rotate:
-            AT.RotateRoll(Result.Y);
+            ActorTransform.RotateRoll(Delta.Y * 10.f);
             break;
         case EGizmoType::Scale:
-            AT.AddScale({ 0, Result.Y * .1f, 0 });
+            ActorTransform.AddScale({ 0, Delta.Y, 0 });
             break;
         }
     }
@@ -189,16 +207,16 @@ void AGizmoHandle::DoTransform(FTransform& AT, FVector Result, AActor* Actor)
         switch (GizmoType)
         {
         case EGizmoType::Translate:
-            AT.SetPosition({ AP.X, AP.Y, Result.Z });
+            ActorTransform.SetPosition({ Position.X, Position.Y, Position.Z + Delta.Z });
             break;
         case EGizmoType::Rotate:
-            AT.RotatePitch(-Result.Z);
+            ActorTransform.RotatePitch(-Delta.Z * 10.f);
             break;
         case EGizmoType::Scale:
-            AT.AddScale({ 0, 0, Result.Z * .1f });
+            ActorTransform.AddScale({ 0, 0, Delta.Z });
             break;
         }
     }
-    Actor->SetActorTransform(AT);
+    Actor->SetActorTransform(ActorTransform);
 }
 

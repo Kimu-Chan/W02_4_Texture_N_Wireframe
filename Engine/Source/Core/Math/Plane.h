@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Vector.h"
 
@@ -25,7 +25,7 @@ struct alignas(16) FQuat : public FVector4{
 	static FQuat SubtractQuaternions(const FQuat& q1, const FQuat& q2);
 
 	static FQuat MakeFromRotationMatrix(const struct FMatrix& M);
-	FQuat Conjugate();
+	FQuat Conjugate() const;
 	FVector GetEuler() const { return QuaternionToEuler(*this); }
 	FVector RotateVector(const FVector& InVector) const;
 	FQuat Normalize();
