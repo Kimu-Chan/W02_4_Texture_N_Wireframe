@@ -277,14 +277,6 @@ void UEngine::InitWorld()
     World->SpawnActor<APicker>();
     WorldGrid = World->SpawnActor<AWorldGrid>();
 
-    // Begin TEST
-    AActor* StaticMeshActor = World->SpawnActor<AActor>();
-    StaticMeshActor->SetName("StaticMeshActor");
-    UMeshComponent* MeshComp = StaticMeshActor->AddComponent<UMeshComponent>();
-    MeshComp->SetMeshName("bag");
-    MeshComp->RegisterComponentWithWorld(World);
-    // End Test
-    
     World->BeginPlay();
 }
 

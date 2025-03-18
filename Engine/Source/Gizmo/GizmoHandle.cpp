@@ -6,6 +6,7 @@
 #include "CoreUObject/World.h"
 #include "Core/Input/PlayerInput.h"
 #include "Static/EditorManager.h"
+#include "Components/MeshComponent.h"
 
 REGISTER_CLASS(AGizmoHandle);
 AGizmoHandle::AGizmoHandle()
@@ -14,6 +15,7 @@ AGizmoHandle::AGizmoHandle()
 	bUseBoundingBox = true;
 	bRenderBoundingBox = false;
 
+    /*
 	// !NOTE : Z방향으로 서있음
 	// z
 	UCylinderComp* ZArrow = AddComponent<UCylinderComp>();
@@ -36,6 +38,35 @@ AGizmoHandle::AGizmoHandle()
 
     XArrow->SetupAttachment(ZArrow);
     YArrow->SetupAttachment(ZArrow);
+    UEngine::Get().GetWorld()->AddZIgnoreComponent(ZArrow);
+    UEngine::Get().GetWorld()->AddZIgnoreComponent(XArrow);
+    UEngine::Get().GetWorld()->AddZIgnoreComponent(YArrow);
+    */
+
+    // x
+    UMeshComponent* XArrow = AddComponent<UMeshComponent>();
+    XArrow->SetMeshName("GizmoTranslation");
+    XArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), FVector(1, 1, 1)));
+    XArrow->SetCustomColor(FVector4(1.0f, 0.0f, 0.0f, 1.0f));
+    Gizmos.Add(XArrow);
+    RootComponent = XArrow;
+
+    // y
+    UMeshComponent* YArrow = AddComponent<UMeshComponent>();
+    YArrow->SetMeshName("GizmoTranslation");
+    YArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 90.0f), FVector(1, 1, 1)));
+    YArrow->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
+    Gizmos.Add(YArrow);
+    YArrow->SetupAttachment(XArrow);
+
+    // z
+    UMeshComponent* ZArrow = AddComponent<UMeshComponent>();
+    ZArrow->SetMeshName("GizmoTranslation");
+    ZArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, -90.0f, 0.0f), FVector(1, 1, 1)));
+    ZArrow->SetCustomColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
+    Gizmos.Add(ZArrow);
+    ZArrow->SetupAttachment(XArrow);
+
     UEngine::Get().GetWorld()->AddZIgnoreComponent(ZArrow);
     UEngine::Get().GetWorld()->AddZIgnoreComponent(XArrow);
     UEngine::Get().GetWorld()->AddZIgnoreComponent(YArrow);
@@ -157,7 +188,7 @@ void AGizmoHandle::SetScaleByDistance()
 void AGizmoHandle::SetActive(bool bActive)
 {
     bIsActive = bActive;
-    for (auto& Cylinder : CylinderComponents)
+    for (auto& Cylinder : Gizmos)
     {
         Cylinder->SetCanBeRendered(bActive);
     }

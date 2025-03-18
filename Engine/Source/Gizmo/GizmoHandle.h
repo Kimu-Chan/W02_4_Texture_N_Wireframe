@@ -35,7 +35,7 @@ public:
 
 private:
 	bool bIsActive = false;
-	TArray<class UCylinderComp*> CylinderComponents;
+	TArray<class UMeshComponent*> Gizmos;
 
 	ESelectedAxis SelectedAxis = ESelectedAxis::None;
 	EGizmoType GizmoType = EGizmoType::Translate;

@@ -338,8 +338,8 @@ void URenderer::RenderMesh(class UMeshComponent* MeshComp)
     DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     ConstantUpdateInfo ConstantInfo = {
-        FMatrix::Identity,
-        {1.f, 1.f, 1.f, 1.f},
+        MeshComp->GetWorldTransform().GetMatrix(),
+        MeshComp->GetCustomColor(),
         true,
     };
     UpdateObjectConstantBuffer(ConstantInfo);
@@ -593,7 +593,7 @@ void URenderer::CreateDeviceAndSwapChain(HWND hWindow)
         infoQueue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_ERROR, TRUE);
         infoQueue->Release();
     }
-    OutputDebugString(L"Debug layer initialized.\n");
+    OutputDebugString(L"Debug layer initialized./n");
 }
 
 void URenderer::ReleaseDeviceAndSwapChain()
@@ -869,9 +869,10 @@ void URenderer::CreateBufferCache()
 {
     BufferCache = std::make_unique<FBufferCache>();
 
-    // TODO: Load static mesh here.
-    // BufferCache->BuildStaticMesh("./bag.obj");
-    BufferCache->BuildStaticMesh("C:/Users/Jungle/Desktop/Folder/_GameTechLab/W02_4_Texture_N_Wireframe/bag.obj");
+    // Load static mesh here.
+    BufferCache->BuildStaticMesh("Resources/GizmoTranslation.obj");
+    BufferCache->BuildStaticMesh("Resources/GizmoRotation.obj");
+    BufferCache->BuildStaticMesh("Resources/GizmoScale.obj");
 }
 
 void URenderer::CreateShaderCache()
@@ -1383,7 +1384,7 @@ FVector4 URenderer::GetPixel(int32 X, int32 Y)
     }
 
     std::cout << "X: " << (int)color.X << " Y: " << (int)color.Y
-        << " Z: " << color.Z << " A: " << color.W << "\n";
+        << " Z: " << color.Z << " A: " << color.W << "/n";
 
     // 6. 매핑 해제 및 정리
     DeviceContext->Unmap(PickingFrameBufferStaging, 0);
