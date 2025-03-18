@@ -87,11 +87,10 @@ void UWorld::Render(float DeltaTime)
         RenderPickingTexture(*Renderer);
     }
     RenderMainTexture(*Renderer);
+    RenderMesh(*Renderer);
 	RenderBillboard(*Renderer);
-	RenderMesh(*Renderer);
     
 	RenderBoundingBoxes(*Renderer);
-    
     RenderDebugLines(*Renderer, DeltaTime);
 
     // DisplayPickingTexture(*Renderer);

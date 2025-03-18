@@ -266,6 +266,7 @@ void URenderer::RenderPrimitiveInternal(ID3D11Buffer* VertexBuffer, ID3D11Buffer
 
 void URenderer::RenderBox(const FBox& Box, const FVector4& Color)
 {
+    PrepareShader();
     // 월드변환이 이미 돼있다
     ConstantUpdateInfo UpdateInfo
     {
@@ -311,6 +312,7 @@ void URenderer::RenderBox(const FBox& Box, const FVector4& Color)
     DeviceContext->IASetVertexBuffers(0, 1, &DynamicVertexBuffer, &Stride, &Offset);
     DeviceContext->IASetIndexBuffer(IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
     DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+
 
     DeviceContext->DrawIndexed(IndexBufferInfo.GetSize(), 0, 0);
 }
