@@ -32,6 +32,7 @@ public:
 	void SetSelectedAxis(ESelectedAxis NewAxis) { SelectedAxis = NewAxis; }
 	ESelectedAxis GetSelectedAxis() const { return SelectedAxis; }
 	EGizmoType GetGizmoType() const { return GizmoType; }
+	void SetLocal(bool bIsLocal) { this->bIsLocal = bIsLocal; }
 
 private:
 	void InitTranslationGizmo();
@@ -57,8 +58,9 @@ private:
 public:
 	virtual const char* GetTypeName() override;
 
+	bool bIsLocal = false;
 private:
-	void DoTransform(FTransform& AT, FVector Result, AActor* Actor);
+	void DoTransform(FTransform& CompTransform, FVector Result, USceneComponent* SceneComp);
 	FVector CachedRayResult = FVector::ZeroVector;
 };
 

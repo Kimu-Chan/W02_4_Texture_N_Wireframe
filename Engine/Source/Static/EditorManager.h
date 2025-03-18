@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Engine/GameFrameWork/Actor.h"
 
@@ -8,7 +8,7 @@ class FEditorManager : public TSingleton<FEditorManager>
 {
 public:
     
-    inline AActor* GetSelectedActor() const {return SelectedActor;}
+    //inline AActor* GetSelectedActor() const {return SelectedActor;}
     
     void SelectActor(AActor* NewActor);
 
@@ -17,9 +17,16 @@ public:
     void SetCamera(ACamera* NewCamera);
 
     AGizmoHandle* GetGizmoHandle() const {return GizmoHandle;}
+
+    void ToggleGizmoHandleLocal(bool bIsLocal);
+
+    USceneComponent* GetSelectedComponent() const;
+
+	void SelectComponent(USceneComponent* SelectedComponent);
     
 private:
     ACamera* Camera = nullptr;
     AActor* SelectedActor = nullptr;
+    USceneComponent* SelectedComponent;
     AGizmoHandle* GizmoHandle = nullptr;
 };

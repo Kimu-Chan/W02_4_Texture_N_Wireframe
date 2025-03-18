@@ -83,7 +83,7 @@ void AActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 			GetWorld()->RemoveRenderComponent(PrimitiveComp);
 		}
-		if (FEditorManager::Get().GetSelectedActor() == this)
+		if (FEditorManager::Get().GetSelectedComponent() && FEditorManager::Get().GetSelectedComponent()->GetOwner() == this)
 		{
 			FEditorManager::Get().SelectActor(nullptr);
 		}
