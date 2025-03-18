@@ -158,7 +158,18 @@
     <ClCompile Include="Billboard.cpp">
       <Filter>Source Files\Engine\GameFrameWork</Filter>
     </ClCompile>
-    <ClCompile Include="TextBillboard.cpp" />
+    <ClCompile Include="Source\Utils\MeshBuilder.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Utils\ObjReader.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CoreUObject\Components\MeshComponent.cpp">
+      <Filter>Source Files\CoreUObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="TextBillboard.cpp">
+      <Filter>Source Files\Engine\GameFrameWork</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Core\HAL\PlatformType.h">
@@ -393,7 +404,18 @@
     <ClInclude Include="Billboard.h">
       <Filter>Header Files\Engine\GameFrameWork</Filter>
     </ClInclude>
-    <ClInclude Include="TextBillboard.h" />
+    <ClInclude Include="Source\Utils\MeshBuilder.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Utils\ObjReader.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CoreUObject\Components\MeshComponent.h">
+      <Filter>Header Files\CoreUObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="TextBillboard.h">
+      <Filter>Header Files\Engine\GameFrameWork</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
@@ -537,6 +559,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\ShaderGrid.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\ShaderMesh.hlsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
