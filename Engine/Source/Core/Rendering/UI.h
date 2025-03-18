@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #define _TCHAR_DEFINED
 
@@ -23,15 +23,15 @@ public:
 	void OnUpdateWindowSize(UINT InScreenWidth, UINT InScreenHeight);
 
 public:// UIWindows
-	void RenderControlPanelWindow(bool& bOutHovered);
+	void RenderControlPanelWindow();
 	void RenderMemoryUsage();
 	void RenderPrimitiveSelection();
 	void RenderCameraSettings();
 	void RenderRenderMode();
-	void RenderPropertyWindow(bool& bOutHovered);
+	void RenderPropertyWindow();
 	void RenderGridGap();
 	void RenderDebugRaycast();
-	void RenderSceneManagerWindow(bool& bOutHovered);
+	void RenderSceneManagerWindow();
 
 private:
 	void PreferenceStyle();
