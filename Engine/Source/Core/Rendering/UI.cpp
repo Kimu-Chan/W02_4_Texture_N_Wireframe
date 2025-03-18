@@ -84,15 +84,11 @@ void UI::Update()
     if (bShowDemoWindow)
 		ImGui::ShowDemoWindow(&bShowDemoWindow);
 
-    bool bIsHoveredControlPanel = false;
-    bool bIsHoveredProperty = false;
-    bool bIsHoveredSceneManager = false;
-    RenderControlPanelWindow(bIsHoveredControlPanel);
-    RenderPropertyWindow(bIsHoveredProperty);
+    RenderControlPanelWindow();
+    RenderPropertyWindow();
     Debug::ShowConsole(bWasWindowSizeUpdated, PreRatio, CurRatio);
-    RenderSceneManagerWindow(bIsHoveredSceneManager);
+    RenderSceneManagerWindow();
 
-    bool bIsAnyHovered = bIsHoveredControlPanel || bIsHoveredProperty || bIsHoveredSceneManager;
 
     // UI::RenderSomePanel 들에 대한 업데이트 완료 //
     bWasWindowSizeUpdated = false;
@@ -104,7 +100,7 @@ void UI::Update()
     ImGui::Render();
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
-    bool bUiInput = bIsAnyHovered || ImGui::IsAnyItemHovered() || ImGui::IsAnyItemActive();
+    bool bUiInput = ImGui::IsAnyItemHovered() || ImGui::IsAnyItemActive() || ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow);
     APlayerController::Get().SetIsUiInput(bUiInput);
 }
 
@@ -131,7 +127,7 @@ void UI::OnUpdateWindowSize(UINT InScreenWidth, UINT InScreenHeight)
     UEditorDesigner::Get().OnResize(InScreenWidth, InScreenHeight);
 }
 
-void UI::RenderControlPanelWindow(bool& bOutHovered)
+void UI::RenderControlPanelWindow()
 {
     ImGui::Begin("Jungle Control Panel");
 
@@ -184,7 +180,6 @@ void UI::RenderControlPanelWindow(bool& bOutHovered)
 	ImGui::SameLine();
     ImGui::Checkbox("Demo Window", &bShowDemoWindow);
 
-    bOutHovered = ImGui::IsWindowHovered();
     ImGui::End();
 }
 
@@ -410,7 +405,7 @@ void UI::RenderRenderMode()
     ImGui::Separator();
 }
 
-void UI::RenderPropertyWindow(bool& bOutHovered)
+void UI::RenderPropertyWindow()
 {
     ImGui::Begin("Properties");
 
@@ -475,7 +470,6 @@ void UI::RenderPropertyWindow(bool& bOutHovered)
             }
         }
     }
-    bOutHovered = ImGui::IsWindowHovered();
     ImGui::End();
 }
 
@@ -506,7 +500,7 @@ void UI::RenderDebugRaycast()
     }
 }
 
-void UI::RenderSceneManagerWindow(bool& bOutHovered)
+void UI::RenderSceneManagerWindow()
 {
     ImGui::Begin("Scene Manager");
 
@@ -541,7 +535,6 @@ void UI::RenderSceneManagerWindow(bool& bOutHovered)
         
         ImGui::TreePop();
     }
-    bOutHovered = ImGui::IsWindowHovered();
     ImGui::End();
 }
 
