@@ -4,6 +4,7 @@
 #include "WorldGrid.h"
 #include "Core/Input/PlayerInput.h"
 #include "CoreUObject/Components/PrimitiveComponent.h"
+#include "Components/MeshComponent.h"
 #include "Gizmo/GizmoHandle.h"
 #include "Engine/GameFrameWork/Camera.h"
 #include "Static/EditorManager.h"
@@ -125,6 +126,10 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
     bool bRenderPrimitives = UEngine::Get().GetShowPrimitives();
     for (auto& RenderComponent : RenderComponents)
     {
+        if (RenderComponent->IsA<UMeshComponent>())
+        {
+            continue;
+        }
         if (!bRenderPrimitives && !RenderComponent->GetOwner()->IsGizmoActor())
         {
             continue;
@@ -135,7 +140,40 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
     Renderer.PrepareZIgnore();
     for (auto& RenderComponent: ZIgnoreRenderComponents)
     {
+        if (RenderComponent->IsA<UMeshComponent>())
+        {
+            continue;
+        }
+        RenderComponent->Render(&Renderer);
+    }
+}
 
+void UWorld::RenderMesh(URenderer& Renderer)
+{
+    Renderer.PrepareMesh();
+    Renderer.PrepareMeshShader();
+    
+    bool bRenderPrimitives = UEngine::Get().GetShowPrimitives();
+    for (auto& RenderComponent : RenderComponents)
+    {
+        if (!RenderComponent->IsA<UMeshComponent>())
+        {
+            continue;
+        }
+        if (!bRenderPrimitives && !RenderComponent->GetOwner()->IsGizmoActor())
+        {
+            continue;
+        }
+        RenderComponent->Render(&Renderer);
+    }
+
+    Renderer.PrepareZIgnore();
+    for (auto& RenderComponent: ZIgnoreRenderComponents)
+    {
+        if (!RenderComponent->IsA<UMeshComponent>())
+        {
+            continue;
+        }
         RenderComponent->Render(&Renderer);
     }
 }

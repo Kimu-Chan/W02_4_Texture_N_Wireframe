@@ -35,8 +35,22 @@ public:
 	void SetLocal(bool bIsLocal) { this->bIsLocal = bIsLocal; }
 
 private:
+	void InitTranslationGizmo();
+	void InitRotationGizmo();
+	void InitScaleGizmo();
+
+	void OnGizmoTypeChanged(EGizmoType NewGizmoType);
+
+	void HideAllGizmo();
+
+	FVector GizmoScale = FVector(0.5f, 0.5f, 0.5f);
+	
 	bool bIsActive = false;
-	TArray<class UCylinderComp*> CylinderComponents;
+	TArray<class UMeshComponent*> AllGizmos;
+
+	TArray<UMeshComponent*> TranslationGizmos;
+	TArray<UMeshComponent*> RotationGizmos;
+	TArray<UMeshComponent*> ScaleGizmos;
 
 	ESelectedAxis SelectedAxis = ESelectedAxis::None;
 	EGizmoType GizmoType = EGizmoType::Translate;
@@ -49,4 +63,5 @@ private:
 	void DoTransform(FTransform& CompTransform, FVector Result, USceneComponent* SceneComp);
 	FVector CachedRayResult = FVector::ZeroVector;
 };
+
 

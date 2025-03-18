@@ -1,5 +1,7 @@
 ﻿#include "pch.h" 
 #include "BufferCache.h"
+
+#include "MeshBuilder.h"
 #include "Engine/Engine.h"
 #include "Primitive/PrimitiveVertices.h"
 
@@ -37,6 +39,52 @@ FIndexBufferInfo FBufferCache::GetIndexBufferInfo(EPrimitiveType Type)
     }
 
 	return IndexBufferCache[Type];
+}
+
+FStaticMeshBufferInfo FBufferCache::GetStaticMeshBufferInfo(FName InName)
+{
+    if (StaticMeshBufferCache.Contains(InName))
+    {
+        return StaticMeshBufferCache[InName];
+    }
+    return {};
+}
+
+bool FBufferCache::BuildStaticMesh(const FString& ObjFilePath)
+{
+    MeshBuilder Builder;
+    bool bSuccess = Builder.BuildMeshFromObj(ObjFilePath);
+    if (!bSuccess)
+    {
+        return false;
+    }
+
+    // Begin 파일 경로에서 파일 이름만 획득
+    std::string filePath = *ObjFilePath;
+    
+    size_t pos = filePath.find_last_of("/\\");
+    std::string fileName = (pos == std::string::npos) ? filePath : filePath.substr(pos + 1);
+    
+    size_t dotPos = fileName.find_last_of('.');
+    fileName = (dotPos == std::string::npos) ? fileName : fileName.substr(0, dotPos);
+    // End 파일 경로에서 파일 이름만 획득
+    FName Key(fileName);
+
+    URenderer* Renderer = UEngine::Get().GetRenderer();
+    
+    uint32 VertexBufferByteWidth = Builder.GetVertexNum() * sizeof(FStaticMeshVertex);
+    ID3D11Buffer* VertexBuffer = Renderer->CreateImmutableVertexBuffer(Builder.GetVertices().GetData(), VertexBufferByteWidth);
+
+    uint32 IndexBufferByteWidth = Builder.GetIndexNum() * sizeof(uint32);
+    ID3D11Buffer* IndexBuffer = Renderer->CreateIndexBuffer(Builder.GetIndices().GetData(), IndexBufferByteWidth);
+
+    FVertexBufferInfo VertexInfo(VertexBuffer, Builder.GetVertexNum(), D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, nullptr);
+    FIndexBufferInfo IndexInfo(IndexBuffer, Builder.GetIndexNum());
+    
+    FStaticMeshBufferInfo StaticMeshInfo(VertexInfo, IndexInfo);
+    StaticMeshBufferCache.Add(Key, StaticMeshInfo);
+
+    return bSuccess;
 }
 
 FVertexBufferInfo FBufferCache::CreateVertexBufferInfo(EPrimitiveType Type)

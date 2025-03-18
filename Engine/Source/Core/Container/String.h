@@ -52,13 +52,13 @@ class FString
 public:
 	static const size_t npos = -1;
 
-private:
 	using BaseStringType = std::basic_string<
 		TCHAR,
 		std::char_traits<TCHAR>,
 		FDefaultAllocator<TCHAR>
 	>;
 
+private:
 	BaseStringType PrivateString;
 
 	friend struct std::hash<FString>;

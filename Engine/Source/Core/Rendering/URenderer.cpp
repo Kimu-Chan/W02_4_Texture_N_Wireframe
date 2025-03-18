@@ -1,5 +1,7 @@
 #include "pch.h" 
 #include "URenderer.h"
+
+#include "Components/MeshComponent.h"
 #include "Static/EditorManager.h"
 #include "Core/Math/Transform.h"
 #include "Engine/GameFrameWork/Camera.h"
@@ -313,6 +315,44 @@ void URenderer::RenderBox(const FBox& Box, const FVector4& Color)
     DeviceContext->DrawIndexed(IndexBufferInfo.GetSize(), 0, 0);
 }
 
+void URenderer::RenderMesh(class UMeshComponent* MeshComp)
+{
+    FName MeshName = MeshComp->GetMeshName();
+    
+    FStaticMeshBufferInfo Info = BufferCache->GetStaticMeshBufferInfo(MeshName);
+    ID3D11Buffer* VertexBuffer = Info.VertexBufferInfo.GetVertexBuffer();
+    ID3D11Buffer* IndexBuffer = Info.IndexBufferInfo.GetIndexBuffer();
+
+    UINT MeshStride = sizeof(FStaticMeshVertex);
+    UINT Offset = 0;
+    DeviceContext->IASetVertexBuffers(0, 1, &VertexBuffer, &MeshStride, &Offset);
+    DeviceContext->IASetIndexBuffer(IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+    DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+    ConstantUpdateInfo ConstantInfo = {
+        MeshComp->GetWorldTransform().GetMatrix(),
+        MeshComp->GetCustomColor(),
+        true,
+    };
+    UpdateObjectConstantBuffer(ConstantInfo);
+
+    DeviceContext->DrawIndexed(Info.VertexBufferInfo.GetSize(), 0, 0);
+}
+
+void URenderer::PrepareMesh()
+{
+    DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);                // DepthStencil 상태 설정. StencilRef: 스텐실 테스트 결과의 레퍼런스
+    DeviceContext->OMSetRenderTargets(1, &FrameBufferRTV, DepthStencilView);
+    DeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
+    DeviceContext->IASetInputLayout(ShaderCache->GetInputLayout(L"ShaderMesh"));
+}
+
+void URenderer::PrepareMeshShader()
+{
+    DeviceContext->VSSetShader(ShaderCache->GetVertexShader(L"ShaderMesh"), nullptr, 0);
+    DeviceContext->PSSetShader(ShaderCache->GetPixelShader(L"ShaderMesh"), nullptr, 0);
+}
+
 void URenderer::PrepareWorldGrid()
 {
     UINT Offset = 0;
@@ -373,6 +413,25 @@ void URenderer::RenderWorldGrid()
 }
 
 ID3D11Buffer* URenderer::CreateImmutableVertexBuffer(const FVertexSimple* Vertices, UINT ByteWidth) const
+{
+    D3D11_BUFFER_DESC VertexBufferDesc = {};
+    VertexBufferDesc.ByteWidth = ByteWidth;
+    VertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+    VertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+    D3D11_SUBRESOURCE_DATA VertexBufferSRD = {};
+    VertexBufferSRD.pSysMem = Vertices;
+
+    ID3D11Buffer* VertexBuffer;
+    const HRESULT Result = Device->CreateBuffer(&VertexBufferDesc, &VertexBufferSRD, &VertexBuffer);
+    if (FAILED(Result))
+    {
+        return nullptr;
+    }
+    return VertexBuffer;
+}
+
+ID3D11Buffer* URenderer::CreateImmutableVertexBuffer(const FStaticMeshVertex* Vertices, UINT ByteWidth) const
 {
     D3D11_BUFFER_DESC VertexBufferDesc = {};
     VertexBufferDesc.ByteWidth = ByteWidth;
@@ -526,7 +585,7 @@ void URenderer::CreateDeviceAndSwapChain(HWND hWindow)
         infoQueue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_ERROR, TRUE);
         infoQueue->Release();
     }
-    OutputDebugString(L"Debug layer initialized.\n");
+    OutputDebugString(L"Debug layer initialized./n");
 }
 
 void URenderer::ReleaseDeviceAndSwapChain()
@@ -801,6 +860,11 @@ void URenderer::ReleaseRasterizerState()
 void URenderer::CreateBufferCache()
 {
     BufferCache = std::make_unique<FBufferCache>();
+
+    // Load static mesh here.
+    BufferCache->BuildStaticMesh("Resources/GizmoTranslation.obj");
+    BufferCache->BuildStaticMesh("Resources/GizmoRotation.obj");
+    BufferCache->BuildStaticMesh("Resources/GizmoScale.obj");
 }
 
 void URenderer::CreateShaderCache()
@@ -1431,8 +1495,7 @@ FVector4 URenderer::GetPixel(int32 X, int32 Y)
         color.W = static_cast<float>(pixelData[3]); // A
     }
 
-    std::cout << "X: " << (int)color.X << " Y: " << (int)color.Y
-        << " Z: " << color.Z << " A: " << color.W << "\n";
+    std::cout << "X: " << (int)color.X << " Y: " << (int)color.Y << " Z: " << color.Z << " A: " << color.W << std::endl;
 
     // 6. 매핑 해제 및 정리
     DeviceContext->Unmap(PickingFrameBufferStaging, 0);
