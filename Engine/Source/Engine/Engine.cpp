@@ -238,6 +238,10 @@ void UEngine::InitWorld()
 {
     World = FObjectFactory::ConstructObject<UWorld>();
 
+	// Add ActorTreeNode to World->ActorTreeNodes //
+    World->WorldNode = new ActorTreeNode(*World->GetName(), *World->GetClass()->Name, nullptr, World->GetUUID(), nullptr);
+	World->ActorTreeNodes.Add(World->WorldNode);
+
     if (ACamera* Camera = World->SpawnActor<ACamera>())
     {
         FEditorManager::Get().SetCamera(Camera);

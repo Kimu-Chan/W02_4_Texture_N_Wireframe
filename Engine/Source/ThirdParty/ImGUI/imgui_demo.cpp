@@ -5561,7 +5561,7 @@ static void ShowDemoWindowTables()
     if (open_action != -1)
         ImGui::SetNextItemOpen(open_action != 0);
     IMGUI_DEMO_MARKER("Tables/Reorderable, hideable, with headers");
-    if (ImGui::TreeNode("Reorderable, hideable, with headers"))
+    if (ImGui::TreeNode("Reorderable, hideable, with headers")) 
     {
         HelpMarker(
             "Click and drag column headers to reorder columns.\n\n"

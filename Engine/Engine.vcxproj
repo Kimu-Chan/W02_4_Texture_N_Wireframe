@@ -169,6 +169,7 @@
     <ClInclude Include="Source\Core\Rendering\Constants.h" />
     <ClInclude Include="Source\CoreUObject\NameTypes.h" />
     <ClInclude Include="Source\CoreUObject\Name.h" />
+    <ClInclude Include="Source\Editor\ActorTreeNode.h" />
     <ClInclude Include="Source\ThirdParty\IniParser\iniparser.hpp" />
     <ClInclude Include="Source\Core\AbstractClass\UClass.h" />
     <ClInclude Include="Source\Core\Rendering\RendererDefine.h" />

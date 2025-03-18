@@ -206,6 +206,21 @@ bool UWorld::DestroyActor(AActor* InActor)
     // 삭제될 때 Destroyed 호출
     InActor->Destroyed();
 
+	// 삭제하고자 하는 Actor를 가지고 있는 ActorTreeNode를 찾아서 삭제
+	for (ActorTreeNode* Node : ActorTreeNodes)
+	{
+		if (Node->GetActor() == InActor)
+		{
+            Node->GetParent()->RemoveChild(Node);
+			for (ActorTreeNode* Child : Node->GetChildren())
+			{
+				Child->SetParent(Node->GetParent());
+			}
+			ActorTreeNodes.Remove(Node);
+			break;
+		}
+	}
+
     // World에서 제거
     Actors.Remove(InActor);
 

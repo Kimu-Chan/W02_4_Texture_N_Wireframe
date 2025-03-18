@@ -384,6 +384,9 @@
       <Filter>Header Files\Core\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Billboard.h" />
+    <ClInclude Include="Source\Editor\ActorTreeNode.h">
+      <Filter>Header Files\Editor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
