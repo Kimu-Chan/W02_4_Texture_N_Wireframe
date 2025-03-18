@@ -43,8 +43,10 @@ void UBillboard::Tick(float DeltaTime)
     
     Super::Tick(DeltaTime);
 
-	FVector Position = FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition();
-    RelativeTransform.LookAt(Position);
+	//FVector Position = FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition();
+ //   FTransform CrrTransform = GetWorldTransform();
+ //   CrrTransform.LookAt(Position);
+	//RelativeTransform.SetRotation(CrrTransform.GetRotation());
 }
 
 void UBillboard::EndPlay(const EEndPlayReason::Type Reason)

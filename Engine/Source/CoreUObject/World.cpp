@@ -26,16 +26,6 @@ void UWorld::BeginPlay()
     {
         Actor->BeginPlay();
     }
-    
-    // Billboard Test
-
-    AActor* Actor = SpawnActor<AActor>();
-	Billboard = Actor->AddComponent<UBillboard>();
-    Billboard->SetTexture(UEngine::Get().GetTextureInfo(L"Cat")->ShaderResourceView);
-    Billboard->SetBoundingBoxRenderable(false);
-    Actor->SetRootComponent(Billboard);
-	Actor->SetActorTransform(FTransform(FVector(1.f, 1.f, 1.f), FVector(0.f, 0.f, 0.f), FVector(1.f, 1.f, 1.f)));
-    Actor->BeginPlay();
 }
 
 void UWorld::Tick(float DeltaTime)
@@ -84,10 +74,6 @@ void UWorld::Render(float DeltaTime)
         return;
     }
 
-    if (!APlayerController::Get().IsUiInput() && APlayerInput::Get().IsMousePressed(false))
-    {
-        RenderPickingTexture(*Renderer);
-    }
 
     /**
      * Axis는 Grid에 가려지면 안되므로 Grid 먼저 렌더.
@@ -95,11 +81,15 @@ void UWorld::Render(float DeltaTime)
      */
     RenderWorldGrid(*Renderer);
         
+    if (!APlayerController::Get().IsUiInput() && APlayerInput::Get().IsMousePressed(false))
+    {
+        RenderPickingTexture(*Renderer);
+    }
+	RenderBillboard(*Renderer);
     RenderMainTexture(*Renderer);
 	RenderBoundingBoxes(*Renderer);
     
     RenderDebugLines(*Renderer, DeltaTime);
-	RenderBillboard(*Renderer);
 
     // DisplayPickingTexture(*Renderer);
 }
