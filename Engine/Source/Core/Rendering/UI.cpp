@@ -419,8 +419,8 @@ void UI::RenderPropertyWindow()
     USceneComponent* SelectedComponent = FEditorManager::Get().GetSelectedComponent();
     if (SelectedComponent != nullptr)
     {
-        ImGui::Text("Selected Actor : %s", *SelectedComponent->GetOwner()->GetName().ToString());
-		ImGui::Text("Selected Component : %s", *SelectedComponent->GetName().ToString());
+        ImGui::Text("Selected Actor : %s", *SelectedComponent->GetOwner()->GetName());
+		ImGui::Text("Selected Component : %s", *SelectedComponent->GetName());
 
 		bool bIsLocal = FEditorManager::Get().GetGizmoHandle()->bIsLocal;
 		if (ImGui::Checkbox("Local", &bIsLocal))

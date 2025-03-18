@@ -9,6 +9,7 @@
 #include "CoreUObject/World.h"
 #include "Gizmo/Axis.h"
 #include "GameFrameWork/Camera.h"
+#include "Gizmo/GizmoHandle.h"
 #include "Core/Rendering/TextureLoader.h"
 
 #ifdef _DEBUG
@@ -279,6 +280,7 @@ void UEngine::InitWorld()
     World->SpawnActor<AAxis>();
     World->SpawnActor<APicker>();
     WorldGrid = World->SpawnActor<AWorldGrid>();
+    FEditorManager::Get().SetGizmoHandle(World->SpawnActor<AGizmoHandle>());
 
     World->BeginPlay();
 }
