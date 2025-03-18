@@ -1,4 +1,4 @@
-﻿#include "pch.h" 
+#include "pch.h" 
 #include "PrimitiveComponent.h"
 #include "CoreUObject/World.h"
 #include "Engine/GameFrameWork/Actor.h"
@@ -26,9 +26,8 @@ void UPrimitiveComponent::UpdateConstantDepth(const URenderer& Renderer, const i
     Renderer.UpdateConstantDepth(Depth);
 }
 
-void UPrimitiveComponent::Render()
+void UPrimitiveComponent::Render(URenderer* Renderer)
 {
-    URenderer* Renderer = UEngine::Get().GetRenderer();
     if (Renderer == nullptr || !bCanBeRendered)
     {
         return;

@@ -9,7 +9,7 @@ public:
 	virtual ~UBillboard() = default;
 
 	virtual void BeginPlay() override;
-	virtual void Render() override;
+	virtual void Render(class URenderer* Renderer) override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void EndPlay(const EEndPlayReason::Type Reason);
 	void SetTexture(class ID3D11ShaderResourceView* InTexture);
