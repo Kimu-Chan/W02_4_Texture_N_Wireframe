@@ -40,6 +40,8 @@ private:
 
 	void OnGizmoTypeChanged(EGizmoType NewGizmoType);
 
+	void HideAllGizmo();
+
 	FVector GizmoScale = FVector(0.5f, 0.5f, 0.5f);
 	
 	bool bIsActive = false;

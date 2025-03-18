@@ -131,10 +131,7 @@ void AGizmoHandle::InitScaleGizmo()
 
 void AGizmoHandle::OnGizmoTypeChanged(EGizmoType NewGizmoType)
 {
-    for (auto& Gizmo : AllGizmos)
-    {
-        Gizmo->SetCanBeRendered(false);
-    }
+    HideAllGizmo();
 
     switch (NewGizmoType)
     {
@@ -158,6 +155,14 @@ void AGizmoHandle::OnGizmoTypeChanged(EGizmoType NewGizmoType)
         break;
     default:
         break;
+    }
+}
+
+void AGizmoHandle::HideAllGizmo()
+{
+    for (auto& Gizmo : AllGizmos)
+    {
+        Gizmo->SetCanBeRendered(false);
     }
 }
 
@@ -276,16 +281,13 @@ void AGizmoHandle::SetScaleByDistance()
 void AGizmoHandle::SetActive(bool bActive)
 {
     bIsActive = bActive;
-    if (bActive)
+    if (bIsActive)
     {
         OnGizmoTypeChanged(GizmoType);
     }
     else
     {
-        for (auto& Gizmo : AllGizmos)
-        {
-            Gizmo->SetCanBeRendered(bActive);
-        }
+        HideAllGizmo();
     }
 }
 
