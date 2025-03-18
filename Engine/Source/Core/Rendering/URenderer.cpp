@@ -1084,13 +1084,21 @@ void URenderer::UpdateTextVertexBuffer(const std::wstring& TextString, float Tot
     {
         FVertexUV* Vertices = reinterpret_cast<FVertexUV*>(MappedResource.pData);
 
-        float StartX = 0.f;
         float StartY = 0.f;
-        float CharWidth = 0.1f;
-        float CharHeight = 0.1f;
+        float StartZ = 0.f;
+        float CharWidth = 0.2f;
+        float CharHeight = 0.2f;
+        float Space = 0.15f;
+
+        int32 CharCount = TextString.size();
+
+		StartY = -0.25 * (CharWidth + Space) * CharCount;
+
+		std::wstring ResultString = TextString;
+		std::reverse(ResultString.begin(), ResultString.end());
 
         int32 Index = 0;
-        for (wchar_t ch : TextString)
+        for (wchar_t ch : ResultString)
         {
             int charIndex = ch;
             float U0 = (float)(charIndex % (int)TotalCols) / TotalCols;
@@ -1098,14 +1106,16 @@ void URenderer::UpdateTextVertexBuffer(const std::wstring& TextString, float Tot
             float U1 = U0 + 1.f / TotalCols;
             float V1 = V0 + 1.f / TotalRows;
 
-            Vertices[Index++] = FVertexUV(StartX, StartY, 0.f, U0, V0);								// 왼쪽 위
-            Vertices[Index++] = FVertexUV(StartX + CharWidth, StartY, 0.f, U1, V0);					// 오른쪽 위
-            Vertices[Index++] = FVertexUV(StartX, StartY + CharHeight, 0.f, U0, V1);				// 왼쪽 아래
-            Vertices[Index++] = FVertexUV(StartX + CharWidth, StartY, 0.f, U1, V0);					// 오른쪽 위
-            Vertices[Index++] = FVertexUV(StartX + CharWidth, StartY + CharHeight, 0.f, U1, V1);	// 오른쪽 아래
-            Vertices[Index++] = FVertexUV(StartX, StartY + CharHeight, 0.f, U0, V1);				// 왼쪽 아래
+            Vertices[Index++] = FVertexUV(0.f, StartY, StartZ + CharHeight, U1, V0);	            // 왼쪽 위
+			Vertices[Index++] = FVertexUV(0.f, StartY, StartZ, U1, V1);	                            // 왼쪽 아래
+            Vertices[Index++] = FVertexUV(0.f, StartY + CharWidth, StartZ, U0, V1);	                // 오른쪽 아래
 
-            StartX += CharWidth;
+            Vertices[Index++] = FVertexUV(0.f, StartY, StartZ + CharHeight, U1, V0);				// 왼쪽 위                      
+            Vertices[Index++] = FVertexUV(0.f, StartY + CharWidth, StartZ, U0, V1);;	            // 오른쪽 아래
+            Vertices[Index++] = FVertexUV(0.f, StartY + CharWidth, StartZ + CharHeight, U0, V0);	// 오른쪽 위
+            
+
+            StartY += Space;
         }
         DeviceContext->Unmap(TextVertexBuffer, 0);
     }

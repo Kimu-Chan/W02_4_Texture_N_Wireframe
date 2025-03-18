@@ -74,7 +74,9 @@ public:
 
 	inline void AddScale(FVector InScale)
 	{
-		Scale += InScale;
+		Scale.X += InScale.X;
+		Scale.Y += InScale.Y;
+		Scale.Z += InScale.Z;
 	}
 
 	inline void SetScale(float x, float y, float z)
@@ -138,31 +140,11 @@ public:
 
 	FVector GetRight() const
 	{
-		//return FVector::CrossProduct(FVector(0, 0, 1), GetForward()).GetSafeNormal();
-		FMatrix RotationMatrix = FMatrix::GetRotateMatrix(Rotation);
-
-		// 회전 행렬의 첫 번째 열이 Forward 벡터를 나타냄
-		FVector Right = FVector(
-			RotationMatrix.M[0][1],
-			RotationMatrix.M[1][1],
-			RotationMatrix.M[2][1]
-		);
-
-		return Right.GetSafeNormal();
+		return FVector::CrossProduct(FVector(0, 0, 1), GetForward()).GetSafeNormal();
 	}
 
 	FVector GetUp() const{
-		//return FVector::CrossProduct(GetForward(), GetRight()).GetSafeNormal();
-		FMatrix RotationMatrix = FMatrix::GetRotateMatrix(Rotation);
-
-		// 회전 행렬의 첫 번째 열이 Forward 벡터를 나타냄
-		FVector Up = FVector(
-			RotationMatrix.M[0][2],
-			RotationMatrix.M[1][2],
-			RotationMatrix.M[2][2]
-		);
-
-		return Up.GetSafeNormal();
+		return FVector::CrossProduct(GetForward(), GetRight()).GetSafeNormal();
 
 	}
 
@@ -174,32 +156,42 @@ public:
 	// InRotate는 Degree 단위
 	void Rotate(const FVector& InRotation)
 	{
-		RotateYaw(InRotation.Z);
-		RotatePitch(InRotation.Y);
 		RotateRoll(InRotation.X);
-		Rotation.Normalize();
+		RotatePitch(InRotation.Y);
+		RotateYaw(InRotation.Z);
 	}
 
 	void RotateYaw(float Angle)
 	{
 		FVector Axis = FVector(0, 0, 1);
 		Rotation = FQuat::MultiplyQuaternions(FQuat(Axis, Angle), Rotation);
+
+		//Rotation = FQuat::MultiplyQuaternions(Rotation, FQuat(0, 0, sin(Angle * TORAD / 2), cos(Angle * TORAD / 2)));
 	}
 
 	void RotatePitch(float Angle)
 	{
-		FVector Axis = FVector(0, 1, 0);
+		FVector Axis = FVector(0, 1, 0).GetSafeNormal();
 		Rotation = FQuat::MultiplyQuaternions(FQuat(Axis, Angle), Rotation);
 	}
 
 	void RotateRoll(float Angle)
 	{
-		FVector Axis = FVector(1, 0, 0);
+		FVector Axis = FVector(1, 0, 0).GetSafeNormal();
 		Rotation = FQuat::MultiplyQuaternions(FQuat(Axis, Angle), Rotation);
 	}
 
 	FTransform operator*(const FTransform& InTransform) const
 	{
+
+		//FMatrix TR = FMatrix::GetTranslateMatrix(Position) * FMatrix::GetRotateMatrix(Rotation);
+		//FMatrix InTR = FMatrix::GetTranslateMatrix(InTransform.Position) * FMatrix::GetRotateMatrix(InTransform.Rotation);
+
+		//FMatrix ScaleMat = FMatrix::GetScaleMatrix(Scale) * FMatrix::GetScaleMatrix(InTransform.Scale);
+		//FTransform NewTransform  = (TR * InTR * ScaleMat).GetTransform();
+
+		//return NewTransform;
+		//
 		FTransform NewTransform;
 
 		NewTransform.Position = Position + (Rotation.RotateVector(Scale * InTransform.Position));
@@ -208,7 +200,6 @@ public:
 
 		return NewTransform; 
 	}
-
 	void LookAt(const FVector& Target)
 	{
 		FVector Dir = (Target - Position).GetSafeNormal();
