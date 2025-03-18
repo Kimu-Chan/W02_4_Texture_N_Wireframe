@@ -296,3 +296,13 @@ private:
 	friend uint32 GetTypeHash(FDisplayNameEntryId InId) { return InId.GetDisplayId().ToUnstableInt(); }
 };
 */
+
+template <>
+struct std::hash<FName>
+{
+	size_t operator()(const FName& InName) const
+	{
+		// 해시 계산 로직
+		return std::hash<FString::BaseStringType>()(*InName.ToString());
+	}
+};

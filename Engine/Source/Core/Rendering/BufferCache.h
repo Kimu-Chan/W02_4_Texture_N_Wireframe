@@ -2,6 +2,7 @@
 
 #define _TCHAR_DEFINED
 
+#include "NameTypes.h"
 #include "Core/Container/Array.h"
 #include "Core/Container/Map.h"
 #include "Primitive/PrimitiveVertices.h"
@@ -70,6 +71,21 @@ public:
 
 };
 
+struct FStaticMeshBufferInfo
+{
+public:
+	FStaticMeshBufferInfo() = default;
+	FStaticMeshBufferInfo(const FVertexBufferInfo& InVertexBufferInfo, const FIndexBufferInfo& InIndexBufferInfo)
+	{
+		VertexBufferInfo = InVertexBufferInfo;
+		IndexBufferInfo = InIndexBufferInfo;
+	}
+
+private:
+	FVertexBufferInfo VertexBufferInfo;
+	FIndexBufferInfo IndexBufferInfo;
+};
+
 class FBufferCache
 {
 private:
@@ -77,13 +93,19 @@ private:
 	TMap <EPrimitiveType, FIndexBufferInfo> IndexBufferCache;
 	TMap <EPrimitiveType, TArray<FVertexSimple>> PrimitiveVertices;
 
+	TMap<FName, FStaticMeshBufferInfo> StaticMeshBufferCache;
+
 public:
 	FBufferCache();
 	~FBufferCache();
 
 	void Init();
+	
 	FVertexBufferInfo GetVertexBufferInfo(EPrimitiveType Type);
 	FIndexBufferInfo GetIndexBufferInfo(EPrimitiveType Type);
+
+	FStaticMeshBufferInfo GetStaticMeshBufferInfo(FName InName);
+	bool BuildStaticMesh(const FString& ObjFilePath);
 
 public:
 	TArray<FVertexSimple> CreateConeVertices();

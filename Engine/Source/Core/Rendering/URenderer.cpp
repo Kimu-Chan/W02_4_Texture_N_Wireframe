@@ -800,6 +800,9 @@ void URenderer::ReleaseRasterizerState()
 void URenderer::CreateBufferCache()
 {
     BufferCache = std::make_unique<FBufferCache>();
+
+    // TODO: Load general mesh here.
+    BufferCache->BuildStaticMesh("");
 }
 
 void URenderer::CreateShaderCache()

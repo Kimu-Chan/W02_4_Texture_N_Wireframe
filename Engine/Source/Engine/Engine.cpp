@@ -276,6 +276,8 @@ void UEngine::InitWorld()
     World->SpawnActor<APicker>();
     WorldGrid = World->SpawnActor<AWorldGrid>();
 
+    
+
     World->BeginPlay();
 }
 
