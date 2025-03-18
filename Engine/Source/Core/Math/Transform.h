@@ -165,8 +165,6 @@ public:
 	{
 		FVector Axis = FVector(0, 0, 1);
 		Rotation = FQuat::MultiplyQuaternions(FQuat(Axis, Angle), Rotation);
-
-		//Rotation = FQuat::MultiplyQuaternions(Rotation, FQuat(0, 0, sin(Angle * TORAD / 2), cos(Angle * TORAD / 2)));
 	}
 
 	void RotatePitch(float Angle)
@@ -183,15 +181,6 @@ public:
 
 	FTransform operator*(const FTransform& InTransform) const
 	{
-
-		//FMatrix TR = FMatrix::GetTranslateMatrix(Position) * FMatrix::GetRotateMatrix(Rotation);
-		//FMatrix InTR = FMatrix::GetTranslateMatrix(InTransform.Position) * FMatrix::GetRotateMatrix(InTransform.Rotation);
-
-		//FMatrix ScaleMat = FMatrix::GetScaleMatrix(Scale) * FMatrix::GetScaleMatrix(InTransform.Scale);
-		//FTransform NewTransform  = (TR * InTR * ScaleMat).GetTransform();
-
-		//return NewTransform;
-		//
 		FTransform NewTransform;
 
 		NewTransform.Position = Position + (Rotation.RotateVector(Scale * InTransform.Position));
@@ -200,6 +189,7 @@ public:
 
 		return NewTransform; 
 	}
+
 	void LookAt(const FVector& Target)
 	{
 		FVector Dir = (Target - Position).GetSafeNormal();

@@ -153,25 +153,31 @@ static FQuat Conjugate(const FQuat& Q)
 FVector FQuat::RotateVector(const FVector& InVector) const
 {
 	FQuat V(InVector.X, InVector.Y, InVector.Z, 0.0f);
-    FQuat Q = *this;
+    FQuat Q = Normalize();
 	FQuat QConj = Q.Conjugate();
 	FQuat RotatedQuat = MultiplyQuaternions(MultiplyQuaternions(Q, V), QConj);
 
 	return FVector(RotatedQuat.X, RotatedQuat.Y, RotatedQuat.Z);
 }
 
-FQuat FQuat::Normalize()
+FQuat FQuat::Normalize() const
 {
 	float Magnitude = FMath::Sqrt(X * X + Y * Y + Z * Z + W * W);
+	FQuat Q = *this;
+	if (Magnitude < KINDA_SMALL_NUMBER)
+	{
+		return FQuat(0.0f, 0.0f, 0.0f, 1.0f);
+	}
 
     if (Magnitude > KINDA_SMALL_NUMBER)
     {
 		float InvMagnitude = 1.0f / Magnitude;
-		X *= InvMagnitude;
-		Y *= InvMagnitude;
-		Z *= InvMagnitude;
-		W *= InvMagnitude;
+        Q.X *= InvMagnitude;
+        Q.Y *= InvMagnitude;
+        Q.Z *= InvMagnitude;
+        Q.W *= InvMagnitude;
     }
 
-    return FQuat(0, 0, 0, 1);
+    return Q;
 }
+

@@ -180,7 +180,7 @@ void AGizmoHandle::DoTransform(FTransform& ActorTransform, FVector Delta, AActor
             ActorTransform.SetPosition({ Position.X + Delta.X, Position.Y, Position.Z });
             break;
         case EGizmoType::Rotate:
-            ActorTransform.RotatePitch(Delta.X * 10.f);
+            ActorTransform.RotateRoll(Delta.X * 10.f);
             break;
         case EGizmoType::Scale:
             ActorTransform.AddScale({ Delta.X, 0, 0});
@@ -195,7 +195,7 @@ void AGizmoHandle::DoTransform(FTransform& ActorTransform, FVector Delta, AActor
             ActorTransform.SetPosition({ Position.X, Position.Y + Delta.Y, Position.Z });
             break;
         case EGizmoType::Rotate:
-            ActorTransform.RotateRoll(Delta.Y * 10.f);
+            ActorTransform.RotatePitch(Delta.Y * 10.f);
             break;
         case EGizmoType::Scale:
             ActorTransform.AddScale({ 0, Delta.Y, 0 });
@@ -210,7 +210,7 @@ void AGizmoHandle::DoTransform(FTransform& ActorTransform, FVector Delta, AActor
             ActorTransform.SetPosition({ Position.X, Position.Y, Position.Z + Delta.Z });
             break;
         case EGizmoType::Rotate:
-            ActorTransform.RotatePitch(-Delta.Z * 10.f);
+            ActorTransform.RotateYaw(Delta.Z * 10.f);
             break;
         case EGizmoType::Scale:
             ActorTransform.AddScale({ 0, 0, Delta.Z });
