@@ -1,4 +1,4 @@
-﻿#include "pch.h" 
+#include "pch.h" 
 #include "PrimitiveComponent.h"
 #include "CoreUObject/World.h"
 #include "Engine/GameFrameWork/Actor.h"
@@ -21,9 +21,8 @@ void UPrimitiveComponent::UpdateConstantPicking(const URenderer& Renderer, const
     Renderer.UpdateConstantPicking(UUIDColor);
 }
 
-void UPrimitiveComponent::Render()
+void UPrimitiveComponent::Render(URenderer* Renderer)
 {
-    URenderer* Renderer = UEngine::Get().GetRenderer();
     if (Renderer == nullptr || !bCanBeRendered)
     {
         return;

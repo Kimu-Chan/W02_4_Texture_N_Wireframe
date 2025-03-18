@@ -103,7 +103,7 @@ void UWorld::RenderPickingTexture(URenderer& Renderer)
     {
         uint32 UUID = RenderComponent->GetUUID();
         RenderComponent->UpdateConstantPicking(Renderer, APicker::EncodeUUID(UUID));
-        RenderComponent->Render();
+        RenderComponent->Render(&Renderer);
     }
 
     Renderer.PrepareZIgnore();
@@ -111,7 +111,7 @@ void UWorld::RenderPickingTexture(URenderer& Renderer)
     {
         uint32 UUID = RenderComponent->GetUUID();
         RenderComponent->UpdateConstantPicking(Renderer, APicker::EncodeUUID(UUID));
-        RenderComponent->Render();
+        RenderComponent->Render(&Renderer);
     }
 }
 
@@ -127,13 +127,14 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
         {
             continue;
         }
-        RenderComponent->Render();
+        RenderComponent->Render(&Renderer);
     }
 
     Renderer.PrepareZIgnore();
     for (auto& RenderComponent: ZIgnoreRenderComponents)
     {
-        RenderComponent->Render();
+
+        RenderComponent->Render(&Renderer);
     }
 }
 
@@ -165,9 +166,9 @@ void UWorld::RenderBillboard(URenderer& Renderer)
 
 	for (UBillboard* Billboard : BillboardComponents)
 	{
-        if(Billboard)
+        if (Billboard)
         {
-            Billboard->Render();
+            Billboard->Render(&Renderer);
         }
 	}
 }
