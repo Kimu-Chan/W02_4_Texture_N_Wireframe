@@ -4,7 +4,6 @@
 
 #include "BufferCache.h"
 #include "ShaderCache.h"
-#include "UI.h"
 #include "Core/Math/Vector.h"
 #include "Core/Math/Matrix.h"
 #include "Primitive/PrimitiveVertices.h"
@@ -53,6 +52,12 @@ public:
 
 	void RenderBox(const class FBox& Box, const FVector4& Color = FVector4(1.0f, 1.0f, 1.0f, 1.0f));
 
+	void RenderMesh(class UMeshComponent* MeshComp);
+
+	void PrepareMesh();
+
+	void PrepareMeshShader();
+	
 	void PrepareWorldGrid();
 	
 	void RenderWorldGrid();

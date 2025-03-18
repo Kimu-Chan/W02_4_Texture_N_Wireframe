@@ -2,6 +2,7 @@
 #include "Engine.h"
 
 #include "WorldGrid.h"
+#include "Components/MeshComponent.h"
 #include "Static/EditorManager.h"
 #include "Core/Input/PlayerInput.h"
 #include "Core/Input/PlayerController.h"
@@ -276,8 +277,14 @@ void UEngine::InitWorld()
     World->SpawnActor<APicker>();
     WorldGrid = World->SpawnActor<AWorldGrid>();
 
+    // Begin TEST
+    AActor* StaticMeshActor = World->SpawnActor<AActor>();
+    StaticMeshActor->SetName("StaticMeshActor");
+    UMeshComponent* MeshComp = StaticMeshActor->AddComponent<UMeshComponent>();
+    MeshComp->SetMeshName("bag");
+    MeshComp->RegisterComponentWithWorld(World);
+    // End Test
     
-
     World->BeginPlay();
 }
 

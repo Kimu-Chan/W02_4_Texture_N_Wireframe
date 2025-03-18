@@ -7,3 +7,13 @@ void UMeshComponent::BeginPlay()
 
     
 }
+
+void UMeshComponent::Tick(float DeltaTime)
+{
+    UPrimitiveComponent::Tick(DeltaTime);
+}
+
+void UMeshComponent::Render(URenderer* Renderer)
+{
+    Renderer->RenderMesh(this);
+}

@@ -1,5 +1,7 @@
 #include "pch.h" 
 #include "URenderer.h"
+
+#include "Components/MeshComponent.h"
 #include "Static/EditorManager.h"
 #include "Core/Math/Transform.h"
 #include "Engine/GameFrameWork/Camera.h"
@@ -310,6 +312,53 @@ void URenderer::RenderBox(const FBox& Box, const FVector4& Color)
     DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 
     DeviceContext->DrawIndexed(IndexBufferInfo.GetSize(), 0, 0);
+}
+
+void URenderer::RenderMesh(class UMeshComponent* MeshComp)
+{
+    FName MeshName = MeshComp->GetMeshName();
+    FString MeshNameString = MeshName.ToString();
+
+    PrepareMesh();
+    PrepareMeshShader();
+
+    /**
+     * TODO: 여기에서 prepare하면 각 메시 컴포넌트마다 prepare 단계를 거치게 됨.
+     *   버텍스 및 인덱스 버퍼 가져와서 세팅.
+     *   월드 매트릭스 설정
+     */
+    FStaticMeshBufferInfo Info = BufferCache->GetStaticMeshBufferInfo(MeshName);
+    ID3D11Buffer* VertexBuffer = Info.VertexBufferInfo.GetVertexBuffer();
+    ID3D11Buffer* IndexBuffer = Info.IndexBufferInfo.GetIndexBuffer();
+
+    UINT MeshStride = sizeof(FStaticMeshVertex);
+    UINT Offset = 0;
+    DeviceContext->IASetVertexBuffers(0, 1, &VertexBuffer, &MeshStride, &Offset);
+    DeviceContext->IASetIndexBuffer(IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+    DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+    ConstantUpdateInfo ConstantInfo = {
+        FMatrix::Identity,
+        {1.f, 1.f, 1.f, 1.f},
+        true,
+    };
+    UpdateObjectConstantBuffer(ConstantInfo);
+
+    DeviceContext->DrawIndexed(Info.VertexBufferInfo.GetSize(), 0, 0);
+}
+
+void URenderer::PrepareMesh()
+{
+    DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);                // DepthStencil 상태 설정. StencilRef: 스텐실 테스트 결과의 레퍼런스
+    DeviceContext->OMSetRenderTargets(1, &FrameBufferRTV, DepthStencilView);
+    DeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
+    DeviceContext->IASetInputLayout(ShaderCache->GetInputLayout(L"ShaderMesh"));
+}
+
+void URenderer::PrepareMeshShader()
+{
+    DeviceContext->VSSetShader(ShaderCache->GetVertexShader(L"ShaderMesh"), nullptr, 0);
+    DeviceContext->PSSetShader(ShaderCache->GetPixelShader(L"ShaderMesh"), nullptr, 0);
 }
 
 void URenderer::PrepareWorldGrid()

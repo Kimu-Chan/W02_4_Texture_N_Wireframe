@@ -246,6 +246,7 @@
     <ClInclude Include="Source\Utils\ObjReader.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\ShaderMesh.hlsl" />
     <ClCompile Include="Shaders\ShaderPicking.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
