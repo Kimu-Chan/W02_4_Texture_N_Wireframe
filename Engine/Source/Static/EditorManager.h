@@ -8,7 +8,7 @@ class FEditorManager : public TSingleton<FEditorManager>
 {
 public:
     
-    inline AActor* GetSelectedActor() const {return SelectedActor;}
+    //inline AActor* GetSelectedActor() const {return SelectedActor;}
     
     void SelectActor(AActor* NewActor);
 
@@ -19,9 +19,14 @@ public:
     AGizmoHandle* GetGizmoHandle() const {return GizmoHandle;}
 
     void ToggleGizmoHandleLocal(bool bIsLocal);
+
+    USceneComponent* GetSelectedComponent() const;
+
+	void SelectComponent(USceneComponent* SelectedComponent);
     
 private:
     ACamera* Camera = nullptr;
     AActor* SelectedActor = nullptr;
+    USceneComponent* SelectedComponent;
     AGizmoHandle* GizmoHandle = nullptr;
 };

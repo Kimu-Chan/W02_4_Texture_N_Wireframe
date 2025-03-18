@@ -8,6 +8,11 @@
 
 void FEditorManager::SelectActor(AActor* NewActor)
 {
+    if (NewActor == nullptr)
+    {
+        return;
+    };
+
     if (GizmoHandle == nullptr)
     {
         GizmoHandle = UEngine::Get().GetWorld()->SpawnActor<AGizmoHandle>();
@@ -15,27 +20,12 @@ void FEditorManager::SelectActor(AActor* NewActor)
         GizmoHandle->SetActive(false);
     }
 
-    if (SelectedActor == NewActor)
-        return;
-        
-    if (SelectedActor != nullptr && SelectedActor != NewActor)
-    {
+    if(SelectedActor != nullptr)
         SelectedActor->UnPick();
-        GizmoHandle->SetActive(false);
-    }
 
     SelectedActor = NewActor;
-        
-    if (SelectedActor != nullptr)
-    {
-        SelectedActor->Pick();
-        GizmoHandle->SetActive(true);
-        //FVector Pos = SelectedActor->GetActorTransform().GetPosition();
-        //FTransform GizmoTransform = GizmoHandle->GetActorTransform();
-        //GizmoTransform.SetPosition(Pos);
-        //GizmoHandle->SetActorTransform(GizmoTransform);
-        //GizmoHandle
-    }
+	SelectedActor->Pick();
+	GizmoHandle->SetActive(true);
 }
 
 void FEditorManager::SetCamera(ACamera* NewCamera)
@@ -47,4 +37,43 @@ void FEditorManager::ToggleGizmoHandleLocal(bool bIsLocal)
 {
     if (GizmoHandle)
         GizmoHandle->SetLocal(bIsLocal);
+}
+
+USceneComponent* FEditorManager::GetSelectedComponent() const
+{
+    if(SelectedComponent == nullptr)
+	{
+        if(SelectedActor)
+		    return SelectedActor->GetRootComponent();
+
+        return nullptr;
+	}
+	return SelectedComponent;
+}
+
+void FEditorManager::SelectComponent(USceneComponent* InSelectedComponent)
+{
+    if (InSelectedComponent == nullptr)
+    {
+        return;
+    }
+
+    // 선택된 액터가 없는 시점에 호출되면 SelectActor호출
+    if (SelectedActor == nullptr)
+    {
+        SelectActor(InSelectedComponent->GetOwner());
+        return;
+    } 
+
+    // 선택한 액터가 있다면, 이 컴포넌트가 액터에 붙은 컴포넌트인지 확인
+    if (SelectedActor != InSelectedComponent->GetOwner())
+    {
+        // 아니라면 그 액터 선택
+		SelectActor(InSelectedComponent->GetOwner());
+		SelectedComponent = InSelectedComponent;
+    }
+    else
+    {
+        SelectedComponent = InSelectedComponent;
+    }
 }
