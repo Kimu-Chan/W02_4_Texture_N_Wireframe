@@ -390,6 +390,25 @@ ID3D11Buffer* URenderer::CreateImmutableVertexBuffer(const FVertexSimple* Vertic
     return VertexBuffer;
 }
 
+ID3D11Buffer* URenderer::CreateImmutableVertexBuffer(const FStaticMeshVertex* Vertices, UINT ByteWidth) const
+{
+    D3D11_BUFFER_DESC VertexBufferDesc = {};
+    VertexBufferDesc.ByteWidth = ByteWidth;
+    VertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+    VertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+    D3D11_SUBRESOURCE_DATA VertexBufferSRD = {};
+    VertexBufferSRD.pSysMem = Vertices;
+
+    ID3D11Buffer* VertexBuffer;
+    const HRESULT Result = Device->CreateBuffer(&VertexBufferDesc, &VertexBufferSRD, &VertexBuffer);
+    if (FAILED(Result))
+    {
+        return nullptr;
+    }
+    return VertexBuffer;
+}
+
 ID3D11Buffer* URenderer::CreateDynamicVertexBuffer(UINT ByteWidth)
 {
 	D3D11_BUFFER_DESC VertexBufferDesc = {};
@@ -801,8 +820,9 @@ void URenderer::CreateBufferCache()
 {
     BufferCache = std::make_unique<FBufferCache>();
 
-    // TODO: Load general mesh here.
-    BufferCache->BuildStaticMesh("");
+    // TODO: Load static mesh here.
+    // BufferCache->BuildStaticMesh("./bag.obj");
+    BufferCache->BuildStaticMesh("C:/Users/Jungle/Desktop/Folder/_GameTechLab/W02_4_Texture_N_Wireframe/bag.obj");
 }
 
 void URenderer::CreateShaderCache()

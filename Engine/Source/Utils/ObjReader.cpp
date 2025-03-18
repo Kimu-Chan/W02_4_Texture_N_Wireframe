@@ -102,7 +102,8 @@ void ObjReader::Clear()
 
 bool ObjReader::CheckFile(const FString& InFilePath) const
 {
-    std::ifstream f(*InFilePath);
+    std::string path = *InFilePath;
+    std::ifstream f(path);
     return f.good();
 }
 
@@ -123,43 +124,32 @@ void ObjReader::ReadFile()
         {
             Tokens.Add(Token);
         }
+        const std::string& Key = Tokens[0];
 
-        if (Tokens[0] == "v")
+        if (Key == "v")
         {
             TArray<float> Vertex(3);
-            for (int i = 0; i < 3; ++i)
-            {
-                Vertex[i] = std::stof(Tokens[i + 1]);
-            }
             Vertex[0] = std::stof(Tokens[1]); // Location X
             Vertex[1] = std::stof(Tokens[2]); // Location Y
-            Vertex[2] = std::stof(Tokens[3]); // Location Z
+            Vertex[2] = -std::stof(Tokens[3]); // Location Z
             Vertices.Add(Vertex);
         }
-        else if (Tokens[0] == "vn")
+        else if (Key == "vn")
         {
             TArray<float> Normal(3);
-            for (int i = 0; i < 3; ++i)
-            {
-                Normal[i] = std::stof(Tokens[i + 1]);
-            }
             Normal[0] = std::stof(Tokens[1]); // Normal X
             Normal[1] = std::stof(Tokens[2]); // Normal Y
-            Normal[2] = std::stof(Tokens[3]); // Normal Z
+            Normal[2] = -std::stof(Tokens[3]); // Normal Z
             Normals.Add(Normal);
         }
-        else if (Tokens[0] == "vt")
+        else if (Key == "vt")
         {
             TArray<float> UV(2);
-            for (int i = 0; i < 2; ++i)
-            {
-                UV[i] = std::stof(Tokens[i + 1]);
-            }
             UV[0] = std::stof(Tokens[1]);       // U
             UV[1] = 1.f - std::stof(Tokens[2]); // V; Obj 파일은 오른손 좌표계 기준이므로, 왼손 좌표계의 UV맵 좌표로 변경
             UVs.Add(UV);
         }
-        else if (Tokens[0] == "f")
+        else if (Key == "f")
         {
             TArray<TArray<uint32>> Face(3);
             for (int i = 0; i < 3; ++i)

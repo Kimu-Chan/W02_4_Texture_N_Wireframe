@@ -70,11 +70,17 @@ bool FBufferCache::BuildStaticMesh(const FString& ObjFilePath)
     // End 파일 경로에서 파일 이름만 획득
     FName Key(fileName);
 
-    FVertexBufferInfo VertexInfo;
-    FIndexBufferInfo IndexInfo;
+    URenderer* Renderer = UEngine::Get().GetRenderer();
+    
+    uint32 VertexBufferByteWidth = Builder.GetVertexNum() * sizeof(FStaticMeshVertex);
+    ID3D11Buffer* VertexBuffer = Renderer->CreateImmutableVertexBuffer(Builder.GetVertices().GetData(), VertexBufferByteWidth);
 
-    // TODO: 렌더러에 함수 추가 및 렌더러에 접근해서 버텍스 버퍼를 생성하고, 위의 두 구조체에 값 넣기
+    uint32 IndexBufferByteWidth = Builder.GetIndexNum() * sizeof(uint32);
+    ID3D11Buffer* IndexBuffer = Renderer->CreateIndexBuffer(Builder.GetIndices().GetData(), IndexBufferByteWidth);
 
+    FVertexBufferInfo VertexInfo(VertexBuffer, Builder.GetVertexNum(), D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, nullptr);
+    FIndexBufferInfo IndexInfo(IndexBuffer, Builder.GetIndexNum());
+    
     FStaticMeshBufferInfo StaticMeshInfo(VertexInfo, IndexInfo);
     StaticMeshBufferCache.Add(Key, StaticMeshInfo);
 

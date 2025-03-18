@@ -17,9 +17,12 @@ MeshBuilder::~MeshBuilder()
 bool MeshBuilder::BuildMeshFromObj(const FString& ObjPath)
 {
     ObjReader Reader(ObjPath);
+    
     TArray<TArray<TArray<uint32>>> Faces = Reader.GetFaces();
+    
     VerticesNum = Reader.GetFaceNum() * 3;
     IndicesNum = VerticesNum; // 현재는 정보가 중복된 정점을 하나로 합치지 않음.
+    
     Vertices = TArray<FStaticMeshVertex>(VerticesNum);
     Indices = TArray<uint32>(IndicesNum);
 
@@ -32,22 +35,22 @@ bool MeshBuilder::BuildMeshFromObj(const FString& ObjPath)
         TArray<float> Normal;
         
         Position = Reader.GetVertex(Face[0][0]);
-        UV = Reader.GetVertex(Face[0][1]);
-        Normal = Reader.GetVertex(Face[0][2]);
+        UV = Reader.GetUV(Face[0][1]);
+        Normal = Reader.GetNormal(Face[0][2]);
         FStaticMeshVertex Vertex0;
-        MakeVertex(Position, UV, Normal, Vertex0);
+        MakeVertex(Position, Normal, UV, Vertex0);
 
         Position = Reader.GetVertex(Face[2][0]);
-        UV = Reader.GetVertex(Face[2][1]);
-        Normal = Reader.GetVertex(Face[2][2]);
+        UV = Reader.GetUV(Face[2][1]);
+        Normal = Reader.GetNormal(Face[2][2]);
         FStaticMeshVertex Vertex1;
-        MakeVertex(Position, UV, Normal, Vertex1);
+        MakeVertex(Position, Normal, UV, Vertex1);
 
         Position = Reader.GetVertex(Face[1][0]);
-        UV = Reader.GetVertex(Face[1][1]);
-        Normal = Reader.GetVertex(Face[1][2]);
+        UV = Reader.GetUV(Face[1][1]);
+        Normal = Reader.GetNormal(Face[1][2]);
         FStaticMeshVertex Vertex2;
-        MakeVertex(Position, UV, Normal, Vertex2);
+        MakeVertex(Position, Normal, UV, Vertex2);
 
         CalculateTangent(Vertex0, Vertex1, Vertex2, Vertex0.Tangent);
         CalculateTangent(Vertex1, Vertex2, Vertex0, Vertex1.Tangent);
