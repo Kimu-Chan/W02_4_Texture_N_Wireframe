@@ -90,27 +90,20 @@ bool APicker::PickByColor()
     FVector4 color = UEngine::Get().GetRenderer()->GetPixel(X, Y);
     uint32_t UUID = DecodeUUID(color);
 
-    UActorComponent* PickedComponent = UEngine::Get().GetObjectByUUID<UActorComponent>(UUID);
+    USceneComponent* PickedComponent = UEngine::Get().GetObjectByUUID<USceneComponent>(UUID);
 
     bool bIsPicked = false;
     if (PickedComponent != nullptr)
     {
         bIsPicked = true;
-        AActor* PickedActor = PickedComponent->GetOwner();
+   //     AActor* PickedActor = PickedComponent->GetOwner();
 
-        // 액터없는 컴포넌트가 검출될 수 있나? -> return false
-        if (PickedActor == nullptr) return false;
-        if (PickedComponent->GetOwner()->IsGizmoActor() == false)
-        {
-            if (PickedActor == FEditorManager::Get().GetSelectedActor())
-            {
-                FEditorManager::Get().SelectActor(nullptr);
-            }
-            else
-            {
-                FEditorManager::Get().SelectActor(PickedActor);
-            }
-        }
+   //     // 액터없는 컴포넌트가 검출될 수 있나? -> return false
+   //     if (PickedActor == nullptr) return false;
+		if (PickedComponent->GetOwner()->IsGizmoActor() == false)
+		{
+			FEditorManager::Get().SelectComponent(PickedComponent);
+		}
     }
     UE_LOG("Pick - UUID: %d", UUID);
     return bIsPicked;
@@ -128,18 +121,7 @@ bool APicker::PickByRay()
         if (FirstHitComponent == nullptr)
             return false;
 
-        AActor* HitActor = FirstHitComponent->GetOwner();
-        if (HitActor != nullptr && HitActor->IsGizmoActor() == false)
-        {
-            if (HitActor == FEditorManager::Get().GetSelectedActor())
-            {
-                FEditorManager::Get().SelectActor(nullptr);
-            }
-            else
-            {
-                FEditorManager::Get().SelectActor(HitActor);
-            }
-        }
+        FEditorManager::Get().SelectComponent(FirstHitComponent);
     }
 
     return bIsPicked;

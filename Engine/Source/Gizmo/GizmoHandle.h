@@ -46,7 +46,7 @@ public:
 
 	bool bIsLocal = false;
 private:
-	void DoTransform(FTransform& AT, FVector Result, AActor* Actor);
+	void DoTransform(FTransform& CompTransform, FVector Result, USceneComponent* SceneComp);
 	FVector CachedRayResult = FVector::ZeroVector;
 };
 

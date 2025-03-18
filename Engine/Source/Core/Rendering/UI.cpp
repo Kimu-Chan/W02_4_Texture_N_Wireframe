@@ -421,31 +421,26 @@ void UI::RenderPropertyWindow(bool& bOutHovered)
         ImGui::SetWindowPos(ResizeToScreen(Window->Pos));
         ImGui::SetWindowSize(ResizeToScreen(Window->Size));
     }
+    USceneComponent* SelectedComponent = FEditorManager::Get().GetSelectedComponent();
+    if (SelectedComponent != nullptr)
+    {
+        ImGui::Text("Selected Actor : %s", *SelectedComponent->GetOwner()->GetName().ToString());
+		ImGui::Text("Selected Component : %s", *SelectedComponent->GetName().ToString());
 
-    if (FEditorManager::Get().GetSelectedActor() == nullptr)
-    {
-        ImGui::Text("No Selected Actor");
-        bOutHovered = ImGui::IsWindowHovered();
-        ImGui::End();
-        return;
-    };
-	bool bIsLocal = FEditorManager::Get().GetGizmoHandle()->bIsLocal;
-	if (ImGui::Checkbox("Local", &bIsLocal))
-	{
-        FEditorManager::Get().ToggleGizmoHandleLocal(bIsLocal);
-	}
-    
-    AActor* selectedActor = FEditorManager::Get().GetSelectedActor();
-    if (selectedActor != nullptr)
-    {
-        FTransform selectedTransform = selectedActor->GetActorTransform();
+		bool bIsLocal = FEditorManager::Get().GetGizmoHandle()->bIsLocal;
+		if (ImGui::Checkbox("Local", &bIsLocal))
+		{
+			FEditorManager::Get().ToggleGizmoHandleLocal(bIsLocal);
+		}
+
+        FTransform selectedTransform = SelectedComponent->GetComponentTransform();
         float position[] = { selectedTransform.GetPosition().X, selectedTransform.GetPosition().Y, selectedTransform.GetPosition().Z };
         float scale[] = { selectedTransform.GetScale().X, selectedTransform.GetScale().Y, selectedTransform.GetScale().Z };
 
         if (ImGui::DragFloat3("Translation", position, 0.1f))
         {
             selectedTransform.SetPosition(position[0], position[1], position[2]);
-            selectedActor->SetActorTransform(selectedTransform);
+            SelectedComponent->SetRelativeTransform(selectedTransform);
         }
 
         FVector PrevEulerAngle = selectedTransform.GetRotation().GetEuler();
@@ -456,12 +451,12 @@ void UI::RenderPropertyWindow(bool& bOutHovered)
 			UE_LOG("DeltaEulerAngle %f, %f, %f", DeltaEulerAngle.X, DeltaEulerAngle.Y, DeltaEulerAngle.Z);
 
             selectedTransform.Rotate(DeltaEulerAngle);
-            selectedActor->SetActorTransform(selectedTransform);
+            SelectedComponent->SetRelativeTransform(selectedTransform);
         }
         if (ImGui::DragFloat3("Scale", scale, 0.1f))
         {
             selectedTransform.SetScale(scale[0], scale[1], scale[2]);
-            selectedActor->SetActorTransform(selectedTransform);
+            SelectedComponent->SetRelativeTransform(selectedTransform);
         }
         if (FEditorManager::Get().GetGizmoHandle() != nullptr)
         {

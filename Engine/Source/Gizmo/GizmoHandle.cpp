@@ -45,14 +45,14 @@ AGizmoHandle::AGizmoHandle()
 
 void AGizmoHandle::Tick(float DeltaTime)
 {
-    AActor* SelectedActor = FEditorManager::Get().GetSelectedActor();
-    if (SelectedActor != nullptr && bIsActive)
+	USceneComponent* SelectedComponent = FEditorManager::Get().GetSelectedComponent();
+    if (SelectedComponent != nullptr && bIsActive)
     {
         FTransform GizmoTr = RootComponent->GetComponentTransform();
-        GizmoTr.SetPosition(SelectedActor->GetActorTransform().GetPosition());
+        GizmoTr.SetPosition(SelectedComponent->GetWorldTransform().GetPosition());
 		if (bIsLocal)
 		{
-            GizmoTr.SetRotation(SelectedActor->GetActorTransform().GetRotation());
+            GizmoTr.SetRotation(SelectedComponent->GetWorldTransform().GetRotation());
 		}
         else
         {
@@ -72,7 +72,7 @@ void AGizmoHandle::Tick(float DeltaTime)
 	}
     if (SelectedAxis != ESelectedAxis::None)
     {
-        if (AActor* Actor = FEditorManager::Get().GetSelectedActor())
+        if (USceneComponent* SceneComp = FEditorManager::Get().GetSelectedComponent())
         {
             // 마우스의 커서 위치를 가져오기
             POINT pt;
@@ -104,7 +104,7 @@ void AGizmoHandle::Tick(float DeltaTime)
 			RayEnd /= RayEnd.W = 1;
 			FVector RayDir = (RayEnd - RayOrigin).GetSafeNormal();
 
-			float Distance = FVector::Distance(RayOrigin, Actor->GetActorTransform().GetPosition());
+			float Distance = FVector::Distance(RayOrigin, SceneComp->GetComponentTransform().GetPosition());
 
             // 이전 프레임의 Result가 있어야 함
 			FVector Result = RayOrigin + RayDir * Distance;
@@ -117,9 +117,9 @@ void AGizmoHandle::Tick(float DeltaTime)
 
 			FVector Delta = Result - CachedRayResult;
             CachedRayResult = Result;
-            FTransform AT = Actor->GetActorTransform();
+            FTransform CompTransform = SceneComp->GetComponentTransform();
 
-			DoTransform(AT, Delta, Actor);
+			DoTransform(CompTransform, Delta, SceneComp);
 		}
         else
         {
@@ -176,22 +176,22 @@ const char* AGizmoHandle::GetTypeName()
     return "GizmoHandle";
 }
 
-void AGizmoHandle::DoTransform(FTransform& ActorTransform, FVector Delta, AActor* Actor)
+void AGizmoHandle::DoTransform(FTransform& CompTransform, FVector Delta, USceneComponent* SceneComp)
 {
-    const FVector& Position = ActorTransform.GetPosition();
+    const FVector& Position = CompTransform.GetPosition();
 
     if (SelectedAxis == ESelectedAxis::X)
     {
         switch (GizmoType)
         {
         case EGizmoType::Translate:
-            ActorTransform.SetPosition({ Position.X + Delta.X, Position.Y, Position.Z });
+            CompTransform.SetPosition({ Position.X + Delta.X, Position.Y, Position.Z });
             break;
         case EGizmoType::Rotate:
-            ActorTransform.RotateRoll(Delta.X * 10.f);
+            CompTransform.RotateRoll(Delta.X * 10.f);
             break;
         case EGizmoType::Scale:
-            ActorTransform.AddScale({ Delta.X, 0, 0});
+            CompTransform.AddScale({ Delta.X, 0, 0});
             break;
         }
     }
@@ -200,13 +200,13 @@ void AGizmoHandle::DoTransform(FTransform& ActorTransform, FVector Delta, AActor
         switch (GizmoType)
         {
         case EGizmoType::Translate:
-            ActorTransform.SetPosition({ Position.X, Position.Y + Delta.Y, Position.Z });
+            CompTransform.SetPosition({ Position.X, Position.Y + Delta.Y, Position.Z });
             break;
         case EGizmoType::Rotate:
-            ActorTransform.RotatePitch(Delta.Y * 10.f);
+            CompTransform.RotatePitch(Delta.Y * 10.f);
             break;
         case EGizmoType::Scale:
-            ActorTransform.AddScale({ 0, Delta.Y, 0 });
+            CompTransform.AddScale({ 0, Delta.Y, 0 });
             break;
         }
     }
@@ -215,16 +215,16 @@ void AGizmoHandle::DoTransform(FTransform& ActorTransform, FVector Delta, AActor
         switch (GizmoType)
         {
         case EGizmoType::Translate:
-            ActorTransform.SetPosition({ Position.X, Position.Y, Position.Z + Delta.Z });
+            CompTransform.SetPosition({ Position.X, Position.Y, Position.Z + Delta.Z });
             break;
         case EGizmoType::Rotate:
-            ActorTransform.RotateYaw(Delta.Z * 10.f);
+            CompTransform.RotateYaw(Delta.Z * 10.f);
             break;
         case EGizmoType::Scale:
-            ActorTransform.AddScale({ 0, 0, Delta.Z });
+            CompTransform.AddScale({ 0, 0, Delta.Z });
             break;
         }
     }
-    Actor->SetActorTransform(ActorTransform);
+    SceneComp->SetRelativeTransform(CompTransform);
 }
 

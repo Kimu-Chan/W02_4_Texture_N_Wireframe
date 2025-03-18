@@ -109,26 +109,6 @@ void APlayerController::HandleCameraMovement(float DeltaTime)
 	UEngine::Get().GetRenderer()->UpdateViewMatrix(CameraTransform);
 }
 
-void APlayerController::HandleGizmoMovement(float DeltaTime)
-{
-    bIsHandlingGizmo = false;
-    
-    if (APlayerInput::Get().IsMousePressed(false) == false)
-    {
-        return;
-    }
-
-    AActor* SelectedActor = FEditorManager::Get().GetSelectedActor();
-
-    //@TODO: Check with Gizmo
-    if (SelectedActor == nullptr)
-    {
-        return;
-    }
-
-    bIsHandlingGizmo = true;
-}
-
 void APlayerController::SaveCameraProperties(ACamera* Camera)
 {
     FEngineConfig* EngineConfig = UEngine::Get().GetEngineConfig();
