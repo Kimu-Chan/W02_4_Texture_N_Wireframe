@@ -7,6 +7,7 @@
 #include "Core/Container/Set.h"
 #include "Core/Container/String.h"
 #include "Debugging/DebugConsole.h"
+#include "Editor/ActorTreeNode.h"
 #include "Utils/JsonSavehelper.h"
 
 #include "Engine/GameFrameWork/Arrow.h"
@@ -96,6 +97,10 @@ protected:
 	TSet<FString> ActorNames;
 
 	UBillboard* Billboard;
+
+public:
+	TArray<ActorTreeNode*> ActorTreeNodes;
+	ActorTreeNode* WorldNode;
 };
 
 template <typename T>
@@ -146,6 +151,10 @@ T* UWorld::SpawnActor()
 	}
 	
 	Actor->BeginPlay();
+
+	// ActorTreeNode 생성 및 추가
+	ActorTreeNode* NewNode = new ActorTreeNode(*Actor->GetName(), *Actor->GetClass()->Name, WorldNode, Actor->GetUUID(), Actor);
+	ActorTreeNodes.Add(NewNode);
 	
 	return Actor;
 }

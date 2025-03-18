@@ -386,6 +386,10 @@
     <ClInclude Include="Source\Core\Rendering\TextureLoader.h">
       <Filter>Header Files\Core\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="Billboard.h" />
+    <ClInclude Include="Source\Editor\ActorTreeNode.h">
+      <Filter>Header Files\Editor</Filter>
+    </ClInclude>
     <ClInclude Include="Billboard.h">
       <Filter>Header Files\Engine\GameFrameWork</Filter>
     </ClInclude>
