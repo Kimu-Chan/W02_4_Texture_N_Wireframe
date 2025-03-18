@@ -241,6 +241,7 @@
     <ClInclude Include="Source\ThirdParty\SimpleJSON\json.hpp" />
     <ClInclude Include="Source\Utils\JsonSaveHelper.h" />
     <ClInclude Include="Billboard.h" />
+    <ClInclude Include="TextBillboard.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Shaders\ShaderPicking.hlsl">
@@ -322,6 +323,7 @@
     </ClCompile>
     <ClCompile Include="Source\Utils\JsonSaveHelper.cpp" />
     <ClCompile Include="Billboard.cpp" />
+    <ClCompile Include="TextBillboard.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\ShaderTexture.hlsl">

@@ -49,5 +49,5 @@ float4 mainPS(PS_INPUT input) : SV_TARGET
         Color.a = 1.f;
     }
     
-    return Color;
+    return pow(Color, 2);
 }

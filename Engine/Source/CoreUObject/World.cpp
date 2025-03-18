@@ -40,7 +40,7 @@ void UWorld::BeginPlay()
         Billboard->SetRenderUV(i, 4);
         Billboard->SetBoundingBoxRenderable(false);
         Actor->SetRootComponent(Billboard);
-        Actor->SetActorTransform(FTransform(FVector(1.f, (float)i * 0.5f, 1.f), FVector(0.f, 0.f, 0.f), FVector(1.f, 1.f, 1.f)));
+        Actor->SetActorTransform(FTransform(FVector(1.f, (float)i, 1.f), FVector(0.f, 0.f, 0.f), FVector(1.f, 1.f, 1.f)));
         Actor->BeginPlay();
     }
     

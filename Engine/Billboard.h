@@ -15,7 +15,7 @@ public:
 	void SetTexture(class ID3D11ShaderResourceView* InTexture, float Cols = 1.0f, float Rows = 1.0f);
 	void SetRenderUV(float Col, float Row);
 
-private:
+protected:
 	ID3D11ShaderResourceView* Texture = nullptr;
 	float TotalCols = 1.0f;
 	float TotalRows = 1.0f;

@@ -158,6 +158,7 @@
     <ClCompile Include="Billboard.cpp">
       <Filter>Source Files\Engine\GameFrameWork</Filter>
     </ClCompile>
+    <ClCompile Include="TextBillboard.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Core\HAL\PlatformType.h">
@@ -388,6 +389,7 @@
     <ClInclude Include="Billboard.h">
       <Filter>Header Files\Engine\GameFrameWork</Filter>
     </ClInclude>
+    <ClInclude Include="TextBillboard.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
