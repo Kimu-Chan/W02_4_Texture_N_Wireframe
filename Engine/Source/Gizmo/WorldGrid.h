@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "GameFrameWork/Actor.h"
 
 /**
@@ -12,6 +12,7 @@ public:
     virtual ~AWorldGrid() = default;
     
     virtual void Tick(float DeltaTime);
+    virtual void InitUUIDBillboard() override {}
 
 private:
 };

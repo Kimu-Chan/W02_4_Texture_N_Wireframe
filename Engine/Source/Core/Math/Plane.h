@@ -28,5 +28,5 @@ struct alignas(16) FQuat : public FVector4{
 	FQuat Conjugate() const;
 	FVector GetEuler() const { return QuaternionToEuler(*this); }
 	FVector RotateVector(const FVector& InVector) const;
-	FQuat Normalize();
+	FQuat Normalize() const;
 };
