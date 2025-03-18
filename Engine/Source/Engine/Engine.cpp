@@ -2,6 +2,7 @@
 #include "Engine.h"
 
 #include "WorldGrid.h"
+#include "Components/MeshComponent.h"
 #include "Static/EditorManager.h"
 #include "Core/Input/PlayerInput.h"
 #include "Core/Input/PlayerController.h"

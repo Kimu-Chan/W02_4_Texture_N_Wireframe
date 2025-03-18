@@ -1,5 +1,6 @@
 #pragma once
 #include "Core/HAL/PlatformType.h"
+#include "Math/Vector.h"
 
 enum class EViewModeIndex : uint8
 {
@@ -25,4 +26,12 @@ enum class EPrimitiveType : uint8
 enum class EIndexBufferType : uint8
 {
 	EIT_Cube,
+};
+
+struct FStaticMeshVertex
+{
+	FVector Position;
+	FVector Normal;
+	FVector Tangent;
+	FVector2D UV;
 };

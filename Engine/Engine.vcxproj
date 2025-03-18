@@ -165,6 +165,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Source\CoreUObject\Components\MeshComponent.h" />
     <ClInclude Include="Source\Core\Rendering\ShaderCache.h" />
     <ClInclude Include="Source\Core\Rendering\Constants.h" />
     <ClInclude Include="Source\CoreUObject\NameTypes.h" />
@@ -241,11 +242,15 @@
     <ClInclude Include="Source\ThirdParty\SimpleJSON\json.hpp" />
     <ClInclude Include="Source\Utils\JsonSaveHelper.h" />
     <ClInclude Include="Billboard.h" />
+    <ClInclude Include="Source\Utils\MeshBuilder.h" />
+    <ClInclude Include="Source\Utils\ObjReader.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\ShaderMesh.hlsl" />
     <ClCompile Include="Shaders\ShaderPicking.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Source\CoreUObject\Components\MeshComponent.cpp" />
     <ClCompile Include="Source\Core\Rendering\ShaderCache.cpp" />
     <ClCompile Include="Source\CoreUObject\Components\ActorComponent.cpp" />
     <ClCompile Include="Source\CoreUObject\Components\PrimitiveComponent.cpp" />
@@ -322,6 +327,8 @@
     </ClCompile>
     <ClCompile Include="Source\Utils\JsonSaveHelper.cpp" />
     <ClCompile Include="Billboard.cpp" />
+    <ClCompile Include="Source\Utils\MeshBuilder.cpp" />
+    <ClCompile Include="Source\Utils\ObjReader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\ShaderTexture.hlsl">

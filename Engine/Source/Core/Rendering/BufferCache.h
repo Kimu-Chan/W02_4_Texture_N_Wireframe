@@ -2,6 +2,7 @@
 
 #define _TCHAR_DEFINED
 
+#include "NameTypes.h"
 #include "Core/Container/Array.h"
 #include "Core/Container/Map.h"
 #include "Primitive/PrimitiveVertices.h"
@@ -14,7 +15,7 @@ struct FVertexBufferInfo
 {
 public:
 	FVertexBufferInfo() = default;
-	FVertexBufferInfo(ID3D11Buffer* InVertexBuffer, int InVertexBufferSize, D3D_PRIMITIVE_TOPOLOGY InTopology, const FVertexSimple* InVertices)
+	FVertexBufferInfo(ID3D11Buffer* InVertexBuffer, uint32 InVertexBufferSize, D3D_PRIMITIVE_TOPOLOGY InTopology, const FVertexSimple* InVertices)
 	{
 		VertexBuffer = InVertexBuffer;
 		VertexBufferSize = InVertexBufferSize;
@@ -23,17 +24,22 @@ public:
 	}
 
 	ID3D11Buffer* GetVertexBuffer() const { return VertexBuffer.Get(); }
-	int GetSize() const { return VertexBufferSize; }
+	uint32 GetSize() const { return VertexBufferSize; }
 	D3D_PRIMITIVE_TOPOLOGY GetTopology() const { return Topology; }
 	FVector LocalMin;
 	FVector LocalMax;
 
 	void SetLocalBounds(const FVertexSimple* Vertices, UINT Size)
 	{
+		if (Vertices == nullptr)
+		{
+			return;
+		}
+		
 		LocalMin = FVector(FLT_MAX, FLT_MAX, FLT_MAX);
 		LocalMax = FVector(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 
-		for (int i = 0; i < Size; ++i)
+		for (uint32 i = 0; i < Size; ++i)
 		{
 			LocalMin.X = FMath::Min(LocalMin.X, Vertices[i].X);
 			LocalMin.Y = FMath::Min(LocalMin.Y, Vertices[i].Y);
@@ -50,24 +56,38 @@ public:
 private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> VertexBuffer;
 	D3D_PRIMITIVE_TOPOLOGY Topology;
-	int VertexBufferSize;
+	uint32 VertexBufferSize;
 };
 
 struct FIndexBufferInfo
 {
 public:
 	FIndexBufferInfo() = default;
-	FIndexBufferInfo(ID3D11Buffer* InIndexBuffer, int InIndexBufferSize)
+	FIndexBufferInfo(ID3D11Buffer* InIndexBuffer, uint32 InIndexBufferSize)
 	{
 		IndexBuffer = InIndexBuffer;
 		IndexBufferSize = InIndexBufferSize;
 	}
 	ID3D11Buffer* GetIndexBuffer() const { return IndexBuffer.Get(); }
-	int GetSize() const { return IndexBufferSize; }
+	uint32 GetSize() const { return IndexBufferSize; }
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> IndexBuffer;
-	int IndexBufferSize;
+	uint32 IndexBufferSize;
 
+};
+
+struct FStaticMeshBufferInfo
+{
+public:
+	FStaticMeshBufferInfo() = default;
+	FStaticMeshBufferInfo(const FVertexBufferInfo& InVertexBufferInfo, const FIndexBufferInfo& InIndexBufferInfo)
+	{
+		VertexBufferInfo = InVertexBufferInfo;
+		IndexBufferInfo = InIndexBufferInfo;
+	}
+
+	FVertexBufferInfo VertexBufferInfo;
+	FIndexBufferInfo IndexBufferInfo;
 };
 
 class FBufferCache
@@ -77,13 +97,19 @@ private:
 	TMap <EPrimitiveType, FIndexBufferInfo> IndexBufferCache;
 	TMap <EPrimitiveType, TArray<FVertexSimple>> PrimitiveVertices;
 
+	TMap<FName, FStaticMeshBufferInfo> StaticMeshBufferCache;
+
 public:
 	FBufferCache();
 	~FBufferCache();
 
 	void Init();
+	
 	FVertexBufferInfo GetVertexBufferInfo(EPrimitiveType Type);
 	FIndexBufferInfo GetIndexBufferInfo(EPrimitiveType Type);
+
+	FStaticMeshBufferInfo GetStaticMeshBufferInfo(FName InName);
+	bool BuildStaticMesh(const FString& ObjFilePath);
 
 public:
 	TArray<FVertexSimple> CreateConeVertices();
