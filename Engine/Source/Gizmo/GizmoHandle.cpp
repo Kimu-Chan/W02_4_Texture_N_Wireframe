@@ -178,53 +178,42 @@ const char* AGizmoHandle::GetTypeName()
 
 void AGizmoHandle::DoTransform(FTransform& CompTransform, FVector Delta, USceneComponent* SceneComp)
 {
-    const FVector& Position = CompTransform.GetPosition();
+    FVector WorldDirection;
+    FVector LocalDirection;
+    switch (SelectedAxis)
+    {
+	case ESelectedAxis::X:
+		WorldDirection = FVector(1, 0, 0);
+        LocalDirection = CompTransform.GetForward();
+		break;
+	case ESelectedAxis::Y:
+		WorldDirection = FVector(0, 1, 0);
+        LocalDirection = CompTransform.GetRight();
+		break;
+	case ESelectedAxis::Z:
+		WorldDirection = FVector(0, 0, 1);
+		LocalDirection = CompTransform.GetUp();
+        break;
+    }
 
-    if (SelectedAxis == ESelectedAxis::X)
-    {
-        switch (GizmoType)
-        {
-        case EGizmoType::Translate:
-            CompTransform.SetPosition({ Position.X + Delta.X, Position.Y, Position.Z });
-            break;
-        case EGizmoType::Rotate:
-            CompTransform.RotateRoll(Delta.X * 10.f);
-            break;
-        case EGizmoType::Scale:
-            CompTransform.AddScale({ Delta.X, 0, 0});
-            break;
-        }
-    }
-    else if (SelectedAxis == ESelectedAxis::Y)
-    {
-        switch (GizmoType)
-        {
-        case EGizmoType::Translate:
-            CompTransform.SetPosition({ Position.X, Position.Y + Delta.Y, Position.Z });
-            break;
-        case EGizmoType::Rotate:
-            CompTransform.RotatePitch(Delta.Y * 10.f);
-            break;
-        case EGizmoType::Scale:
-            CompTransform.AddScale({ 0, Delta.Y, 0 });
-            break;
-        }
-    }
-    else if (SelectedAxis == ESelectedAxis::Z)
-    {
-        switch (GizmoType)
-        {
-        case EGizmoType::Translate:
-            CompTransform.SetPosition({ Position.X, Position.Y, Position.Z + Delta.Z });
-            break;
-        case EGizmoType::Rotate:
-            CompTransform.RotateYaw(Delta.Z * 10.f);
-            break;
-        case EGizmoType::Scale:
-            CompTransform.AddScale({ 0, 0, Delta.Z });
-            break;
-        }
-    }
-    SceneComp->SetRelativeTransform(CompTransform);
+    bool bIsLocal = FEditorManager::Get().GetGizmoHandle()->bIsLocal;
+	FVector Direction = bIsLocal ? LocalDirection : WorldDirection;
+	Delta = Direction * FVector::DotProduct(Delta, Direction);
+
+	switch (GizmoType)
+	{
+	case EGizmoType::Translate:
+		CompTransform.Translate(Delta);
+		break;
+	case EGizmoType::Rotate:
+		CompTransform.Rotate(Delta * 10);
+		break;
+	case EGizmoType::Scale:
+        // 스케일은 축에 평행한 방향으로 커지는게 맞음
+		Delta = WorldDirection * FVector::DotProduct(Delta, WorldDirection);
+		CompTransform.AddScale(Delta);
+		break;
+	}
+	SceneComp->SetRelativeTransform(CompTransform);
 }
 

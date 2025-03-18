@@ -74,9 +74,7 @@ public:
 
 	inline void AddScale(FVector InScale)
 	{
-		Scale.X += InScale.X;
-		Scale.Y += InScale.Y;
-		Scale.Z += InScale.Z;
+		Scale += InScale;
 	}
 
 	inline void SetScale(float x, float y, float z)
@@ -140,11 +138,31 @@ public:
 
 	FVector GetRight() const
 	{
-		return FVector::CrossProduct(FVector(0, 0, 1), GetForward()).GetSafeNormal();
+		//return FVector::CrossProduct(FVector(0, 0, 1), GetForward()).GetSafeNormal();
+		FMatrix RotationMatrix = FMatrix::GetRotateMatrix(Rotation);
+
+		// 회전 행렬의 첫 번째 열이 Forward 벡터를 나타냄
+		FVector Right = FVector(
+			RotationMatrix.M[0][1],
+			RotationMatrix.M[1][1],
+			RotationMatrix.M[2][1]
+		);
+
+		return Right.GetSafeNormal();
 	}
 
 	FVector GetUp() const{
-		return FVector::CrossProduct(GetForward(), GetRight()).GetSafeNormal();
+		//return FVector::CrossProduct(GetForward(), GetRight()).GetSafeNormal();
+		FMatrix RotationMatrix = FMatrix::GetRotateMatrix(Rotation);
+
+		// 회전 행렬의 첫 번째 열이 Forward 벡터를 나타냄
+		FVector Up = FVector(
+			RotationMatrix.M[0][2],
+			RotationMatrix.M[1][2],
+			RotationMatrix.M[2][2]
+		);
+
+		return Up.GetSafeNormal();
 
 	}
 

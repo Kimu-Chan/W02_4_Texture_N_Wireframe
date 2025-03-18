@@ -63,13 +63,14 @@ void FEditorManager::SelectComponent(USceneComponent* InSelectedComponent)
     {
         SelectActor(InSelectedComponent->GetOwner());
         return;
-    }
+    } 
 
     // 선택한 액터가 있다면, 이 컴포넌트가 액터에 붙은 컴포넌트인지 확인
     if (SelectedActor != InSelectedComponent->GetOwner())
     {
         // 아니라면 그 액터 선택
 		SelectActor(InSelectedComponent->GetOwner());
+		SelectedComponent = InSelectedComponent;
     }
     else
     {
