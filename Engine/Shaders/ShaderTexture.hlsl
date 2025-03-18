@@ -8,6 +8,7 @@ cbuffer TextureBuffer : register(b5)
     matrix WorldViewProj;
     float2 UVOffset;
     float2 AtlasColsRows;
+    int bIsText; // 0 이면 일반 텍스처, 1 이면 텍스트
 }
 
 struct VS_INPUT
@@ -25,12 +26,18 @@ struct PS_INPUT
 PS_INPUT mainVS(VS_INPUT Input)
 {
     PS_INPUT Output;
-    Output.Position = float4(Input.Position.xyz, 1.0f);
-    Output.Position = mul(Output.Position, WorldViewProj);
+    Output.Position = mul(float4(Input.Position.xyz, 1.0f), WorldViewProj);
     
-    float2 AtlasTileSize = float2(1.0f / AtlasColsRows.x, 1.0f / AtlasColsRows.y);
+    if (1 == bIsText)
+    {
+        Output.Tex = Input.Tex;
+    }
+    else
+    {
+        float2 AtlasTileSize = float2(1.0f / AtlasColsRows.x, 1.0f / AtlasColsRows.y);
+        Output.Tex = Input.Tex * AtlasTileSize + UVOffset;
+    }
     
-    Output.Tex = Input.Tex * AtlasTileSize + UVOffset;
     return Output;
 }
 

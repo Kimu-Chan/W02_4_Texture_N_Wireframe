@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 struct FMatrix;
 struct FVector;
 #include "Engine/Engine.h"
@@ -45,6 +45,7 @@ struct alignas(16) FTextureConstants
 	float V;
 	float Cols;
 	float Rows;
+	int bIsText;
 };
 
 struct ConstantUpdateInfo

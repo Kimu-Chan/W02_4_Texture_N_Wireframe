@@ -26,24 +26,6 @@ void UWorld::BeginPlay()
     {
         Actor->BeginPlay();
     }
-    
-    // Billboard Test
-
-    for (int i = 1; i < 10; ++i)
-    {
-        AActor* Actor = SpawnActor<AActor>();
-        Billboard = Actor->AddComponent<UBillboard>();
-
-        TextureInfo* TextureInfo = UEngine::Get().GetTextureInfo(L"ASCII");
-
-        Billboard->SetTexture(TextureInfo->ShaderResourceView, TextureInfo->Cols, TextureInfo->Rows);
-        Billboard->SetRenderUV(i, 4);
-        Billboard->SetBoundingBoxRenderable(false);
-        Actor->SetRootComponent(Billboard);
-        Actor->SetActorTransform(FTransform(FVector(1.f, (float)i, 1.f), FVector(0.f, 0.f, 0.f), FVector(1.f, 1.f, 1.f)));
-        Actor->BeginPlay();
-    }
-    
 }
 
 void UWorld::Tick(float DeltaTime)
