@@ -10,6 +10,7 @@
 #include "CoreUObject/World.h"
 #include "Gizmo/Axis.h"
 #include "GameFrameWork/Camera.h"
+#include "Gizmo/GizmoHandle.h"
 #include "Core/Rendering/TextureLoader.h"
 
 #ifdef _DEBUG
@@ -239,6 +240,10 @@ void UEngine::InitWorld()
 {
     World = FObjectFactory::ConstructObject<UWorld>();
 
+	// Add ActorTreeNode to World->ActorTreeNodes //
+    World->WorldNode = new ActorTreeNode(*World->GetName(), *World->GetClass()->Name, nullptr, World->GetUUID(), nullptr);
+	World->ActorTreeNodes.Add(World->WorldNode);
+
     if (ACamera* Camera = World->SpawnActor<ACamera>())
     {
         FEditorManager::Get().SetCamera(Camera);
@@ -276,6 +281,7 @@ void UEngine::InitWorld()
     World->SpawnActor<AAxis>();
     World->SpawnActor<APicker>();
     WorldGrid = World->SpawnActor<AWorldGrid>();
+    FEditorManager::Get().SetGizmoHandle(World->SpawnActor<AGizmoHandle>());
 
     World->BeginPlay();
 }

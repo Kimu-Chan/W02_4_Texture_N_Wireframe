@@ -16,6 +16,7 @@ public:
 
     void SetCamera(ACamera* NewCamera);
 
+	void SetGizmoHandle(AGizmoHandle* NewGizmoHandle) { GizmoHandle = NewGizmoHandle; }
     AGizmoHandle* GetGizmoHandle() const {return GizmoHandle;}
 
     void ToggleGizmoHandleLocal(bool bIsLocal);

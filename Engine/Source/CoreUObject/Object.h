@@ -25,7 +25,8 @@ public:
 	uint32 GetUUID() const { return UUID; }
 	uint32 GetInternalIndex() const { return InternalIndex; }
 
-	FName GetName() const { return NamePrivate; }
+	FName GetFName() const { return NamePrivate; }
+	FString GetName() const { return GetFName().ToString(); }
 	void SetName(const FString& InName) { NamePrivate = InName; }
 
 public:

@@ -84,15 +84,11 @@ void UI::Update()
     if (bShowDemoWindow)
 		ImGui::ShowDemoWindow(&bShowDemoWindow);
 
-    bool bIsHoveredControlPanel = false;
-    bool bIsHoveredProperty = false;
-    bool bIsHoveredSceneManager = false;
-    RenderControlPanelWindow(bIsHoveredControlPanel);
-    RenderPropertyWindow(bIsHoveredProperty);
+    RenderControlPanelWindow();
+    RenderPropertyWindow();
     Debug::ShowConsole(bWasWindowSizeUpdated, PreRatio, CurRatio);
-    RenderSceneManagerWindow(bIsHoveredSceneManager);
+    RenderSceneManagerWindow();
 
-    bool bIsAnyHovered = bIsHoveredControlPanel || bIsHoveredProperty || bIsHoveredSceneManager;
 
     // UI::RenderSomePanel 들에 대한 업데이트 완료 //
     bWasWindowSizeUpdated = false;
@@ -104,7 +100,7 @@ void UI::Update()
     ImGui::Render();
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
-    bool bUiInput = bIsAnyHovered || ImGui::IsAnyItemHovered() || ImGui::IsAnyItemActive();
+    bool bUiInput = ImGui::IsAnyItemHovered() || ImGui::IsAnyItemActive() || ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow);
     APlayerController::Get().SetIsUiInput(bUiInput);
 }
 
@@ -131,7 +127,7 @@ void UI::OnUpdateWindowSize(UINT InScreenWidth, UINT InScreenHeight)
     UEditorDesigner::Get().OnResize(InScreenWidth, InScreenHeight);
 }
 
-void UI::RenderControlPanelWindow(bool& bOutHovered)
+void UI::RenderControlPanelWindow()
 {
     ImGui::Begin("Jungle Control Panel");
 
@@ -184,7 +180,6 @@ void UI::RenderControlPanelWindow(bool& bOutHovered)
 	ImGui::SameLine();
     ImGui::Checkbox("Demo Window", &bShowDemoWindow);
 
-    bOutHovered = ImGui::IsWindowHovered();
     ImGui::End();
 }
 
@@ -410,7 +405,7 @@ void UI::RenderRenderMode()
     ImGui::Separator();
 }
 
-void UI::RenderPropertyWindow(bool& bOutHovered)
+void UI::RenderPropertyWindow()
 {
     ImGui::Begin("Properties");
 
@@ -424,8 +419,8 @@ void UI::RenderPropertyWindow(bool& bOutHovered)
     USceneComponent* SelectedComponent = FEditorManager::Get().GetSelectedComponent();
     if (SelectedComponent != nullptr)
     {
-        ImGui::Text("Selected Actor : %s", *SelectedComponent->GetOwner()->GetName().ToString());
-		ImGui::Text("Selected Component : %s", *SelectedComponent->GetName().ToString());
+        ImGui::Text("Selected Actor : %s", *SelectedComponent->GetOwner()->GetName());
+		ImGui::Text("Selected Component : %s", *SelectedComponent->GetName());
 
 		bool bIsLocal = FEditorManager::Get().GetGizmoHandle()->bIsLocal;
 		if (ImGui::Checkbox("Local", &bIsLocal))
@@ -475,7 +470,6 @@ void UI::RenderPropertyWindow(bool& bOutHovered)
             }
         }
     }
-    bOutHovered = ImGui::IsWindowHovered();
     ImGui::End();
 }
 
@@ -506,10 +500,14 @@ void UI::RenderDebugRaycast()
     }
 }
 
-void UI::RenderSceneManagerWindow(bool& bOutHovered)
+void UI::RenderSceneManagerWindow()
 {
-    ImGui::Begin("Scene Manager");
+    // Using those as a base value to create width/height that are factor of the size of our font
+    const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("A").x;
+    const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
 
+    ImGui::Begin("Outliner");
+    /*
     TArray<AActor*> Actors = UEngine::Get().GetWorld()->GetActors();
     
     if (ImGui::TreeNodeEx("Primitives", ImGuiTreeNodeFlags_DefaultOpen))
@@ -535,13 +533,39 @@ void UI::RenderSceneManagerWindow(bool& bOutHovered)
             
             if (bHasPrimitive)
             {
-                ImGui::Text(*Actor->GetName().ToString());
+                ImGui::Text(*Actor->GetName());
             }
         }
         
         ImGui::TreePop();
     }
-    bOutHovered = ImGui::IsWindowHovered();
+	*/
+
+    static ImGuiSelectionBasicStorage OutlinerSelection;
+    ImGui::Text("Selection size: %d", OutlinerSelection.Size);
+    static ImGuiTableFlags flags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable | ImGuiTableFlags_NoBordersInBodyUntilResize | ImGuiTableFlags_Hideable | ImGuiTableFlags_Sortable;
+
+	if (ImGui::BeginTable("table", 7, flags, ImVec2(0.0f, TEXT_BASE_HEIGHT * 16)))
+    {
+        ImGui::TableSetupColumn("V", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoResize | ImGuiTableColumnFlags_IndentDisable);
+        ImGui::TableSetupColumn("*", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoResize);
+        ImGui::TableSetupColumn("P", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoResize);
+        ImGui::TableSetupColumn("ItemLabel", ImGuiTableColumnFlags_WidthStretch | ImGuiTableColumnFlags_IndentEnable | ImGuiTableColumnFlags_DefaultSort | ImGuiTableColumnFlags_NoHide);
+        ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 18.0f);
+        ImGui::TableSetupColumn("UUID", ImGuiTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 18.0f);
+        ImGui::TableSetupColumn("PUUID", ImGuiTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 18.0f);
+        ImGui::TableHeadersRow();
+
+        ActorTreeNode* tree = UEngine::Get().GetWorld()->WorldNode;
+        ImGuiMultiSelectFlags ms_flags = ImGuiMultiSelectFlags_ClearOnEscape | ImGuiMultiSelectFlags_BoxSelect2d;
+        ImGuiMultiSelectIO* ms_io = ImGui::BeginMultiSelect(ms_flags, OutlinerSelection.Size, -1);
+        ActorTreeNode::ApplySelectionRequests(ms_io, tree, &OutlinerSelection);
+		ActorTreeNode::DisplayNode(tree, &OutlinerSelection);
+        ms_io = ImGui::EndMultiSelect();
+        ActorTreeNode::ApplySelectionRequests(ms_io, tree, &OutlinerSelection);
+
+        ImGui::EndTable();
+    }
     ImGui::End();
 }
 

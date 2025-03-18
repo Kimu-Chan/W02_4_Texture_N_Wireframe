@@ -1,7 +1,7 @@
-﻿#pragma once
+#pragma once
 
-//@TODO: UE_LOG()를 사용할 수 있도록 수정
 #define UE_LOG(format, ...) if (UI::ConsoleWindowInstance) { UI::ConsoleWindowInstance->Log(format, ##__VA_ARGS__); }
+#define ProcCommand(cmd) if (UI::ConsoleWindowInstance) { UI::ConsoleWindowInstance->ProcessCommand(cmd); }
 
 #include "Editor/EditorWindow.h"
 #include "Editor/ICommand.h"
@@ -45,13 +45,13 @@ public:
 private:
 
     void ClearLog();
-
+public:
     void ProcessCommand(const FString& cmd);
 
 private:
     char                        InputBuf[256];
 	std::vector<FString>        Items; // 출력 로그   //TODO: TArray로 변경???
-	std::vector<FString>        Commands;   // TODO: const FString 적용 가능 여부 확인
+	std::vector<FString>        Commands;
 	std::vector<FString>        History;
     int                   HistoryPos;    // -1: new line, 0..History.Size-1 browsing history.
     ImGuiTextFilter       Filter;
