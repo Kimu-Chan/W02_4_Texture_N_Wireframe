@@ -42,3 +42,9 @@ void FEditorManager::SetCamera(ACamera* NewCamera)
 {
     Camera = NewCamera;
 }
+
+void FEditorManager::ToggleGizmoHandleLocal(bool bIsLocal)
+{
+    if (GizmoHandle)
+        GizmoHandle->SetLocal(bIsLocal);
+}

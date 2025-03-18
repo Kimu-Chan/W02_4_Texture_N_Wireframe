@@ -40,7 +40,7 @@ FQuat FQuat::EulerToQuaternion(FVector Euler)
     q.Y = cr * sp * cy + sr * cp * sy;
     q.Z = cr * cp * sy - sr * sp * cy;
 
-    return q;
+    return q.Normalize();
 }
 
 FVector FQuat::QuaternionToEuler(const FQuat& Quat) {

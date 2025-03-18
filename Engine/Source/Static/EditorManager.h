@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Engine/GameFrameWork/Actor.h"
 
@@ -17,6 +17,8 @@ public:
     void SetCamera(ACamera* NewCamera);
 
     AGizmoHandle* GetGizmoHandle() const {return GizmoHandle;}
+
+    void ToggleGizmoHandleLocal(bool bIsLocal);
     
 private:
     ACamera* Camera = nullptr;

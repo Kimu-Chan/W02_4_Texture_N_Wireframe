@@ -421,6 +421,19 @@ void UI::RenderPropertyWindow(bool& bOutHovered)
         ImGui::SetWindowPos(ResizeToScreen(Window->Pos));
         ImGui::SetWindowSize(ResizeToScreen(Window->Size));
     }
+
+    if (FEditorManager::Get().GetSelectedActor() == nullptr)
+    {
+        ImGui::Text("No Selected Actor");
+        bOutHovered = ImGui::IsWindowHovered();
+        ImGui::End();
+        return;
+    };
+	bool bIsLocal = FEditorManager::Get().GetGizmoHandle()->bIsLocal;
+	if (ImGui::Checkbox("Local", &bIsLocal))
+	{
+        FEditorManager::Get().ToggleGizmoHandleLocal(bIsLocal);
+	}
     
     AActor* selectedActor = FEditorManager::Get().GetSelectedActor();
     if (selectedActor != nullptr)
@@ -440,6 +453,7 @@ void UI::RenderPropertyWindow(bool& bOutHovered)
         if (ImGui::DragFloat3("Rotation", reinterpret_cast<float*>(&UIEulerAngle), 0.1f))
         {
             FVector DeltaEulerAngle = UIEulerAngle - PrevEulerAngle;
+			UE_LOG("DeltaEulerAngle %f, %f, %f", DeltaEulerAngle.X, DeltaEulerAngle.Y, DeltaEulerAngle.Z);
 
             selectedTransform.Rotate(DeltaEulerAngle);
             selectedActor->SetActorTransform(selectedTransform);

@@ -50,6 +50,14 @@ void AGizmoHandle::Tick(float DeltaTime)
     {
         FTransform GizmoTr = RootComponent->GetComponentTransform();
         GizmoTr.SetPosition(SelectedActor->GetActorTransform().GetPosition());
+		if (bIsLocal)
+		{
+            GizmoTr.SetRotation(SelectedActor->GetActorTransform().GetRotation());
+		}
+        else
+        {
+			GizmoTr.SetRotation(FQuat());
+        }
         SetActorTransform(GizmoTr);
     }
 
