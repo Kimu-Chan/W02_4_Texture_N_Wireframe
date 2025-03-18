@@ -8,6 +8,7 @@ class APlayerController : public TSingleton<APlayerController>
 	
 public :
 	APlayerController();
+	~APlayerController();
 
 	void ProcessPlayerInput(float DeltaTime);
 
@@ -19,10 +20,13 @@ public :
 	float GetMaxSpeed() const { return MaxSpeed; }
 	float GetMinSpeed() const { return MinSpeed; }
 
-	void SetCurrentSpeed(float InSpeed) { CurrentSpeed = InSpeed; }
+	void SetCurrentSpeed(float InSpeed);
 
 	float GetMouseSensitivity() const { return MouseSensitivity; }
-	void SetMouseSensitivity(float InSensitivity) { MouseSensitivity = InSensitivity;}
+	float GetMaxSensitivity() const { return MaxSensitivity; }
+	float GetMinSensitivity() const { return MinSensitivity; }
+	
+	void SetMouseSensitivity(float InSensitivity);
 
 	// TODO: 함수랑 변수 이름 맘에 안듬
 	bool IsUiInput() const { return bUiInput; }
@@ -34,6 +38,8 @@ protected:
 	float MinSpeed;
 
 	float MouseSensitivity;
+	float MaxSensitivity;
+	float MinSensitivity;
 
 	bool bIsHandlingGizmo;
 

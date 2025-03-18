@@ -18,7 +18,6 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	void UpdateConstantPicking(const URenderer& Renderer, FVector4 UUIDColor) const;
-	void UpdateConstantDepth(const URenderer& Renderer, int Depth) const;
 	virtual void Render(URenderer* Renderer);
 
 	EPrimitiveType GetType() { return Type; }

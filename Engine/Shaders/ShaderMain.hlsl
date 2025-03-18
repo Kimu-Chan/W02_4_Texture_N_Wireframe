@@ -22,14 +22,9 @@ cbuffer ChangeOnResizeAndFov : register(b2)
     float FarClip;
 }
 
-cbuffer UUIDColor : register(b3){
+cbuffer UUIDColor : register(b3)
+{
     float4 UUIDColor;
-}
-
-cbuffer Depth : register(b4){
-    int depth;
-    int nearPlane;
-    int farPlane;
 }
 
 ////////
@@ -47,12 +42,6 @@ struct PS_INPUT
     float4 color : COLOR;          // Color to pass to the pixel shader
 };
 
-struct PS_OUTPUT
-{
-    float4 color : SV_TARGET;
-    float depth : SV_Depth;
-};
-
 ////////
 /// Function
 ////////
@@ -68,29 +57,12 @@ PS_INPUT mainVS(VS_INPUT input)
     return output;
 }
 
-PS_OUTPUT mainPS(PS_INPUT input) : SV_TARGET
+float4 mainPS(PS_INPUT input) : SV_TARGET
 {
-    PS_OUTPUT output;
-
-    // 기본 깊이 값 계산 (0.0~1.0)
-    // float baseDepth = input.depthPosition.z / input.depthPosition.w;
-
-    // 색상 설정 (예: 흰색)
-    output.color = input.color;
-    output.depth = saturate(depth);
-    // output.color = float4(depth, depth, depth, 1.0f);
-    
-    return output;
+    return input.color;
 }
 
-float4 outlinePS(PS_INPUT input) : SV_TARGET
+float4 PickingPS(PS_INPUT input) : SV_TARGET
 {
-    // Output the color directly
-    return float4(1.0f, 0.647f, 0.0f, 0.1f);
-}
-
-PS_OUTPUT PickingPS(PS_INPUT input):SV_TARGET{
-    PS_OUTPUT output;
-    output.color = UUIDColor;
-    return output;
+    return UUIDColor;
 }
