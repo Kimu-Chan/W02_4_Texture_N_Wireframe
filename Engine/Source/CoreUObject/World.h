@@ -40,6 +40,7 @@ public:
 	void RenderPickingTexture(URenderer& Renderer);
 	void DisplayPickingTexture(URenderer& Renderer);
 	void RenderMainTexture(URenderer& Renderer);
+	void RenderMesh(URenderer& Renderer);
 	void RenderBoundingBoxes(URenderer& Renderer);
 	void RenderWorldGrid(URenderer& Renderer);
 	void RenderDebugLines(URenderer& Renderer, float DeltaTime);

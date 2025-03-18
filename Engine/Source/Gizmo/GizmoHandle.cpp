@@ -15,63 +15,150 @@ AGizmoHandle::AGizmoHandle()
 	bUseBoundingBox = true;
 	bRenderBoundingBox = false;
 
-    /*
-	// !NOTE : Z방향으로 서있음
-	// z
-	UCylinderComp* ZArrow = AddComponent<UCylinderComp>();
-	ZArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), FVector(1, 1, 1)));
-	ZArrow->SetCustomColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
-	CylinderComponents.Add(ZArrow);
+    USceneComponent* Root = AddComponent<USceneComponent>();
+    RootComponent = Root;
 
+    InitTranslationGizmo();
+    InitRotationGizmo();
+    InitScaleGizmo();
+
+    OnGizmoTypeChanged(GizmoType);
+    
+    SetActive(false);
+}
+
+void AGizmoHandle::InitTranslationGizmo()
+{
     // x
-    UCylinderComp* XArrow = AddComponent<UCylinderComp>();
-    XArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 90.0f, 0.0f), FVector(1, 1, 1)));
-    XArrow->SetCustomColor(FVector4(1.0f, 0.0f, 0.0f, 1.0f));
-    CylinderComponents.Add(XArrow);
+    UMeshComponent* TranslationX = AddComponent<UMeshComponent>();
+    TranslationX->SetMeshName("GizmoTranslation");
+    TranslationX->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), GizmoScale));
+    TranslationX->SetCustomColor(FVector4(1.0f, 0.0f, 0.0f, 1.0f));
+    AllGizmos.Add(TranslationX);
+    TranslationGizmos.Add(TranslationX);
+    TranslationX->SetupAttachment(RootComponent);
 
     // y
-    UCylinderComp* YArrow = AddComponent<UCylinderComp>();
-    YArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(-90.0f, 0.0f, 0.0f), FVector(1, 1, 1)));
-    YArrow->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
-    CylinderComponents.Add(YArrow);
-    RootComponent = ZArrow;
-
-    XArrow->SetupAttachment(ZArrow);
-    YArrow->SetupAttachment(ZArrow);
-    UEngine::Get().GetWorld()->AddZIgnoreComponent(ZArrow);
-    UEngine::Get().GetWorld()->AddZIgnoreComponent(XArrow);
-    UEngine::Get().GetWorld()->AddZIgnoreComponent(YArrow);
-    */
-
-    // x
-    UMeshComponent* XArrow = AddComponent<UMeshComponent>();
-    XArrow->SetMeshName("GizmoTranslation");
-    XArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), FVector(1, 1, 1)));
-    XArrow->SetCustomColor(FVector4(1.0f, 0.0f, 0.0f, 1.0f));
-    Gizmos.Add(XArrow);
-    RootComponent = XArrow;
-
-    // y
-    UMeshComponent* YArrow = AddComponent<UMeshComponent>();
-    YArrow->SetMeshName("GizmoTranslation");
-    YArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 90.0f), FVector(1, 1, 1)));
-    YArrow->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
-    Gizmos.Add(YArrow);
-    YArrow->SetupAttachment(XArrow);
+    UMeshComponent* TranslationY = AddComponent<UMeshComponent>();
+    TranslationY->SetMeshName("GizmoTranslation");
+    TranslationY->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 90.0f), GizmoScale));
+    TranslationY->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
+    AllGizmos.Add(TranslationY);
+    TranslationGizmos.Add(TranslationY);
+    TranslationY->SetupAttachment(RootComponent);
 
     // z
-    UMeshComponent* ZArrow = AddComponent<UMeshComponent>();
-    ZArrow->SetMeshName("GizmoTranslation");
-    ZArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, -90.0f, 0.0f), FVector(1, 1, 1)));
-    ZArrow->SetCustomColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
-    Gizmos.Add(ZArrow);
-    ZArrow->SetupAttachment(XArrow);
+    UMeshComponent* TranslationZ = AddComponent<UMeshComponent>();
+    TranslationZ->SetMeshName("GizmoTranslation");
+    TranslationZ->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, -90.0f, 0.0f), GizmoScale));
+    TranslationZ->SetCustomColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
+    AllGizmos.Add(TranslationZ);
+    TranslationGizmos.Add(TranslationZ);
+    TranslationZ->SetupAttachment(RootComponent);
 
-    UEngine::Get().GetWorld()->AddZIgnoreComponent(ZArrow);
-    UEngine::Get().GetWorld()->AddZIgnoreComponent(XArrow);
-    UEngine::Get().GetWorld()->AddZIgnoreComponent(YArrow);
+    UEngine::Get().GetWorld()->AddZIgnoreComponent(TranslationX);
+    UEngine::Get().GetWorld()->AddZIgnoreComponent(TranslationY);
+    UEngine::Get().GetWorld()->AddZIgnoreComponent(TranslationZ);
+}
 
-    SetActive(false);
+void AGizmoHandle::InitRotationGizmo()
+{
+    // x
+    UMeshComponent* RotationX = AddComponent<UMeshComponent>();
+    RotationX->SetMeshName("GizmoRotation");
+    RotationX->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), GizmoScale));
+    RotationX->SetCustomColor(FVector4(1.0f, 0.0f, 0.0f, 1.0f));
+    AllGizmos.Add(RotationX);
+    RotationGizmos.Add(RotationX);
+    RotationX->SetupAttachment(RootComponent);
+
+    // y
+    UMeshComponent* RotationY = AddComponent<UMeshComponent>();
+    RotationY->SetMeshName("GizmoRotation");
+    RotationY->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(90.0f, 0.0f, 90.0f), GizmoScale));
+    RotationY->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
+    AllGizmos.Add(RotationY);
+    RotationGizmos.Add(RotationY);
+    RotationY->SetupAttachment(RootComponent);
+
+    // z
+    UMeshComponent* RotationZ = AddComponent<UMeshComponent>();
+    RotationZ->SetMeshName("GizmoRotation");
+    RotationZ->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, -90.0f, -90.0f), GizmoScale));
+    RotationZ->SetCustomColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
+    AllGizmos.Add(RotationZ);
+    RotationGizmos.Add(RotationZ);
+    RotationZ->SetupAttachment(RootComponent);
+
+    UEngine::Get().GetWorld()->AddZIgnoreComponent(RotationZ);
+    UEngine::Get().GetWorld()->AddZIgnoreComponent(RotationX);
+    UEngine::Get().GetWorld()->AddZIgnoreComponent(RotationY);
+}
+
+void AGizmoHandle::InitScaleGizmo()
+{
+    // x
+    UMeshComponent* ScaleX = AddComponent<UMeshComponent>();
+    ScaleX->SetMeshName("GizmoScale");
+    ScaleX->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), GizmoScale));
+    ScaleX->SetCustomColor(FVector4(1.0f, 0.0f, 0.0f, 1.0f));
+    AllGizmos.Add(ScaleX);
+    ScaleGizmos.Add(ScaleX);
+    ScaleX->SetupAttachment(RootComponent);
+
+    // y
+    UMeshComponent* ScaleY = AddComponent<UMeshComponent>();
+    ScaleY->SetMeshName("GizmoScale");
+    ScaleY->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 90.0f), GizmoScale));
+    ScaleY->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
+    AllGizmos.Add(ScaleY);
+    ScaleGizmos.Add(ScaleY);
+    ScaleY->SetupAttachment(RootComponent);
+
+    // z
+    UMeshComponent* ScaleZ = AddComponent<UMeshComponent>();
+    ScaleZ->SetMeshName("GizmoScale");
+    ScaleZ->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, -90.0f, 0.0f), GizmoScale));
+    ScaleZ->SetCustomColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
+    AllGizmos.Add(ScaleZ);
+    ScaleGizmos.Add(ScaleZ);
+    ScaleZ->SetupAttachment(RootComponent);
+
+    UEngine::Get().GetWorld()->AddZIgnoreComponent(ScaleZ);
+    UEngine::Get().GetWorld()->AddZIgnoreComponent(ScaleX);
+    UEngine::Get().GetWorld()->AddZIgnoreComponent(ScaleY);
+}
+
+void AGizmoHandle::OnGizmoTypeChanged(EGizmoType NewGizmoType)
+{
+    for (auto& Gizmo : AllGizmos)
+    {
+        Gizmo->SetCanBeRendered(false);
+    }
+
+    switch (NewGizmoType)
+    {
+    case EGizmoType::Translate:
+        for (auto& Gizmo : TranslationGizmos)
+        {
+            Gizmo->SetCanBeRendered(true);
+        }
+        break;
+    case EGizmoType::Rotate:
+        for (auto& Gizmo : RotationGizmos)
+        {
+            Gizmo->SetCanBeRendered(true);
+        }
+        break;
+    case EGizmoType::Scale:
+        for (auto& Gizmo : ScaleGizmos)
+        {
+            Gizmo->SetCanBeRendered(true);
+        }
+        break;
+    default:
+        break;
+    }
 }
 
 void AGizmoHandle::Tick(float DeltaTime)
@@ -155,6 +242,7 @@ void AGizmoHandle::Tick(float DeltaTime)
         int type = static_cast<int>(GizmoType);
         type = (type + 1) % static_cast<int>(EGizmoType::Max);
         GizmoType = static_cast<EGizmoType>(type);
+        OnGizmoTypeChanged(GizmoType);
     }
 
 }
@@ -188,9 +276,16 @@ void AGizmoHandle::SetScaleByDistance()
 void AGizmoHandle::SetActive(bool bActive)
 {
     bIsActive = bActive;
-    for (auto& Cylinder : Gizmos)
+    if (bActive)
     {
-        Cylinder->SetCanBeRendered(bActive);
+        OnGizmoTypeChanged(GizmoType);
+    }
+    else
+    {
+        for (auto& Gizmo : AllGizmos)
+        {
+            Gizmo->SetCanBeRendered(bActive);
+        }
     }
 }
 

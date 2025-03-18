@@ -317,16 +317,7 @@ void URenderer::RenderBox(const FBox& Box, const FVector4& Color)
 void URenderer::RenderMesh(class UMeshComponent* MeshComp)
 {
     FName MeshName = MeshComp->GetMeshName();
-    FString MeshNameString = MeshName.ToString();
-
-    PrepareMesh();
-    PrepareMeshShader();
-
-    /**
-     * TODO: 여기에서 prepare하면 각 메시 컴포넌트마다 prepare 단계를 거치게 됨.
-     *   버텍스 및 인덱스 버퍼 가져와서 세팅.
-     *   월드 매트릭스 설정
-     */
+    
     FStaticMeshBufferInfo Info = BufferCache->GetStaticMeshBufferInfo(MeshName);
     ID3D11Buffer* VertexBuffer = Info.VertexBufferInfo.GetVertexBuffer();
     ID3D11Buffer* IndexBuffer = Info.IndexBufferInfo.GetIndexBuffer();
@@ -1383,8 +1374,7 @@ FVector4 URenderer::GetPixel(int32 X, int32 Y)
         color.W = static_cast<float>(pixelData[3]); // A
     }
 
-    std::cout << "X: " << (int)color.X << " Y: " << (int)color.Y
-        << " Z: " << color.Z << " A: " << color.W << "/n";
+    std::cout << "X: " << (int)color.X << " Y: " << (int)color.Y << " Z: " << color.Z << " A: " << color.W << std::endl;
 
     // 6. 매핑 해제 및 정리
     DeviceContext->Unmap(PickingFrameBufferStaging, 0);

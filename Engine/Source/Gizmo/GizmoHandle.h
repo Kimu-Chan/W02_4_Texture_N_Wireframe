@@ -34,8 +34,20 @@ public:
 	EGizmoType GetGizmoType() const { return GizmoType; }
 
 private:
+	void InitTranslationGizmo();
+	void InitRotationGizmo();
+	void InitScaleGizmo();
+
+	void OnGizmoTypeChanged(EGizmoType NewGizmoType);
+
+	FVector GizmoScale = FVector(0.5f, 0.5f, 0.5f);
+	
 	bool bIsActive = false;
-	TArray<class UMeshComponent*> Gizmos;
+	TArray<class UMeshComponent*> AllGizmos;
+
+	TArray<UMeshComponent*> TranslationGizmos;
+	TArray<UMeshComponent*> RotationGizmos;
+	TArray<UMeshComponent*> ScaleGizmos;
 
 	ESelectedAxis SelectedAxis = ESelectedAxis::None;
 	EGizmoType GizmoType = EGizmoType::Translate;
@@ -47,4 +59,5 @@ private:
 	void DoTransform(FTransform& AT, FVector Result, AActor* Actor);
 	FVector CachedRayResult = FVector::ZeroVector;
 };
+
 

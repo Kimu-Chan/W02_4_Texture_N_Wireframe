@@ -3,7 +3,7 @@
 
 class UMeshComponent : public UPrimitiveComponent
 {
-    UCLASS(USceneComponent, UMeshComponent);
+    UCLASS(UMeshComponent, UPrimitiveComponent);
     using Super = UPrimitiveComponent;
 public:
     UMeshComponent() = default;
