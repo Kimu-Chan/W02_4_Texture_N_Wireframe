@@ -89,7 +89,7 @@ public:
         if (node->bIsSelected)
         {
             if (ImGui::IsWindowFocused())
-				FEditorManager::Get().SelectActor(node->Actor);
+				FEditorManager::Get().SelectComponent(node->Actor->GetRootComponent());
             node_flags |= ImGuiTreeNodeFlags_Selected;
         }
         else
