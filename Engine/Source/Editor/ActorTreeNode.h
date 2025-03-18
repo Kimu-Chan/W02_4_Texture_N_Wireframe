@@ -4,6 +4,7 @@
 #include "Engine/GameFrameWork/Actor.h"
 #include "CoreUObject/Components/PrimitiveComponent.h"
 #include "Static/EditorManager.h"
+#include "Engine.h"
 #include "ImGui/imgui.h"
 
 class ActorTreeNode
@@ -76,6 +77,7 @@ public:
 
     static void DisplayNode(ActorTreeNode* node, ImGuiSelectionBasicStorage* selection)
     {
+        if (node->Actor && node->Actor->IsGizmoActor()) return;
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(3);
         const bool is_folder = (!node->Children.IsEmpty());
@@ -88,7 +90,10 @@ public:
         node->bIsSelected = selection->Contains(node->GetUUID());
         if (node->bIsSelected)
         {
-            if (ImGui::IsWindowFocused())
+            ////////////////////////////////////////////
+            //       아래에 Pick() 함수를 삽입       //
+            ////////////////////////////////////////////
+            if (ImGui::IsWindowFocused() && UEngine::Get().GetObjectByUUID(node->UUID)->IsA<AActor>())   // 에디터 조작중 && Parent 존재 시 (a.k.a World가 아닌 경우)
 				FEditorManager::Get().SelectComponent(node->Actor->GetRootComponent());
             node_flags |= ImGuiTreeNodeFlags_Selected;
         }
@@ -108,7 +113,7 @@ public:
             ImGui::TableSetColumnIndex(0);
             ImGui::PushID(node);
             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
-            ImGui::Checkbox("##bVisible", &node->bVisibility);
+            ImGui::Checkbox("##bVisible", &node->bVisibility);  //TODO: 체크박스는 네비게이션에서 제외할 것
             ImGui::PopStyleVar();
             ImGui::PopID();
             ImGui::TableSetColumnIndex(4);
