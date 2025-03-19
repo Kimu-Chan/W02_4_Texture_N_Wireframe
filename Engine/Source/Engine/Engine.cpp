@@ -355,7 +355,7 @@ UObject* UEngine::GetObjectByUUID(uint32 InUUID) const
     return nullptr;
 }
 
-bool UEngine::LoadTexture(const std::wstring& Name, const std::wstring& FileName, int32 Rows, int32 Columns)
+bool UEngine::LoadTexture(const FName& Name, const FString& FileName, int32 Rows, int32 Columns)
 {
 	if (TextureLoaderInstance)
 	{
@@ -364,7 +364,7 @@ bool UEngine::LoadTexture(const std::wstring& Name, const std::wstring& FileName
     return false;
 }
 
- TextureInfo* UEngine::GetTextureInfo(const std::wstring& Name) const
+ TextureInfo* UEngine::GetTextureInfo(const FName& Name) const
 {
     if (TextureLoaderInstance)
     {

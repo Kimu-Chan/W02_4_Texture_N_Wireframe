@@ -3,6 +3,7 @@
 #define RESOURCE_PATH L"Resources/"
 
 
+
 struct TextureInfo
 {
 	ID3D11ShaderResourceView* ShaderResourceView;
@@ -16,15 +17,15 @@ public:
 	TextureLoader(ID3D11Device* InDevice, ID3D11DeviceContext* InContext);
 	~TextureLoader();
 
-	bool LoadTexture(const std::wstring& Name, const std::wstring& FileName, int32 InRows, int32 InColumns);
-	TextureInfo* GetTextureInfo(const std::wstring& Name);
+	bool LoadTexture(const FName& Name, const FString& FileName, int32 InRows, int32 InColumns);
+	TextureInfo* GetTextureInfo(const FName& Name);
 	void ReleaseTextures();
 
 private:
 	ID3D11Device* Device;
 	ID3D11DeviceContext* Context;
-	std::unordered_map<std::wstring, TextureInfo> TextureMap;
+	std::unordered_map<FName, TextureInfo> TextureMap;
 
-	std::wstring GetFullPath(const std::wstring& FileName) const;
+	FString GetFullPath(const FString& FileName) const;
 };
 
