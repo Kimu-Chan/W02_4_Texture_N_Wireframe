@@ -9,10 +9,12 @@ UTextBillboard::UTextBillboard()
 
 void UTextBillboard::BeginPlay()
 {
-	Super::BeginPlay();
+	// Super::BeginPlay(); // TODO: 부모인 UBillboard와 UTextBillboard의 동작이 달라서 발생하는 문제
 
 	int32 VertexCount = TextString.size() * 6;
 	UEngine::Get().GetRenderer()->CreateTextVertexBuffer(VertexCount);
+
+	GetOwner()->GetWorld()->AddTextBillboardComponent(this);
 }
 
 void UTextBillboard::Render(class URenderer* Renderer)
@@ -28,6 +30,11 @@ void UTextBillboard::Render(class URenderer* Renderer)
 	Renderer->GetDeviceContext()->PSSetShaderResources(0, 1, &Texture);
 	Renderer->UpdateTextConstantBuffer(GetWorldTransform().GetMatrix());
 	Renderer->RenderTextBillboard(TextString, TotalCols, TotalRows);
+}
+
+void UTextBillboard::EndPlay(const EEndPlayReason::Type Reason)
+{
+	GetOwner()->GetWorld()->RemoveBillboardComponent(this);
 }
 
 void UTextBillboard::SetText(const std::wstring& InString)

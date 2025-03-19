@@ -1179,7 +1179,7 @@ void URenderer::UpdateTextVertexBuffer(const std::wstring& TextString, float Tot
             Vertices[Index++] = FVertexUV(0.f, StartY + CharWidth, StartZ, U0, V1);	                // 오른쪽 아래
 
             Vertices[Index++] = FVertexUV(0.f, StartY, StartZ + CharHeight, U1, V0);				// 왼쪽 위                      
-            Vertices[Index++] = FVertexUV(0.f, StartY + CharWidth, StartZ, U0, V1);;	            // 오른쪽 아래
+            Vertices[Index++] = FVertexUV(0.f, StartY + CharWidth, StartZ, U0, V1);	            // 오른쪽 아래
             Vertices[Index++] = FVertexUV(0.f, StartY + CharWidth, StartZ + CharHeight, U0, V0);	// 오른쪽 위
             
 
@@ -1192,10 +1192,7 @@ void URenderer::UpdateTextVertexBuffer(const std::wstring& TextString, float Tot
 void URenderer::RenderTextBillboard(const std::wstring& TextString, float TotalCols, float TotalRows)
 {
 	UpdateTextVertexBuffer(TextString, TotalCols, TotalRows);
-
-    UINT Stride = sizeof(FVertexUV);
-    UINT Offset = 0;
-    DeviceContext->IASetVertexBuffers(0, 1, &TextVertexBuffer, &Stride, &Offset);
+    
 	DeviceContext->Draw(TextString.size() * 6, 0);
 }
 
@@ -1215,6 +1212,21 @@ void URenderer::UpdateTextConstantBuffer(const FMatrix& World)
     BufferData->bIsText = 1;
 
     DeviceContext->Unmap(TextureConstantBuffer, 0);
+}
+
+void URenderer::PrepareTextBillboard()
+{
+    UINT Stride = sizeof(FVertexUV);
+    UINT Offset = 0;
+    DeviceContext->IASetVertexBuffers(0, 1, &TextVertexBuffer, &Stride, &Offset);
+    DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    DeviceContext->IASetInputLayout(ShaderCache->GetInputLayout(L"ShaderTexture"));
+    DeviceContext->VSSetShader(ShaderCache->GetVertexShader(L"ShaderTexture"), nullptr, 0);
+    DeviceContext->PSSetShader(ShaderCache->GetPixelShader(L"ShaderTexture"), nullptr, 0);
+    DeviceContext->PSSetSamplers(0, 1, &SamplerState);
+    DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);
+
+    DeviceContext->OMSetBlendState(TextureBlendState, nullptr, 0xffffffff);
 }
 
 void URenderer::AdjustDebugLineVertexBuffer(uint32 LineNum)
