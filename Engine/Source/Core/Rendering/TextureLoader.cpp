@@ -16,8 +16,9 @@ TextureLoader::~TextureLoader()
 bool TextureLoader::LoadTexture(const FName& Name, const FString& FileName, int32 InRows, int32 InColumns)
 {
     // 맵 확인
-    std::unordered_map<FName, TextureInfo>::iterator iter = TextureMap.find(Name);
-    if (iter != TextureMap.end())
+    TextureInfo* Info = TextureMap.Find(Name);
+
+    if (Info)
     {
         return true;
     }
@@ -26,40 +27,36 @@ bool TextureLoader::LoadTexture(const FName& Name, const FString& FileName, int3
 
     // DirectX 텍스처 로드
     ID3D11ShaderResourceView* ShaderResourceView;
-    HRESULT Result = DirectX::CreateWICTextureFromFile(Device, Context, *FullPath , nullptr, &ShaderResourceView);
+    HRESULT Result = DirectX::CreateWICTextureFromFile(Device, Context, FullPath.c_wchar(), nullptr, &ShaderResourceView);
 	if (FAILED(Result))
 	{
 		return false;
 	}
     
     // 텍스처 정보 추가
-    TextureInfo Info;
-    Info.Rows = InRows;
-    Info.Cols = InColumns;
-	Info.ShaderResourceView = ShaderResourceView;
+    TextureInfo NewInfo;
+    NewInfo.Rows = InRows;
+    NewInfo.Cols = InColumns;
+    NewInfo.ShaderResourceView = ShaderResourceView;
     
-    TextureMap[Name] = Info;
+    TextureMap[Name] = NewInfo;
 
     return true;
 }
 
 TextureInfo* TextureLoader::GetTextureInfo(const FName& Name)
 {
-    std::unordered_map<FName, TextureInfo>::iterator iter = TextureMap.find(Name);
-    if (TextureMap.end() != iter)
-    {
-        return &iter->second;
-    }
-    return nullptr;
+    TextureInfo* Info = TextureMap.Find(Name);
+    return Info;
 }
 
 void TextureLoader::ReleaseTextures()
 {
 	for (auto& Pair : TextureMap)
 	{
-		Pair.second.ShaderResourceView->Release();
+		Pair.Value.ShaderResourceView->Release();
 	}
-	TextureMap.clear();
+    TextureMap.Empty();
 }
 
 FString TextureLoader::GetFullPath(const FString& FileName) const

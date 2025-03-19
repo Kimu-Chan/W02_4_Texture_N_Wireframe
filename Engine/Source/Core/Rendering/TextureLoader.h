@@ -1,8 +1,7 @@
 #pragma once
 
 #define RESOURCE_PATH L"Resources/"
-
-
+#include "Container/Map.h"
 
 struct TextureInfo
 {
@@ -24,7 +23,7 @@ public:
 private:
 	ID3D11Device* Device;
 	ID3D11DeviceContext* Context;
-	std::unordered_map<FName, TextureInfo> TextureMap;
+	TMap<FName, TextureInfo> TextureMap;
 
 	FString GetFullPath(const FString& FileName) const;
 };
