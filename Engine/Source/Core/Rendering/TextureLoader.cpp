@@ -54,6 +54,10 @@ TextureInfo* TextureLoader::GetTextureInfo(const std::wstring& Name)
 
 void TextureLoader::ReleaseTextures()
 {
+	for (auto& Pair : TextureMap)
+	{
+		Pair.second.ShaderResourceView->Release();
+	}
 	TextureMap.clear();
 }
 
