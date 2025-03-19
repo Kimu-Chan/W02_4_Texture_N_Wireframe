@@ -123,6 +123,7 @@ void URenderer::CreateConstantBuffer()
     DeviceContext->PSSetConstantBuffers(1, 1, &CbChangeOnCameraMove);
     DeviceContext->PSSetConstantBuffers(2, 1, &CbChangeOnResizeAndFov);
     DeviceContext->PSSetConstantBuffers(3, 1, &ConstantPickingBuffer);
+    DeviceContext->PSSetConstantBuffers(5, 1, &TextureConstantBuffer);
 }
 
 void URenderer::ReleaseConstantBuffer()

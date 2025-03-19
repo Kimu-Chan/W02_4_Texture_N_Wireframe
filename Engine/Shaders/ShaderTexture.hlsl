@@ -45,16 +45,19 @@ float4 mainPS(PS_INPUT input) : SV_TARGET
 {
     float4 Color = TextureMap.Sample(SampleType, input.Tex);
     
-    float Threshold = 0.1f;
-    
-    if (Color.r < Threshold && Color.g < Threshold && Color.b < Threshold)
+    float Threshold = 0.5f;
+
+    if (bIsText)
     {
-        Color.a = 0.f;
-    }
-    else
-    {
-        Color.a = 1.f;
+        if (Color.r < Threshold && Color.g < Threshold && Color.b < Threshold)
+        {
+            Color.a = 0.f;
+        }
+        else
+        {
+            Color.a = 1.f;
+        }
     }
     
-    return pow(Color, 2);
+    return pow(Color, 1.5);
 }
