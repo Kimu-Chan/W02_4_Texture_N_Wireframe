@@ -39,7 +39,7 @@ public:
 	void PrepareRender();
 
 	/** 셰이더를 준비 합니다. */
-	void PrepareShader() const;
+	void PrepareMainShader() const;
 
 	void RenderPrimitive(class UPrimitiveComponent* PrimitiveComp);
 

@@ -53,7 +53,7 @@ void URenderer::CreateShader()
         return;
     }
 
-	ShaderCache->CreateShaders(ShaderCache->GetShaderNames(L"Shaders"));
+    ShaderCache->CreateShaders(ShaderCache->GetShaderNames(TEXT("Shaders")));
 
     // unit byte
     Stride = sizeof(FVertexSimple);
@@ -197,12 +197,12 @@ void URenderer::PrepareRender()
     DeviceContext->OMSetBlendState(nullptr, nullptr, 0xffffffff);
 }
 
-void URenderer::PrepareShader() const
+void URenderer::PrepareMainShader() const
 {
     // 기본 셰이더랑 InputLayout을 설정
-	ID3D11VertexShader* MainVertexShader = ShaderCache->GetVertexShader(L"ShaderMain");
-	ID3D11PixelShader* MainPixelShader = ShaderCache->GetPixelShader(L"ShaderMain");
-	ID3D11InputLayout* MainInputLayout = ShaderCache->GetInputLayout(L"ShaderMain");
+	ID3D11VertexShader* MainVertexShader = ShaderCache->GetVertexShader(TEXT("ShaderMain"));
+    ID3D11PixelShader* MainPixelShader = ShaderCache->GetPixelShader(TEXT("ShaderMain"));
+    ID3D11InputLayout* MainInputLayout = ShaderCache->GetInputLayout(TEXT("ShaderMain"));
     DeviceContext->VSSetShader(MainVertexShader, nullptr, 0);
     DeviceContext->PSSetShader(MainPixelShader, nullptr, 0);
     DeviceContext->IASetInputLayout(MainInputLayout);
@@ -267,7 +267,7 @@ void URenderer::RenderPrimitiveInternal(ID3D11Buffer* VertexBuffer, ID3D11Buffer
 
 void URenderer::RenderBox(const FBox& Box, const FVector4& Color)
 {
-    PrepareShader();
+    PrepareMainShader();
     // 월드변환이 이미 돼있다
     ConstantUpdateInfo UpdateInfo
     {
@@ -347,13 +347,13 @@ void URenderer::PrepareMesh()
     DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);                // DepthStencil 상태 설정. StencilRef: 스텐실 테스트 결과의 레퍼런스
     DeviceContext->OMSetRenderTargets(1, &FrameBufferRTV, DepthStencilView);
     DeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
-    DeviceContext->IASetInputLayout(ShaderCache->GetInputLayout(L"ShaderMesh"));
+    DeviceContext->IASetInputLayout(ShaderCache->GetInputLayout(TEXT("ShaderMesh")));
 }
 
 void URenderer::PrepareMeshShader()
 {
-    DeviceContext->VSSetShader(ShaderCache->GetVertexShader(L"ShaderMesh"), nullptr, 0);
-    DeviceContext->PSSetShader(ShaderCache->GetPixelShader(L"ShaderMesh"), nullptr, 0);
+    DeviceContext->VSSetShader(ShaderCache->GetVertexShader(TEXT("ShaderMesh")), nullptr, 0);
+    DeviceContext->PSSetShader(ShaderCache->GetPixelShader(TEXT("ShaderMesh")), nullptr, 0);
 }
 
 void URenderer::PrepareWorldGrid()
@@ -367,9 +367,9 @@ void URenderer::PrepareWorldGrid()
     
     DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 
-	ID3D11VertexShader* ShaderGridVS = ShaderCache->GetVertexShader(L"ShaderGrid");
-	ID3D11PixelShader* ShaderGridPS = ShaderCache->GetPixelShader(L"ShaderGrid");
-	ID3D11InputLayout* InputLayoutGrid = ShaderCache->GetInputLayout(L"ShaderGrid");
+	ID3D11VertexShader* ShaderGridVS = ShaderCache->GetVertexShader(TEXT("ShaderGrid"));
+	ID3D11PixelShader* ShaderGridPS = ShaderCache->GetPixelShader(TEXT("ShaderGrid"));
+	ID3D11InputLayout* InputLayoutGrid = ShaderCache->GetInputLayout(TEXT("ShaderGrid"));
 
 	DeviceContext->VSSetShader(ShaderGridVS, nullptr, 0);
 	DeviceContext->PSSetShader(ShaderGridPS, nullptr, 0);
@@ -1090,9 +1090,9 @@ void URenderer::PrepareBillboard()
     UINT Offset = 0;
     DeviceContext->IASetVertexBuffers(0, 1, &TextureVertexBuffer, &Stride, &Offset);
     DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    DeviceContext->IASetInputLayout(ShaderCache->GetInputLayout(L"ShaderTexture"));
-    DeviceContext->VSSetShader(ShaderCache->GetVertexShader(L"ShaderTexture"), nullptr, 0);
-    DeviceContext->PSSetShader(ShaderCache->GetPixelShader(L"ShaderTexture"), nullptr, 0);
+    DeviceContext->IASetInputLayout(ShaderCache->GetInputLayout(TEXT("ShaderTexture")));
+    DeviceContext->VSSetShader(ShaderCache->GetVertexShader(TEXT("ShaderTexture")), nullptr, 0);
+    DeviceContext->PSSetShader(ShaderCache->GetPixelShader(TEXT("ShaderTexture")), nullptr, 0);
     DeviceContext->PSSetSamplers(0, 1, &SamplerState);
     DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);
 
@@ -1307,9 +1307,9 @@ void URenderer::PrepareDebugLines()
     
     DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
     
-	ID3D11InputLayout* InputLayout = ShaderCache->GetInputLayout(L"ShaderMain");
-	ID3D11VertexShader* VertexShader = ShaderCache->GetVertexShader(L"ShaderDebugLine");
-	ID3D11PixelShader* PixelShader = ShaderCache->GetPixelShader(L"ShaderDebugLine");
+	ID3D11InputLayout* InputLayout = ShaderCache->GetInputLayout(TEXT("ShaderMain"));
+	ID3D11VertexShader* VertexShader = ShaderCache->GetVertexShader(TEXT("ShaderDebugLine"));
+	ID3D11PixelShader* PixelShader = ShaderCache->GetPixelShader(TEXT("ShaderDebugLine"));
 
     DeviceContext->IASetInputLayout(InputLayout);
     DeviceContext->VSSetShader(VertexShader, nullptr, 0);
@@ -1407,7 +1407,7 @@ void URenderer::PreparePicking()
 
 void URenderer::PreparePickingShader() const
 {
-	ID3D11PixelShader* PickingPixelShader = ShaderCache->GetPixelShader(L"ShaderPicking");
+    ID3D11PixelShader* PickingPixelShader = ShaderCache->GetPixelShader(TEXT("ShaderPicking"));
     DeviceContext->PSSetShader(PickingPixelShader, nullptr, 0);
 
 }
@@ -1440,13 +1440,13 @@ void URenderer::PrepareMain()
     DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);                // DepthStencil 상태 설정. StencilRef: 스텐실 테스트 결과의 레퍼런스
     DeviceContext->OMSetRenderTargets(1, &FrameBufferRTV, DepthStencilView);
     DeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
-    DeviceContext->IASetInputLayout(ShaderCache->GetInputLayout(L"ShaderMain"));
+    DeviceContext->IASetInputLayout(ShaderCache->GetInputLayout(TEXT("ShaderMain")));
 }
 
 void URenderer::PrepareMainShader()
 {
-    DeviceContext->VSSetShader(ShaderCache->GetVertexShader(L"ShaderMain"), nullptr, 0);
-    DeviceContext->PSSetShader(ShaderCache->GetPixelShader(L"ShaderMain"), nullptr, 0);
+    DeviceContext->VSSetShader(ShaderCache->GetVertexShader(TEXT("ShaderMain")), nullptr, 0);
+    DeviceContext->PSSetShader(ShaderCache->GetPixelShader(TEXT("ShaderMain")), nullptr, 0);
 }
 
 FVector4 URenderer::GetPixel(int32 X, int32 Y)

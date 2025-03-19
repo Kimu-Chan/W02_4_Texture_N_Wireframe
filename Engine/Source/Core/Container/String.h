@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Core/HAL/ContainerAllocator.h"
 #include "CString.h"
@@ -74,9 +74,12 @@ public:
 
 	explicit FString(BaseStringType InString) : PrivateString(std::move(InString)) {}
 
-#if IS_WIDECHAR
 private:
+	// WIDECHAR 사용처에서 사용할 수 있도록
 	static std::wstring ConvertWideChar(const ANSICHAR* NarrowStr);
+	// ANSICHAR 사용처에서 사용할 수 있도록
+	static std::string ConvertMultibyte(const WIDECHAR* WideStr);
+#if IS_WIDECHAR
 
 public:
 	FString(const std::wstring& InString) : PrivateString(InString) {}
@@ -91,6 +94,13 @@ public:
 
 	static FString FromInt(int32 Num);
 	static FString SanitizeFloat(float InFloat);
+
+	// 반드시 const char*를 반환하는 함수
+	FORCEINLINE const char* c_char() const;
+	FORCEINLINE const wchar_t* c_wchar() const;
+
+	// findlastof
+	FORCEINLINE size_t FindLastOf(const TCHAR* Char) const;
 
 public:
 	FORCEINLINE int32 Len() const;
@@ -207,7 +217,9 @@ public:
 	FORCEINLINE const TCHAR* operator*() const;
 
 	FORCEINLINE FString operator+(const FString& SubStr) const;
+	FORCEINLINE FString operator+(const TCHAR* Rhs) const;
 	FORCEINLINE FString& operator+=(const FString& SubStr);
+	FORCEINLINE FString& operator+=(const TCHAR* Rhs);
 	FORCEINLINE friend FString operator+(const FString& Lhs, const FString& Rhs);
 
 	FORCEINLINE bool operator==(const FString& Rhs) const;
@@ -216,8 +228,15 @@ public:
 	/** n번째 위치의 문자를 가져오는 연산자 오버로딩 */
 	FORCEINLINE TCHAR& operator[](const size_t Index);
 	FORCEINLINE const TCHAR& operator[](const size_t Index) const;
+
+
 };
 
+
+inline size_t FString::FindLastOf(const TCHAR* Char) const
+{
+	return PrivateString.find_last_of(Char);
+}
 
 FORCEINLINE int32 FString::Len() const
 {
@@ -237,6 +256,11 @@ FORCEINLINE const TCHAR* FString::operator*() const
 FORCEINLINE FString FString::operator+(const FString& SubStr) const
 {
 	return static_cast<FString>(this->PrivateString + SubStr.PrivateString);
+}
+
+inline FString FString::operator+(const TCHAR* Rhs) const
+{
+	return static_cast<FString>(this->PrivateString + Rhs);
 }
 
 FString operator+(const FString& Lhs, const FString& Rhs)
@@ -261,6 +285,12 @@ FORCEINLINE FString& FString::operator+=(const FString& SubStr)
 	return *this;
 }
 
+FORCEINLINE FString& FString::operator+=(const TCHAR* Rhs)
+{
+	this->PrivateString += Rhs;
+	return *this;
+}
+
 FORCEINLINE TCHAR& FString::operator[](const size_t Index)
 {
 	return PrivateString[Index];
@@ -269,6 +299,28 @@ FORCEINLINE TCHAR& FString::operator[](const size_t Index)
 FORCEINLINE const TCHAR& FString::operator[](const size_t Index) const
 {
 	return PrivateString[Index];
+}
+
+FORCEINLINE const char* FString::c_char() const
+{
+#if IS_WIDECHAR
+	static std::string ConvertedStr;
+	ConvertedStr = ConvertMultibyte(PrivateString.c_str());
+	return ConvertedStr.c_str();
+#else
+	return PrivateString.c_str();
+#endif // IS_WIDECHAR
+}
+
+inline const wchar_t* FString::c_wchar() const
+{
+#if IS_WIDECHAR
+	return PrivateString.c_str();
+#else
+	static std::wstring ConvertedStr;
+	ConvertedStr = ConvertWideChar(PrivateString.c_str());
+	return ConvertedStr.c_str();
+#endif // IS_WIDECHAR
 }
 
 FORCEINLINE TCHAR& FString::Front()

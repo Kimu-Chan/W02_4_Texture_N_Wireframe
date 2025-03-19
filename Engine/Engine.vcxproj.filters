@@ -145,7 +145,6 @@
     <ClCompile Include="Source\CoreUObject\Name.cpp">
       <Filter>Source Files\CoreUObject</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\EngineConfig.cpp" />
     <ClCompile Include="Source\Core\Rendering\ShaderCache.cpp">
       <Filter>Source Files\Core\Rendering</Filter>
     </ClCompile>
@@ -154,9 +153,6 @@
     </ClCompile>
     <ClCompile Include="Source\Core\Rendering\TextureLoader.cpp">
       <Filter>Source Files\Core\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Billboard.cpp">
-      <Filter>Source Files\Engine\GameFrameWork</Filter>
     </ClCompile>
     <ClCompile Include="Source\Utils\MeshBuilder.cpp">
       <Filter>Source Files\Utils</Filter>
@@ -167,7 +163,19 @@
     <ClCompile Include="Source\CoreUObject\Components\MeshComponent.cpp">
       <Filter>Source Files\CoreUObject\Components</Filter>
     </ClCompile>
-    <ClCompile Include="TextBillboard.cpp">
+    <ClCompile Include="Source\CoreUObject\Components\AnimatedBillboard.cpp">
+      <Filter>Source Files\CoreUObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CoreUObject\Components\Billboard.cpp">
+      <Filter>Source Files\CoreUObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CoreUObject\Components\TextBillboard.cpp">
+      <Filter>Source Files\CoreUObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\EngineConfig.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\GameFrameWork\CatActor.cpp">
       <Filter>Source Files\Engine\GameFrameWork</Filter>
     </ClCompile>
   </ItemGroup>
@@ -400,9 +408,6 @@
     <ClInclude Include="Source\Editor\ActorTreeNode.h">
       <Filter>Header Files\Editor</Filter>
     </ClInclude>
-    <ClInclude Include="Billboard.h">
-      <Filter>Header Files\Engine\GameFrameWork</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Utils\MeshBuilder.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
@@ -412,7 +417,16 @@
     <ClInclude Include="Source\CoreUObject\Components\MeshComponent.h">
       <Filter>Header Files\CoreUObject\Components</Filter>
     </ClInclude>
-    <ClInclude Include="TextBillboard.h">
+    <ClInclude Include="Source\CoreUObject\Components\Billboard.h">
+      <Filter>Header Files\CoreUObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CoreUObject\Components\AnimatedBillboard.h">
+      <Filter>Header Files\CoreUObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CoreUObject\Components\TextBillboard.h">
+      <Filter>Header Files\CoreUObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\GameFrameWork\CatActor.h">
       <Filter>Header Files\Engine\GameFrameWork</Filter>
     </ClInclude>
   </ItemGroup>

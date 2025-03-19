@@ -153,7 +153,7 @@ void UEngine::Run()
 
         // Renderer Update
         Renderer->PrepareRender();
-        Renderer->PrepareShader();
+        Renderer->PrepareMainShader();
 
         // World Update
         if (World)
