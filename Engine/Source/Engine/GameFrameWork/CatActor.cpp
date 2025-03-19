@@ -15,27 +15,34 @@ ACatActor::ACatActor()
     RootComponent = Root;
     TextureInfo* TexInfo = UEngine::Get().GetTextureInfo(L"Cat");
     Root->SetTexture(TexInfo->ShaderResourceView);
+    Root->bCanBeRendered = true;
 
-    UAnimatedBillboard* HappyCat = AddComponent<UAnimatedBillboard>();
+    HappyCatBillboard = AddComponent<UAnimatedBillboard>();
     TexInfo = UEngine::Get().GetTextureInfo(L"HappyCat");
-    HappyCat->SetTexture(TexInfo->ShaderResourceView, 11, 11);
-    HappyCat->SetupAttachment(Root);
-    HappyCat->SetPlayRate(25);
-    HappyCat->SetRelativeTransform(FTransform(FVector(0.f, 0.f, 2.f), FVector::ZeroVector, FVector(2.f, 2.f, 2.f)));
-
-    UAnimatedBillboard* AppleCat = AddComponent<UAnimatedBillboard>();
+    HappyCatBillboard->SetTexture(TexInfo->ShaderResourceView, 11, 11);
+    HappyCatBillboard->SetupAttachment(Root);
+    HappyCatBillboard->SetPlayRate(25);
+    HappyCatBillboard->SetRelativeTransform(FTransform(FVector(0.f, 0.f, 2.f), FVector::ZeroVector, FVector(2.f, 2.f, 2.f)));
+    HappyCatBillboard->bCanBeRendered = false;
+    HappyCatBillboard->PartyTrigger = 3.5f;
+    
+    AppleCatBillboard = AddComponent<UAnimatedBillboard>();
     TexInfo = UEngine::Get().GetTextureInfo(L"AppleCat");
-    AppleCat->SetTexture(TexInfo->ShaderResourceView, 2, 2);
-    AppleCat->SetupAttachment(Root);
-    AppleCat->SetPlayRate(12);
-    AppleCat->SetRelativeTransform(FTransform(FVector(0.f, -2.f, 1.f), FVector::ZeroVector, FVector(1.f, 1.f, 1.f)));
-
-    UAnimatedBillboard* DancingCat = AddComponent<UAnimatedBillboard>();
+    AppleCatBillboard->SetTexture(TexInfo->ShaderResourceView, 2, 2);
+    AppleCatBillboard->SetupAttachment(Root);
+    AppleCatBillboard->SetPlayRate(12);
+    AppleCatBillboard->SetRelativeTransform(FTransform(FVector(0.f, -2.f, 1.f), FVector::ZeroVector, FVector(1.f, 1.f, 1.f)));
+    AppleCatBillboard->bCanBeRendered = false;
+    AppleCatBillboard->PartyTrigger = 3.5f;
+    
+    DancingCatBillboard = AddComponent<UAnimatedBillboard>();
     TexInfo = UEngine::Get().GetTextureInfo(L"DancingCat");
-    DancingCat->SetTexture(TexInfo->ShaderResourceView, 2, 2);
-    DancingCat->SetupAttachment(Root);
-    DancingCat->SetPlayRate(4);
-    DancingCat->SetRelativeTransform(FTransform(FVector(0.f, 3.f, 0.f), FVector::ZeroVector, FVector(3.f, 3.f, 3.f)));
+    DancingCatBillboard->SetTexture(TexInfo->ShaderResourceView, 2, 2);
+    DancingCatBillboard->SetupAttachment(Root);
+    DancingCatBillboard->SetPlayRate(4);
+    DancingCatBillboard->SetRelativeTransform(FTransform(FVector(0.f, 3.f, 0.f), FVector::ZeroVector, FVector(3.f, 3.f, 3.f)));
+    DancingCatBillboard->bCanBeRendered = false;
+    DancingCatBillboard->PartyTrigger = 3.5f;
 }
 
 void ACatActor::BeginPlay()
@@ -53,4 +60,21 @@ void ACatActor::Tick(float DeltaTime)
     FTransform ComponentTransform = GetActorTransform();
     ComponentTransform.LookAt(Camera->GetActorTransform().GetPosition());
     SetActorTransform(ComponentTransform);
+
+    if (AccumulatedTime < DancingCatTrigger)
+    {
+        AccumulatedTime += DeltaTime;
+        if (AccumulatedTime >= HappyCatTrigger)
+        {
+            HappyCatBillboard->bCanBeRendered = true;
+        }
+        if (AccumulatedTime >= AppleCatTrigger)
+        {
+            AppleCatBillboard->bCanBeRendered = true;
+        }
+        if (AccumulatedTime >= DancingCatTrigger)
+        {
+            DancingCatBillboard->bCanBeRendered = true;
+        }
+    }
 }

@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Billboard.h"
-#include "Static/EditorManager.h"
 #include "Engine/GameFrameWork/Camera.h"
 #include "World.h"
 
@@ -19,7 +18,7 @@ void UBillboard::BeginPlay()
 
 void UBillboard::Render(class URenderer* Renderer)
 {
-    if (Renderer == nullptr || Texture == nullptr)
+    if (Renderer == nullptr || Texture == nullptr || !bCanBeRendered)
     {
         return;
     }

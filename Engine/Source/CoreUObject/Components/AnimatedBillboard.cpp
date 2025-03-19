@@ -20,6 +20,7 @@ void UAnimatedBillboard::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
+    AccumulatedTime += DeltaTime;
     RemainingNextFrameTime -= DeltaTime;
     if (RemainingNextFrameTime <= 0)
     {
@@ -36,4 +37,13 @@ void UAnimatedBillboard::Tick(float DeltaTime)
 void UAnimatedBillboard::Render(class URenderer* Renderer)
 {
     Super::Render(Renderer);
+}
+
+FVector4 UAnimatedBillboard::PartyHsvToRgb(float Hue)
+{
+    if (AccumulatedTime < PartyTrigger)
+    {
+        return FVector4(1.f, 1.f, 1.f, 1.f);
+    }
+    return Super::PartyHsvToRgb(Hue);
 }
