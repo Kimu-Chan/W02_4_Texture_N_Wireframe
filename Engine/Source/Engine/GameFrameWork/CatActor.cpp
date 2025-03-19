@@ -18,7 +18,7 @@ ACatActor::ACatActor()
     Root->bCanBeRendered = true;
 
     HappyCatBillboard = AddComponent<UAnimatedBillboard>();
-    TexInfo = UEngine::Get().GetTextureInfo(L"HappyCat");
+    TexInfo = UEngine::Get().GetTextureInfo(L"HappyCat"); // TODO: TEXT 매크로
     HappyCatBillboard->SetTexture(TexInfo->ShaderResourceView, 11, 11);
     HappyCatBillboard->SetupAttachment(Root);
     HappyCatBillboard->SetPlayRate(25);

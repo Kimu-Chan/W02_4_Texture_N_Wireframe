@@ -16,6 +16,7 @@
 #include "Input/PlayerController.h"
 
 #include "Components/Billboard.h"
+#include "Components/TextBillboard.h"
 
 REGISTER_CLASS(UWorld);
 void UWorld::BeginPlay()
@@ -84,11 +85,12 @@ void UWorld::Render(float DeltaTime)
         RenderPickingTexture(*Renderer);
     }
     RenderMainTexture(*Renderer);
+	RenderBillboard(*Renderer);
+    RenderText(*Renderer);
     RenderMesh(*Renderer);
     
 	RenderBoundingBoxes(*Renderer);
     RenderDebugLines(*Renderer, DeltaTime);
-	RenderBillboard(*Renderer);
 
     // DisplayPickingTexture(*Renderer);
 }
@@ -209,6 +211,20 @@ void UWorld::RenderBillboard(URenderer& Renderer)
             Billboard->Render(&Renderer);
         }
 	}
+}
+
+void UWorld::RenderText(URenderer& Renderer)
+{
+    // 텍스처와 샘플러 상태를 셰이더에 설정
+    Renderer.PrepareTextBillboard();
+
+    for (UTextBillboard* TextBillboard : TextBillboardComponents)
+    {
+        if (TextBillboard)
+        {
+            TextBillboard->Render(&Renderer);
+        }
+    }
 }
 
 void UWorld::DisplayPickingTexture(URenderer& Renderer)

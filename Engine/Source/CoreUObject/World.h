@@ -46,13 +46,14 @@ public:
 	void RenderWorldGrid(URenderer& Renderer);
 	void RenderDebugLines(URenderer& Renderer, float DeltaTime);
 	void RenderBillboard(URenderer& Renderer);
+	void RenderText(URenderer& Renderer);
 
 	void ClearWorld();
 	void LoadWorld(const char* SceneName);
 	void SaveWorld();
 
 	void AddZIgnoreComponent(UPrimitiveComponent* InComponent);
-	void RemoveZIgnoreComponent(UPrimitiveComponent* InComponent) {ZIgnoreRenderComponents.Remove(InComponent); }
+	void RemoveZIgnoreComponent(UPrimitiveComponent* InComponent) { ZIgnoreRenderComponents.Remove(InComponent); }
 	bool ContainsZIgnoreComponent(UPrimitiveComponent* InComponent) {return ZIgnoreRenderComponents.Find(InComponent) != -1; }
 	
 	// render
@@ -63,7 +64,11 @@ public:
 	void AddBillboardComponent(class UBillboard* Component) { BillboardComponents.Add(Component); }
 	void RemoveBillboardComponent(class UBillboard* Component) { BillboardComponents.Remove(Component); }
 
-	TArray<AActor*> GetActors() const { return Actors; };
+	// billboard
+	void AddTextBillboardComponent(class UTextBillboard* Component) { TextBillboardComponents.Add(Component); }
+	void RemoveTextBillboardComponent(class UTextBillboard* Component) { TextBillboardComponents.Remove(Component); }
+
+	TArray<AActor*> GetActors() const { return Actors; }
 	
 private:
 	UWorldInfo GetWorldInfo() const;
@@ -89,14 +94,13 @@ protected:
 	TArray<AActor*> Actors;
 	TArray<UPrimitiveComponent*> ZIgnoreRenderComponents;
 	TArray<UBillboard*> BillboardComponents;
+	TArray<UTextBillboard*> TextBillboardComponents;
 	TArray<AActor*> ActorsToSpawn;
 	TArray<AActor*> PendingDestroyActors; // TODO: 추후에 TQueue로 변경
 	TSet<UPrimitiveComponent*> RenderComponents;
 	TSet<class FBox*> BoundingBoxes;
 
 	TSet<FString> ActorNames;
-
-	UBillboard* Billboard;
 
 public:
 	TArray<ActorTreeNode*> ActorTreeNodes;
