@@ -136,7 +136,7 @@ private:
 	UWorld* World = nullptr;
 	TSet<UActorComponent*> Components;
 
-	class UBillboard* UUIDBillboard = nullptr;
+	class UTextBillboard* UUIDBillboard = nullptr;
 	bool bIsUUIDBillboard = false;
 
 	TSet<FString> ComponentNames;

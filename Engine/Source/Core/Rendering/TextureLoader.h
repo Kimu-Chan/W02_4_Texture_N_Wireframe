@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #define RESOURCE_PATH L"Resources/"
 
@@ -17,7 +17,7 @@ public:
 	~TextureLoader();
 
 	bool LoadTexture(const std::wstring& Name, const std::wstring& FileName, int32 InRows, int32 InColumns);
-	const TextureInfo* GetTextureInfo(const std::wstring& Name) const;
+	TextureInfo* GetTextureInfo(const std::wstring& Name);
 	void ReleaseTextures();
 
 private:

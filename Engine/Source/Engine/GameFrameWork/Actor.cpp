@@ -7,6 +7,7 @@
 #include "Editor/Windows/ConsoleWindow.h"
 #include "Static/EditorManager.h"
 #include "../../../Billboard.h"
+#include "../TextBillboard.h"
 #include "Core/Rendering/TextureLoader.h"
 #include "Sphere.h"
 #include "Camera.h"
@@ -52,7 +53,7 @@ void AActor::Tick(float DeltaTime)
 	if (UUIDBillboard)
 	{
 		FTransform BillboardTransform = UUIDBillboard->GetWorldTransform();
-		FVector BillboardPosition = GetActorTransform().GetPosition() + FVector(0.f, 0.f, 2.f);
+		FVector BillboardPosition = GetActorTransform().GetPosition() + FVector(0.f, 0.f, 1.f);
 		BillboardTransform.SetPosition(BillboardPosition);
 		BillboardTransform.LookAt(FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition());
 		UUIDBillboard->SetRelativeTransform(BillboardTransform);
@@ -105,8 +106,9 @@ void AActor::SetBoundingBoxRenderable(bool bRenderable)
 
 void AActor::InitUUIDBillboard()
 {
-	UUIDBillboard = AddComponent<UBillboard>();
-	UUIDBillboard->SetTexture(UEngine::Get().GetTextureInfo(L"Cat")->ShaderResourceView);
+	UUIDBillboard = AddComponent<UTextBillboard>();
+	UUIDBillboard->SetTexture(UEngine::Get().GetTextureInfo(L"ASCII")->ShaderResourceView, 16.f, 16.f);
+	UUIDBillboard->SetText(L"UUID:" + std::to_wstring(GetUUID()));
 	UUIDBillboard->SetBoundingBoxRenderable(false);
 	UUIDBillboard->BeginPlay();
 }

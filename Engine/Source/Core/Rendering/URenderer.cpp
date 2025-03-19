@@ -23,6 +23,7 @@ void URenderer::Create(HWND hWindow)
 
     CreateTextureBuffer();
     CreateTextureSamplerState();
+    CreateTextureBlendState();
 
     AdjustDebugLineVertexBuffer(DebugLineNumStep);
     InitMatrix();
@@ -265,6 +266,7 @@ void URenderer::RenderPrimitiveInternal(ID3D11Buffer* VertexBuffer, ID3D11Buffer
 
 void URenderer::RenderBox(const FBox& Box, const FVector4& Color)
 {
+    PrepareShader();
     // 월드변환이 이미 돼있다
     ConstantUpdateInfo UpdateInfo
     {
@@ -310,6 +312,7 @@ void URenderer::RenderBox(const FBox& Box, const FVector4& Color)
     DeviceContext->IASetVertexBuffers(0, 1, &DynamicVertexBuffer, &Stride, &Offset);
     DeviceContext->IASetIndexBuffer(IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
     DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+
 
     DeviceContext->DrawIndexed(IndexBufferInfo.GetSize(), 0, 0);
 }
@@ -898,6 +901,12 @@ void URenderer::ReleaseBlendState()
         GridBlendState->Release();
         GridBlendState = nullptr;
     }
+
+    if (TextureBlendState)
+    {
+        TextureBlendState->Release();
+        TextureBlendState = nullptr;
+    }
 }
 
 void URenderer::CreateTextureSamplerState()
@@ -1059,6 +1068,21 @@ void URenderer::CreateTextureBuffer()
     Device->CreateBuffer(&TextureBufferDesc, &TextureBufferInitData, &TextureVertexBuffer);
 }
 
+void URenderer::CreateTextureBlendState()
+{
+	D3D11_BLEND_DESC BlendState;
+	ZeroMemory(&BlendState, sizeof(D3D11_BLEND_DESC));
+	BlendState.RenderTarget[0].BlendEnable = TRUE;
+	BlendState.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	BlendState.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	BlendState.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	BlendState.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	BlendState.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	BlendState.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	BlendState.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	Device->CreateBlendState(&BlendState, &TextureBlendState);
+}
+
 void URenderer::PrepareBillboard()
 {
     UINT Stride = sizeof(FVertexUV);
@@ -1070,6 +1094,8 @@ void URenderer::PrepareBillboard()
     DeviceContext->PSSetShader(ShaderCache->GetPixelShader(L"ShaderTexture"), nullptr, 0);
     DeviceContext->PSSetSamplers(0, 1, &SamplerState);
     DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);
+
+    DeviceContext->OMSetBlendState(TextureBlendState, nullptr, 0xffffffff);
 }
 
 void URenderer::RenderBillboard()
@@ -1077,7 +1103,7 @@ void URenderer::RenderBillboard()
 	DeviceContext->Draw(6, 0);
 }
 
-void URenderer::UpdateTextureConstantBuffer(const FMatrix& World, float u, float v)
+void URenderer::UpdateTextureConstantBuffer(const FMatrix& World, float U, float V, float TotalCols, float TotalRows)
 {
     D3D11_MAPPED_SUBRESOURCE MappedResource;
     HRESULT hr = DeviceContext->Map(TextureConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
@@ -1086,8 +1112,105 @@ void URenderer::UpdateTextureConstantBuffer(const FMatrix& World, float u, float
 
     FTextureConstants* BufferData = reinterpret_cast<FTextureConstants*>(MappedResource.pData);
     BufferData->WorldViewProj =FMatrix::Transpose(World * ViewMatrix * ProjectionMatrix);
-    BufferData->u = u;
-	BufferData->v = v;
+    BufferData->U = U;
+	BufferData->V = V;
+    BufferData->Cols = TotalCols;
+    BufferData->Rows = TotalRows;
+    BufferData->bIsText = 0;
+
+    DeviceContext->Unmap(TextureConstantBuffer, 0);
+}
+
+void URenderer::CreateTextVertexBuffer(int32 InVertexCount)
+{
+    if (TextVertexBuffer)
+    {
+        TextVertexBuffer->Release();
+        TextVertexBuffer = nullptr;
+    }
+
+    D3D11_BUFFER_DESC Desc = {};
+    Desc.Usage = D3D11_USAGE_DYNAMIC;
+    Desc.ByteWidth = sizeof(FVertexUV) * InVertexCount;
+    Desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    Desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+    HRESULT HR = UEngine::Get().GetRenderer()->GetDevice()->CreateBuffer(&Desc, nullptr, &TextVertexBuffer);
+    if (HR != S_OK)
+    {
+        //UE_LOG(L"Failed to create Text Vertex Buffer");
+    }
+}
+
+void URenderer::UpdateTextVertexBuffer(const std::wstring& TextString, float TotalCols, float TotalRows)
+{
+    D3D11_MAPPED_SUBRESOURCE MappedResource;
+
+    if (SUCCEEDED(DeviceContext->Map(TextVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource)))
+    {
+        FVertexUV* Vertices = reinterpret_cast<FVertexUV*>(MappedResource.pData);
+
+        float StartY = 0.f;
+        float StartZ = 0.f;
+        float CharWidth = 0.2f;
+        float CharHeight = 0.2f;
+        float Space = 0.15f;
+
+        int32 CharCount = TextString.size();
+
+		StartY = -0.25 * (CharWidth + Space) * CharCount;
+
+		std::wstring ResultString = TextString;
+		std::reverse(ResultString.begin(), ResultString.end());
+
+        int32 Index = 0;
+        for (wchar_t ch : ResultString)
+        {
+            int charIndex = ch;
+            float U0 = (float)(charIndex % (int)TotalCols) / TotalCols;
+            float V0 = (float)(charIndex / (int)TotalCols) / TotalRows;
+            float U1 = U0 + 1.f / TotalCols;
+            float V1 = V0 + 1.f / TotalRows;
+
+            Vertices[Index++] = FVertexUV(0.f, StartY, StartZ + CharHeight, U1, V0);	            // 왼쪽 위
+			Vertices[Index++] = FVertexUV(0.f, StartY, StartZ, U1, V1);	                            // 왼쪽 아래
+            Vertices[Index++] = FVertexUV(0.f, StartY + CharWidth, StartZ, U0, V1);	                // 오른쪽 아래
+
+            Vertices[Index++] = FVertexUV(0.f, StartY, StartZ + CharHeight, U1, V0);				// 왼쪽 위                      
+            Vertices[Index++] = FVertexUV(0.f, StartY + CharWidth, StartZ, U0, V1);;	            // 오른쪽 아래
+            Vertices[Index++] = FVertexUV(0.f, StartY + CharWidth, StartZ + CharHeight, U0, V0);	// 오른쪽 위
+            
+
+            StartY += Space;
+        }
+        DeviceContext->Unmap(TextVertexBuffer, 0);
+    }
+}
+
+void URenderer::RenderTextBillboard(const std::wstring& TextString, float TotalCols, float TotalRows)
+{
+	UpdateTextVertexBuffer(TextString, TotalCols, TotalRows);
+
+    UINT Stride = sizeof(FVertexUV);
+    UINT Offset = 0;
+    DeviceContext->IASetVertexBuffers(0, 1, &TextVertexBuffer, &Stride, &Offset);
+	DeviceContext->Draw(TextString.size() * 6, 0);
+}
+
+void URenderer::UpdateTextConstantBuffer(const FMatrix& World)
+{
+    D3D11_MAPPED_SUBRESOURCE MappedResource;
+    HRESULT hr = DeviceContext->Map(TextureConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
+    if (FAILED(hr))
+        return;
+
+    FTextureConstants* BufferData = reinterpret_cast<FTextureConstants*>(MappedResource.pData);
+    BufferData->WorldViewProj = FMatrix::Transpose(World * ViewMatrix * ProjectionMatrix);
+    BufferData->U = 1.f;              // 무시됨
+    BufferData->V = 1.f;              // 무시됨
+    BufferData->Cols = 10.f;           // 무시됨
+    BufferData->Rows = 10.f;           // 무시됨
+    BufferData->bIsText = 1;
 
     DeviceContext->Unmap(TextureConstantBuffer, 0);
 }

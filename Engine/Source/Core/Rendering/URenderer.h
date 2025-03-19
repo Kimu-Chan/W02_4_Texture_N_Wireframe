@@ -109,11 +109,24 @@ public:
 	// Texture
 	void CreateTextureBuffer();
 
+	void CreateTextureBlendState();
+
 	void PrepareBillboard();
 
 	void RenderBillboard();
 
-	void UpdateTextureConstantBuffer(const FMatrix& World, float u, float v);
+	void UpdateTextureConstantBuffer(const FMatrix& World, float U, float V, float TotalCols, float TotalRows);
+
+	// Text Billboard
+	// 버텍스 버퍼를 제외한 나머지 렌더링에 필요한 리소스는
+	// Texture에서 사용하던 것을 재사용
+	void CreateTextVertexBuffer(int32 InVertexCount);
+
+	void UpdateTextVertexBuffer(const std::wstring& TextString, float TotalCols, float TotalRows);
+
+	void RenderTextBillboard(const std::wstring& TextString, float TotalCols, float TotalRows);
+
+	void UpdateTextConstantBuffer(const FMatrix& World);
 
 protected:
 	/** Direct3D Device 및 SwapChain을 생성합니다. */
@@ -237,6 +250,10 @@ protected:
 	ID3D11InputLayout* TextureInputLayout = nullptr;        // 텍스처용 인풋 레이아웃
 	ID3D11Buffer* TextureConstantBuffer = nullptr;
 	ID3D11SamplerState* SamplerState = nullptr;				// 텍스쳐 샘플러 스테이트
+	ID3D11BlendState* TextureBlendState = nullptr;
+
+	// TextVertexBuffer
+	ID3D11Buffer* TextVertexBuffer = nullptr;
 
 private:
 	// Debug Line

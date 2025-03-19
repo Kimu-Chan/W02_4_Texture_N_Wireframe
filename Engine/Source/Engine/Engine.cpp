@@ -364,7 +364,7 @@ bool UEngine::LoadTexture(const std::wstring& Name, const std::wstring& FileName
     return false;
 }
 
-const TextureInfo* UEngine::GetTextureInfo(const std::wstring& Name) const
+ TextureInfo* UEngine::GetTextureInfo(const std::wstring& Name) const
 {
     if (TextureLoaderInstance)
     {

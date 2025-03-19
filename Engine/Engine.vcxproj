@@ -245,6 +245,7 @@
     <ClInclude Include="Billboard.h" />
     <ClInclude Include="Source\Utils\MeshBuilder.h" />
     <ClInclude Include="Source\Utils\ObjReader.h" />
+    <ClInclude Include="TextBillboard.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\ShaderMesh.hlsl" />
@@ -330,6 +331,7 @@
     <ClCompile Include="Billboard.cpp" />
     <ClCompile Include="Source\Utils\MeshBuilder.cpp" />
     <ClCompile Include="Source\Utils\ObjReader.cpp" />
+    <ClCompile Include="TextBillboard.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\ShaderTexture.hlsl">
