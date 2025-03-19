@@ -469,6 +469,13 @@ void UI::RenderPropertyWindow()
                     ImGui::Text("GizmoType: Scale");
             }
         }
+
+        if (ImGui::Button("Remove"))
+        {
+			UWorld* World = UEngine::Get().GetWorld();
+			//FEditorManager::Get().SelectComponent(nullptr);
+			World->DestroyActor(SelectedComponent->GetOwner());
+        }
     }
     ImGui::End();
 }

@@ -85,7 +85,7 @@ void AActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		}
 		if (FEditorManager::Get().GetSelectedComponent() && FEditorManager::Get().GetSelectedComponent()->GetOwner() == this)
 		{
-			FEditorManager::Get().SelectActor(nullptr);
+			FEditorManager::Get().ClearSelectedComponent();
 		}
 		UEngine::Get().GObjects.Remove(Component->GetUUID());
 	}

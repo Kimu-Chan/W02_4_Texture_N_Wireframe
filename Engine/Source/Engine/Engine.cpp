@@ -280,7 +280,6 @@ void UEngine::InitWorld()
     
     World->SpawnActor<AAxis>();
     World->SpawnActor<APicker>();
-    WorldGrid = World->SpawnActor<AWorldGrid>();
     FEditorManager::Get().SetGizmoHandle(World->SpawnActor<AGizmoHandle>());
 
     World->BeginPlay();

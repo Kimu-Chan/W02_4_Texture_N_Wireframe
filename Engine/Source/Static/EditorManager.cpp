@@ -77,3 +77,11 @@ void FEditorManager::SelectComponent(USceneComponent* InSelectedComponent)
         SelectedComponent = InSelectedComponent;
     }
 }
+
+void FEditorManager::ClearSelectedComponent()
+{
+	SelectedComponent = nullptr;
+    SelectedActor = nullptr;
+    if(GizmoHandle)
+        GizmoHandle->SetActive(false);
+}
