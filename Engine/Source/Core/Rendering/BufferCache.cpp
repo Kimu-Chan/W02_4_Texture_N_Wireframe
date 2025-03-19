@@ -220,8 +220,8 @@ TArray<FVertexSimple> FBufferCache::CreateCylinderVertices()
     TArray<FVertexSimple> vertices;
         
     int segments = 36;
-    float radius = .03f;
-    float height = .5f;
+    float radius = 1.f;
+    float height = 1.f;
 
 
 	// Cylinder bottom top

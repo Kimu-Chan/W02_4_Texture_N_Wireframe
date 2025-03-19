@@ -444,7 +444,6 @@ void UI::RenderPropertyWindow()
         if (ImGui::DragFloat3("Rotation", reinterpret_cast<float*>(&UIEulerAngle), 0.1f))
         {
             FVector DeltaEulerAngle = UIEulerAngle - PrevEulerAngle;
-			UE_LOG("DeltaEulerAngle %f, %f, %f", DeltaEulerAngle.X, DeltaEulerAngle.Y, DeltaEulerAngle.Z);
 
             selectedTransform.Rotate(DeltaEulerAngle);
             SelectedComponent->SetRelativeTransform(selectedTransform);
