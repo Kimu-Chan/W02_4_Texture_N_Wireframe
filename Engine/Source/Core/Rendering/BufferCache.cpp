@@ -63,7 +63,7 @@ bool FBufferCache::BuildStaticMesh(const FString& ObjFilePath)
     FString filePath = *ObjFilePath;
     
     size_t pos = filePath.FindLastOf(TEXT("/\\"));
-    FString fileName = (pos == std::wstring::npos) ? filePath : filePath.Substr(pos + 1);
+    FString fileName = (pos == std::string::npos) ? filePath : filePath.Substr(pos + 1);
     
     size_t dotPos = fileName.FindLastOf(TEXT("."));
     fileName = (dotPos == std::string::npos) ? fileName : fileName.Substr(0, dotPos);
