@@ -5,9 +5,7 @@
 #include "Core/Input/PlayerInput.h"
 #include "CoreUObject/Components/PrimitiveComponent.h"
 #include "Components/MeshComponent.h"
-#include "Gizmo/GizmoHandle.h"
 #include "Engine/GameFrameWork/Camera.h"
-#include "Static/EditorManager.h"
 #include "Core/Container/Map.h"
 #include "Utils/JsonSavehelper.h"
 
@@ -17,9 +15,8 @@
 #include "Engine/GameFrameWork/Sphere.h"
 #include "Input/PlayerController.h"
 
+#include "Components/Billboard.h"
 
-#include "Core/Rendering/TextureLoader.h"
-#include "../Billboard.h"
 REGISTER_CLASS(UWorld);
 void UWorld::BeginPlay()
 {

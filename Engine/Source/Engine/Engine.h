@@ -95,10 +95,6 @@ private:
     uint32 ScreenWidth = 0;
     uint32 ScreenHeight = 0;
 
-    // TODO: remove
-    uint32 ResizeWidth = 0;
-	uint32 ResizeHeight = 0;
-
 	// 텍스처 로더
     TextureLoader* TextureLoaderInstance = nullptr;
 private:

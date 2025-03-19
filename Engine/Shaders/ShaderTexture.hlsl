@@ -9,6 +9,7 @@ cbuffer TextureBuffer : register(b5)
     float2 UVOffset;
     float2 AtlasColsRows;
     int bIsText; // 0 이면 일반 텍스처, 1 이면 텍스트
+    float4 PartyMode;
 }
 
 struct VS_INPUT
@@ -45,16 +46,26 @@ float4 mainPS(PS_INPUT input) : SV_TARGET
 {
     float4 Color = TextureMap.Sample(SampleType, input.Tex);
     
-    float Threshold = 0.1f;
-    
-    if (Color.r < Threshold && Color.g < Threshold && Color.b < Threshold)
+    float Threshold = 0.5f;
+
+    if (bIsText)
     {
-        Color.a = 0.f;
+        if (Color.r < Threshold && Color.g < Threshold && Color.b < Threshold)
+        {
+            Color.a = 0.f;
+        }
+        else
+        {
+            Color.a = 1.f;
+        }
     }
     else
     {
-        Color.a = 1.f;
+        if (Color.a < Threshold)
+        {
+            Color = PartyMode;
+        }
     }
     
-    return pow(Color, 2);
+    return pow(Color, 1.2);
 }

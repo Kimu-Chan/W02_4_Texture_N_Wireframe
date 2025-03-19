@@ -38,12 +38,6 @@ struct PS_INPUT
     float4 WorldPosition : POSITION;
 };
 
-struct PS_OUTPUT
-{
-    float4 Color : SV_TARGET;
-    float Depth : SV_Depth;
-};
-
 ////////
 /// Function
 ////////
