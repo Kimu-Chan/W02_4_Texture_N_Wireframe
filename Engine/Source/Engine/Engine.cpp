@@ -37,6 +37,7 @@ LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     switch (uMsg)
     {
     case WM_DESTROY:    // Window Close, Alt + F4
+        UEngine::Get().Shutdown();
         PostQuitMessage(0);
         return 0;
 
@@ -92,6 +93,9 @@ void UEngine::Initialize(HINSTANCE hInstance, const WCHAR* InWindowTitle, const 
     ScreenMode = InScreenMode;
 
     InitWindow(ScreenWidth, ScreenHeight);
+
+    EngineConfig->SaveEngineConfig<int>(EEngineConfigValueType::EEC_ScreenWidth, ScreenWidth);
+    EngineConfig->SaveEngineConfig<int>(EEngineConfigValueType::EEC_ScreenHeight, ScreenHeight);
 
 	// Get Client Rect
 	RECT ClientRect;
