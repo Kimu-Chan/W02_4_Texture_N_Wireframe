@@ -34,7 +34,7 @@ void UTextBillboard::Render(class URenderer* Renderer)
 
 void UTextBillboard::EndPlay(const EEndPlayReason::Type Reason)
 {
-	GetOwner()->GetWorld()->RemoveBillboardComponent(this);
+	GetOwner()->GetWorld()->RemoveTextBillboardComponent(this);
 }
 
 void UTextBillboard::SetText(const std::wstring& InString)

@@ -558,8 +558,8 @@ void URenderer::CreateDeviceAndSwapChain(HWND hWindow)
     if (FAILED(result))
 	{
 		wchar_t errorMsg[256];
-		swprintf_s(errorMsg, L"Failed to create Device and SwapChain! HRESULT: 0x%08X", result);
-		MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
+		swprintf_s(errorMsg, TEXT("Failed to create Device and SwapChain! HRESULT: 0x%08X"), result);
+		MessageBox(hWnd, errorMsg, TEXT("Error"), MB_ICONERROR | MB_OK);
 		return;
 	}
 
@@ -568,8 +568,8 @@ void URenderer::CreateDeviceAndSwapChain(HWND hWindow)
 	if (FAILED(result))
 	{
 		wchar_t errorMsg[256];
-		swprintf_s(errorMsg, L"Failed to get SwapChain Description! HRESULT: 0x%08X", result);
-		MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
+		swprintf_s(errorMsg, TEXT("Failed to get SwapChain Description! HRESULT: 0x%08X"), result);
+		MessageBox(hWnd, errorMsg, TEXT("Error"), MB_ICONERROR | MB_OK);
 		return;
 	}
 
@@ -588,7 +588,7 @@ void URenderer::CreateDeviceAndSwapChain(HWND hWindow)
         infoQueue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_ERROR, TRUE);
         infoQueue->Release();
     }
-    OutputDebugString(L"Debug layer initialized./n");
+    OutputDebugString(TEXT("Debug layer initialized./n"));
 }
 
 void URenderer::ReleaseDeviceAndSwapChain()
@@ -624,13 +624,13 @@ void URenderer::CreateFrameBuffer()
 	if (FAILED(result))
 	{
 		wchar_t errorMsg[256];
-		swprintf_s(errorMsg, L"Failed to get Back Buffer! HRESULT: 0x%08X", result);
-		MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
+		swprintf_s(errorMsg, TEXT("Failed to get Back Buffer! HRESULT: 0x%08X"), result);
+		MessageBox(hWnd, errorMsg, TEXT("Error"), MB_ICONERROR | MB_OK);
 		return;
 	}
 
     if (FrameBuffer == nullptr) {
-        MessageBox(hWnd, L"FrameBuffer is not initialized!", L"Error", MB_ICONERROR | MB_OK);
+        MessageBox(hWnd, TEXT("FrameBuffer is not initialized!"), TEXT("Error"), MB_ICONERROR | MB_OK);
         return;
     }
 
@@ -650,8 +650,8 @@ void URenderer::CreateFrameBuffer()
 	if (FAILED(result))
 	{
 		wchar_t errorMsg[256];
-		swprintf_s(errorMsg, L"Failed to create Render Target View! HRESULT: 0x%08X", result);
-		MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
+		swprintf_s(errorMsg, TEXT("Failed to create Render Target View! HRESULT: 0x%08X"), result);
+		MessageBox(hWnd, errorMsg, TEXT("Error"), MB_ICONERROR | MB_OK);
         return;
 	}
 }
@@ -675,8 +675,8 @@ void URenderer::CreateDepthStencilBuffer()
 	if (FAILED(result))
 	{
 		wchar_t errorMsg[256];
-		swprintf_s(errorMsg, L"Failed to create Depth Stencil Buffer! HRESULT: 0x%08X", result);
-		MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
+		swprintf_s(errorMsg, TEXT("Failed to create Depth Stencil Buffer! HRESULT: 0x%08X"), result);
+		MessageBox(hWnd, errorMsg, TEXT("Error"), MB_ICONERROR | MB_OK);
 		return;
 	}
 
@@ -689,8 +689,8 @@ void URenderer::CreateDepthStencilBuffer()
 	if (FAILED(result))
 	{
 		wchar_t errorMsg[256];
-		swprintf_s(errorMsg, L"Failed to create Depth Stencil View! HRESULT: 0x%08X", result);
-		MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
+		swprintf_s(errorMsg, TEXT("Failed to create Depth Stencil View! HRESULT: 0x%08X"), result);
+		MessageBox(hWnd, errorMsg, TEXT("Error"), MB_ICONERROR | MB_OK);
 		return;
 	}
 
@@ -711,8 +711,8 @@ void URenderer::CreateDepthStencilBuffer()
     if (FAILED(result))
     {
         wchar_t errorMsg[256];
-        swprintf_s(errorMsg, L"Failed to create Depth Stencil Buffer! HRESULT: 0x%08X", result);
-        MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
+        swprintf_s(errorMsg, TEXT("Failed to create Depth Stencil Buffer! HRESULT: 0x%08X"), result);
+        MessageBox(hWnd, errorMsg, TEXT("Error"), MB_ICONERROR | MB_OK);
         return;
     }
 
@@ -720,8 +720,8 @@ void URenderer::CreateDepthStencilBuffer()
     if (FAILED(result))
     {
         wchar_t errorMsg[256];
-        swprintf_s(errorMsg, L"Failed to create Depth Stencil View! HRESULT: 0x%08X", result);
-        MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
+        swprintf_s(errorMsg, TEXT("Failed to create Depth Stencil View! HRESULT: 0x%08X"), result);
+        MessageBox(hWnd, errorMsg, TEXT("Error"), MB_ICONERROR | MB_OK);
         return;
     }
 }
@@ -737,8 +737,8 @@ void URenderer::CreateDepthStencilState()
 	if (FAILED(result))
 	{
 		wchar_t errorMsg[256];
-		swprintf_s(errorMsg, L"Failed to create Depth Stencil State! HRESULT: 0x%08X", result);
-		MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
+		swprintf_s(errorMsg, TEXT("Failed to create Depth Stencil State! HRESULT: 0x%08X"), result);
+		MessageBox(hWnd, errorMsg, TEXT("Error"), MB_ICONERROR | MB_OK);
 		return;
 	}
 
@@ -750,8 +750,8 @@ void URenderer::CreateDepthStencilState()
 	if (FAILED(result))
 	{
 		wchar_t errorMsg[256];
-		swprintf_s(errorMsg, L"Failed to create Ignore Depth Stencil State! HRESULT: 0x%08X", result);
-		MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
+		swprintf_s(errorMsg, TEXT("Failed to create Ignore Depth Stencil State! HRESULT: 0x%08X"), result);
+		MessageBox(hWnd, errorMsg, TEXT("Error"), MB_ICONERROR | MB_OK);
 		return;
 	}
 }
@@ -827,8 +827,8 @@ void URenderer::CreateRasterizerState()
 	if (FAILED(result))
 	{
 		wchar_t errorMsg[256];
-		swprintf_s(errorMsg, L"Failed to create Rasterizer State! HRESULT: 0x%08X", result);
-		MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
+		swprintf_s(errorMsg, TEXT("Failed to create Rasterizer State! HRESULT: 0x%08X"), result);
+		MessageBox(hWnd, errorMsg, TEXT("Error"), MB_ICONERROR | MB_OK);
 		return;
 	}
 
@@ -839,8 +839,8 @@ void URenderer::CreateRasterizerState()
 	if (FAILED(result))
 	{
 		wchar_t errorMsg[256];
-		swprintf_s(errorMsg, L"Failed to create Wireframe Rasterizer State! HRESULT: 0x%08X", result);
-		MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
+		swprintf_s(errorMsg, TEXT("Failed to create Wireframe Rasterizer State! HRESULT: 0x%08X"), result);
+		MessageBox(hWnd, errorMsg, TEXT("Error"), MB_ICONERROR | MB_OK);
 		return;
 	}
 }
@@ -1140,7 +1140,7 @@ void URenderer::CreateTextVertexBuffer(int32 InVertexCount)
     HRESULT HR = UEngine::Get().GetRenderer()->GetDevice()->CreateBuffer(&Desc, nullptr, &TextVertexBuffer);
     if (HR != S_OK)
     {
-        //UE_LOG(L"Failed to create Text Vertex Buffer");
+        //UE_LOG(TEXT("Failed to create Text Vertex Buffer"));
     }
 }
 
@@ -1220,9 +1220,9 @@ void URenderer::PrepareTextBillboard()
     UINT Offset = 0;
     DeviceContext->IASetVertexBuffers(0, 1, &TextVertexBuffer, &Stride, &Offset);
     DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    DeviceContext->IASetInputLayout(ShaderCache->GetInputLayout(L"ShaderTexture"));
-    DeviceContext->VSSetShader(ShaderCache->GetVertexShader(L"ShaderTexture"), nullptr, 0);
-    DeviceContext->PSSetShader(ShaderCache->GetPixelShader(L"ShaderTexture"), nullptr, 0);
+    DeviceContext->IASetInputLayout(ShaderCache->GetInputLayout(TEXT("ShaderTexture")));
+    DeviceContext->VSSetShader(ShaderCache->GetVertexShader(TEXT("ShaderTexture")), nullptr, 0);
+    DeviceContext->PSSetShader(ShaderCache->GetPixelShader(TEXT("ShaderTexture")), nullptr, 0);
     DeviceContext->PSSetSamplers(0, 1, &SamplerState);
     DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);
 
@@ -1269,8 +1269,8 @@ void URenderer::CreateDebugLineVertexBuffer(uint32 NewSize)
     if (FAILED(result))
     {
         wchar_t errorMsg[256];
-        swprintf_s(errorMsg, L"Failed to create Debug Line Vertex Buffer! HRESULT: 0x%08X", result);
-        MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
+        swprintf_s(errorMsg, TEXT("Failed to create Debug Line Vertex Buffer! HRESULT: 0x%08X"), result);
+        MessageBox(hWnd, errorMsg, TEXT("Error"), MB_ICONERROR | MB_OK);
     }
 }
 
@@ -1332,8 +1332,8 @@ void URenderer::CreatePickingFrameBuffer()
 	if (FAILED(result))
 	{
 		wchar_t errorMsg[256];
-		swprintf_s(errorMsg, L"Failed to create Picking Frame Buffer! HRESULT: 0x%08X", result);
-		MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
+		swprintf_s(errorMsg, TEXT("Failed to create Picking Frame Buffer! HRESULT: 0x%08X"), result);
+		MessageBox(hWnd, errorMsg, TEXT("Error"), MB_ICONERROR | MB_OK);
 		return;
 	}
 
@@ -1352,8 +1352,8 @@ void URenderer::CreatePickingFrameBuffer()
     if (FAILED(result))
     {
         wchar_t errorMsg[256];
-        swprintf_s(errorMsg, L"Failed to create Staging Texture! HRESULT: 0x%08X", result);
-        MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
+        swprintf_s(errorMsg, TEXT("Failed to create Staging Texture! HRESULT: 0x%08X"), result);
+        MessageBox(hWnd, errorMsg, TEXT("Error"), MB_ICONERROR | MB_OK);
         return;
     }
 
@@ -1365,8 +1365,8 @@ void URenderer::CreatePickingFrameBuffer()
 	if (FAILED(result))
 	{
 		wchar_t errorMsg[256];
-		swprintf_s(errorMsg, L"Failed to create Picking Frame Buffer RTV! HRESULT: 0x%08X", result);
-		MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
+		swprintf_s(errorMsg, TEXT("Failed to create Picking Frame Buffer RTV! HRESULT: 0x%08X"), result);
+		MessageBox(hWnd, errorMsg, TEXT("Error"), MB_ICONERROR | MB_OK);
 		return;
 	}
 }
@@ -1424,8 +1424,8 @@ void URenderer::UpdateConstantPicking(FVector4 UUIDColor) const
 	if (FAILED(result))
 	{
 		wchar_t errorMsg[256];
-		swprintf_s(errorMsg, L"Failed to map Constant Picking Buffer! HRESULT: 0x%08X", result);
-		MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
+		swprintf_s(errorMsg, TEXT("Failed to map Constant Picking Buffer! HRESULT: 0x%08X"), result);
+		MessageBox(hWnd, errorMsg, TEXT("Error"), MB_ICONERROR | MB_OK);
 		return;
 	}
     {
@@ -1475,7 +1475,7 @@ FVector4 URenderer::GetPixel(int32 X, int32 Y)
     if (srcBox.left >= originalDesc.Width || srcBox.right > originalDesc.Width ||
         srcBox.top >= originalDesc.Height || srcBox.bottom > originalDesc.Height) {
         // srcBox가 원본 텍스처의 범위를 벗어남
-        MessageBox(hWnd, L"srcBox coordinates are out of the original texture bounds.", L"Error", MB_ICONERROR | MB_OK);
+        MessageBox(hWnd, TEXT("srcBox coordinates are out of the original texture bounds."), TEXT("Error"), MB_ICONERROR | MB_OK);
         return FVector4();
     }
 
@@ -1495,8 +1495,8 @@ FVector4 URenderer::GetPixel(int32 X, int32 Y)
 	if (FAILED(result))
 	{
 		wchar_t errorMsg[256];
-		swprintf_s(errorMsg, L"Failed to map Staging Texture! HRESULT: 0x%08X", result);
-		MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
+		swprintf_s(errorMsg, TEXT("Failed to map Staging Texture! HRESULT: 0x%08X"), result);
+		MessageBox(hWnd, errorMsg, TEXT("Error"), MB_ICONERROR | MB_OK);
 		return FVector4();
 	}
 
@@ -1576,7 +1576,7 @@ void URenderer::OnUpdateWindowSize(int Width, int Height)
         ReleaseFrameBuffer();
 
         //if (Width <= 0 || Height <= 0) {
-        //    MessageBox(hWnd, L"Invalid window size parameters.", L"Error", MB_ICONERROR | MB_OK);
+        //    MessageBox(hWnd, TEXT("Invalid window size parameters."), TEXT("Error"), MB_ICONERROR | MB_OK);
         //    return;
         //}
 
@@ -1584,8 +1584,8 @@ void URenderer::OnUpdateWindowSize(int Width, int Height)
 		if (FAILED(hr))
 		{
             wchar_t errorMsg[256];
-			swprintf_s(errorMsg, L"Failed to resize SwapChain! HRESULT: 0x%08X", hr);
-			MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
+			swprintf_s(errorMsg, TEXT("Failed to resize SwapChain! HRESULT: 0x%08X"), hr);
+			MessageBox(hWnd, errorMsg, TEXT("Error"), MB_ICONERROR | MB_OK);
 			return;
 		}
 
@@ -1594,7 +1594,7 @@ void URenderer::OnUpdateWindowSize(int Width, int Height)
 		if (FAILED(hr))
 		{
 			wchar_t errorMsg[256];
-			swprintf_s(errorMsg, L"Failed to get SwapChain Description! HRESULT: 0x%08X", hr);
+			swprintf_s(errorMsg, TEXT("Failed to get SwapChain Description! HRESULT: 0x%08X"), hr);
 			return;
 		}
 
@@ -1642,8 +1642,8 @@ void URenderer::RenderPickingTexture()
 	if (FAILED(result))
 	{
 		wchar_t errorMsg[256];
-		swprintf_s(errorMsg, L"Failed to get Back Buffer(RENDER_PICKING)! HRESULT: 0x%08X", result);
-		MessageBox(hWnd, errorMsg, L"Error", MB_ICONERROR | MB_OK);
+		swprintf_s(errorMsg, TEXT("Failed to get Back Buffer(RENDER_PICKING)! HRESULT: 0x%08X"), result);
+		MessageBox(hWnd, errorMsg, TEXT("Error"), MB_ICONERROR | MB_OK);
 		return;
 	}
     DeviceContext->CopyResource(backBuffer, PickingFrameBuffer);
