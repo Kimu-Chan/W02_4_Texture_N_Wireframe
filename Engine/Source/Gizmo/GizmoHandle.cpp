@@ -342,7 +342,7 @@ void AGizmoHandle::DoTransform(FTransform& CompTransform, FVector Delta, USceneC
 		CompTransform.Translate(Delta);
 		break;
 	case EGizmoType::Rotate:
-		CompTransform.Rotate(LocalDirection, Sign * DeltaLength * 50);
+		CompTransform.Rotate(Direction, Sign * DeltaLength * 50);
 		break;
 	case EGizmoType::Scale:
         // 스케일은 축에 평행한 방향으로 커지는게 맞음
