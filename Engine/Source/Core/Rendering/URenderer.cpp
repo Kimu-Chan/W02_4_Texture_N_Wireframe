@@ -1104,7 +1104,7 @@ void URenderer::RenderBillboard()
 	DeviceContext->Draw(6, 0);
 }
 
-void URenderer::UpdateTextureConstantBuffer(const FMatrix& World, float U, float V, float TotalCols, float TotalRows)
+void URenderer::UpdateTextureConstantBuffer(const FMatrix& World, float U, float V, float TotalCols, float TotalRows, FVector4 PartyMode)
 {
     D3D11_MAPPED_SUBRESOURCE MappedResource;
     HRESULT hr = DeviceContext->Map(TextureConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
@@ -1118,6 +1118,7 @@ void URenderer::UpdateTextureConstantBuffer(const FMatrix& World, float U, float
     BufferData->Cols = TotalCols;
     BufferData->Rows = TotalRows;
     BufferData->bIsText = 0;
+    BufferData->PartyMode = PartyMode;
 
     DeviceContext->Unmap(TextureConstantBuffer, 0);
 }

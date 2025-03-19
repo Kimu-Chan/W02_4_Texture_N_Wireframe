@@ -21,5 +21,11 @@ protected:
 	float TotalRows = 1.0f;
 	float RenderCol = 1.0f;
 	float RenderRow = 1.0f;
+
+	FVector4 PartyMode = FVector4(0.0f, 0.0f, 0.0f, 1.0f);
+	float PartyHue = 0.0f;
+	
+private:
+	FVector4 PartyHsvToRgb(float Hue);
 };
 
