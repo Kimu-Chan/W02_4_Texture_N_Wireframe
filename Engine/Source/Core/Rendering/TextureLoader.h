@@ -1,7 +1,8 @@
 #pragma once
 
-#define RESOURCE_PATH L"Resources/"
+#define RESOURCE_PATH TEXT("Resources/")
 #include "Container/Map.h"
+#include "NameTypes.h"
 
 struct TextureInfo
 {

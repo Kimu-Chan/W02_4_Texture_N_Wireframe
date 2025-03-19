@@ -39,7 +39,7 @@ bool TextureLoader::LoadTexture(const FName& Name, const FString& FileName, int3
     NewInfo.Cols = InColumns;
     NewInfo.ShaderResourceView = ShaderResourceView;
     
-    TextureMap[Name] = NewInfo;
+	TextureMap.Add(Name, NewInfo);
 
     return true;
 }
