@@ -24,6 +24,8 @@ public:
     USceneComponent* GetSelectedComponent() const;
 
 	void SelectComponent(USceneComponent* SelectedComponent);
+
+	void ClearSelectedComponent();
     
 private:
     ACamera* Camera = nullptr;
