@@ -346,8 +346,14 @@ void AGizmoHandle::DoTransform(FTransform& CompTransform, FVector Delta, USceneC
 		break;
 	case EGizmoType::Scale:
         // 스케일은 축에 평행한 방향으로 커지는게 맞음
-		Delta = WorldDirection * FVector::DotProduct(Delta, WorldDirection) * 2;
-		CompTransform.AddScale(Delta);
+	    Delta = WorldDirection * FVector::DotProduct(Delta, WorldDirection) * 2;
+		FVector CurrentScale = CompTransform.GetScale();
+		FVector NewScale = CurrentScale + Delta;
+
+		NewScale.X = FMath::Max(0.01f, NewScale.X);
+		NewScale.Y = FMath::Max(0.01f, NewScale.Y);
+		NewScale.Z = FMath::Max(0.01f, NewScale.Z);
+        CompTransform.SetScale(NewScale);
 		break;
 	}
 	SceneComp->SetRelativeTransform(CompTransform);

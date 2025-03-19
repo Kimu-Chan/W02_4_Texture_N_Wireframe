@@ -53,7 +53,18 @@ void AActor::Tick(float DeltaTime)
 	if (UUIDBillboard)
 	{
 		FTransform BillboardTransform = UUIDBillboard->GetWorldTransform();
-		FVector BillboardPosition = GetActorTransform().GetPosition() + FVector(0.f, 0.f, 1.f);
+		FVector ActorPosition = GetActorTransform().GetPosition();
+
+		// 기본은 Actor의 Z축 포지션 + 1;
+		float MaxZ = ActorPosition.Z + 1.f;
+
+		if (RootComponent && RootComponent->IsA<USceneComponent>())
+		{
+			USceneComponent* SceneComp = static_cast<USceneComponent*>(RootComponent);
+			MaxZ = SceneComp->BoundingBox->Max.Z;
+		}
+		
+		FVector BillboardPosition = FVector(ActorPosition.X, ActorPosition.Y, MaxZ);
 		BillboardTransform.SetPosition(BillboardPosition);
 		BillboardTransform.LookAt(FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition());
 		UUIDBillboard->SetRelativeTransform(BillboardTransform);
