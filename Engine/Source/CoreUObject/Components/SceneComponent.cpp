@@ -5,6 +5,8 @@
 #include "Core/Math/Vector.h"
 #include "Core/Math/Matrix.h"
 #include "Core/Math/Box.h"
+#include "GameFrameWork/Actor.h"
+#include "World.h"
 
 
 REGISTER_CLASS(USceneComponent);
@@ -63,6 +65,15 @@ void USceneComponent::Pick(bool bPicked)
     for (auto& Child : Children)
     {
         Child->Pick(bPicked);
+    }
+}
+
+void USceneComponent::EndPlay(const EEndPlayReason::Type Reason)
+{
+	Super::EndPlay(Reason);
+    if (BoundingBox)
+    {
+        GetOwner()->GetWorld()->RemoveBoundingBox(BoundingBox.get());
     }
 }
 

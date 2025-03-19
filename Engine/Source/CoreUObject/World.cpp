@@ -281,6 +281,16 @@ bool UWorld::DestroyActor(AActor* InActor)
 
     // 제거 대기열에 추가
     PendingDestroyActors.Add(InActor);
+
+    // 박스 즉시 제거
+    auto Components = InActor->GetComponents();
+    for (auto Comp : Components)
+    {
+        if (Comp->GetClass()->IsA<USceneComponent>())
+        {
+			USceneComponent* SceneComp = static_cast<USceneComponent*>(Comp);
+        }
+    }
     return true;
 }
 

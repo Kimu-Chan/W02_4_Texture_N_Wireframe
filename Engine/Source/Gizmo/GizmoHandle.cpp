@@ -312,8 +312,6 @@ void AGizmoHandle::DoTransform(FTransform& CompTransform, FVector Delta, USceneC
 	FVector CamToComp = (SceneComp->GetComponentTransform().GetPosition() - FEditorManager::Get().GetCamera()->GetActorTransform().GetPosition()).GetSafeNormal();
 	FVector RotationDelta = FVector::CrossProduct(Delta, CamToComp);
 
-
-
 	float DeltaLength = Delta.Length();
     switch (SelectedAxis)
     {
@@ -335,14 +333,16 @@ void AGizmoHandle::DoTransform(FTransform& CompTransform, FVector Delta, USceneC
 	FVector Direction = bIsLocal ? LocalDirection : WorldDirection;
 
 	Delta = Direction * FVector::DotProduct(Delta, Direction);
-	RotationDelta = Direction * FVector::DotProduct(RotationDelta, Direction);
+
+	int Sign = FVector::DotProduct(RotationDelta, Direction) > 0 ? 1 : -1;
+
 	switch (GizmoType)
 	{
 	case EGizmoType::Translate:
 		CompTransform.Translate(Delta);
 		break;
 	case EGizmoType::Rotate:
-		CompTransform.Rotate(RotationDelta * 100);
+		CompTransform.Rotate(LocalDirection, Sign * DeltaLength * 50);
 		break;
 	case EGizmoType::Scale:
         // 스케일은 축에 평행한 방향으로 커지는게 맞음

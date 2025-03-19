@@ -33,6 +33,7 @@ public:
 	void Pick(bool bPicked);
 public:
 	bool IsPicked() const { return bIsPicked; }
+	virtual void EndPlay(const EEndPlayReason::Type Reason) override;
 
 public:
 	void SetupAttachment(USceneComponent* InParent, bool bUpdateChildTransform = false);
