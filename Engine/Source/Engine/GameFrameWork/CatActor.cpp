@@ -78,3 +78,8 @@ void ACatActor::Tick(float DeltaTime)
         }
     }
 }
+
+const char* ACatActor::GetTypeName()
+{
+    return "CatActor";
+}

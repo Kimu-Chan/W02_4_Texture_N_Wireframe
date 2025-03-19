@@ -13,6 +13,7 @@
 #include "Engine/GameFrameWork/Cube.h"
 #include "Engine/GameFrameWork/Cylinder.h"
 #include "Engine/GameFrameWork/Sphere.h"
+#include "Engine/GameFrameWork/CatActor.h"
 #include "Input/PlayerController.h"
 
 #include "Components/Billboard.h"
@@ -342,6 +343,10 @@ void UWorld::LoadWorld(const char* SceneName)
         else if (ObjectInfo->ObjectType == "Cone")
         {
             Actor = SpawnActor<ACone>();
+        }
+        else if (ObjectInfo->ObjectType == "CatActor")
+        {
+            Actor = SpawnActor<ACatActor>();
         }
         if (Actor)
         {
