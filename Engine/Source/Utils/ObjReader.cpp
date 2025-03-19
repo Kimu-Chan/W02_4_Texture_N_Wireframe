@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "ObjReader.h"
 
 #include <sstream>
@@ -102,7 +102,7 @@ void ObjReader::Clear()
 
 bool ObjReader::CheckFile(const FString& InFilePath) const
 {
-    std::string path = *InFilePath;
+    std::string path(InFilePath.c_char());
     std::ifstream f(path);
     return f.good();
 }

@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Name.h"
 #include "NameTypes.h"
 #include "HAL/PlatformType.h"
@@ -340,7 +340,7 @@ struct FNameHelper
 		}
 
 		const FNameEntryId DisplayId = FNamePool::Get().Store({ Char, Len });
-		UE_LOG("NumEntries in FNamePool: %d", FNamePool::Get().NumEntries())
+		//UE_LOG("NumEntries in FNamePool: %d", FNamePool::Get().NumEntries())
 
 		FName Result;
 		Result.DisplayIndex = DisplayId.Value;
@@ -377,10 +377,12 @@ FString FName::ToString() const
 		return { TEXT("None") };
 	}
 
-	//TODO: FString이 WIDECHAR를 지원할 수 있도록 수정
 	FNameEntry Entry = FNamePool::Get().Resolve(DisplayIndex);
 	return {
-		//Entry.Header.bIsWide ? Entry.WideName : Entry.AnsiName
+#if IS_WIDECHAR
+		Entry.WideName
+#else
 		Entry.AnsiName
+#endif
 	};
 }

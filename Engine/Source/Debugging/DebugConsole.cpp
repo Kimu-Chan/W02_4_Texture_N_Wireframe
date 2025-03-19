@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Debugging/DebugConsole.h"
 #include "Editor/Windows/ConsoleWindow.h"
 #include <cstdarg>
@@ -34,7 +34,7 @@ void Debug::ShowConsole(bool bWasWindowSizeUpdated, ImVec2 PreRatio, ImVec2 CurR
          ImGui::SetWindowSize(ResizeToScreen(Window->Size, PreRatio, CurRatio));
          
          for (const auto& Item : items)
-             ImGui::TextUnformatted(*Item);
+             ImGui::TextUnformatted(Item.c_char());
     
          if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
              ImGui::SetScrollHereY(1.0f);
@@ -53,7 +53,7 @@ void Debug::ShowConsole(bool bWasWindowSizeUpdated, ImVec2 PreRatio, ImVec2 CurR
     
                  FString& historyCommand = history[historyPos];
                  data->DeleteChars(0, data->BufTextLen);
-                 data->InsertChars(0, *historyCommand);
+                 data->InsertChars(0, historyCommand.c_char());
              }
              return 0;
          }))
