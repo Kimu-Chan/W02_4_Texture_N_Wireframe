@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
 #define _CRT_SECURE_NO_WARNINGS
 #endif
@@ -145,7 +145,7 @@ void ConsoleWindow::Render()
             ImGui::LogToClipboard();
         for (const FString item : Items)
         {
-            if (!Filter.PassFilter(*item))
+            if (!Filter.PassFilter(item.c_char()))
                 continue;
 
             // Normally you would store more information in your item than just a string.
@@ -156,7 +156,7 @@ void ConsoleWindow::Render()
             else if (item.Strnicmp("# ", 2) == 0) { color = ImVec4(1.0f, 0.8f, 0.6f, 1.0f); has_color = true; }
             if (has_color)
                 ImGui::PushStyleColor(ImGuiCol_Text, color);
-            ImGui::TextUnformatted(*item);
+            ImGui::TextUnformatted(item.c_char());
             if (has_color)
                 ImGui::PopStyleColor();
         }
@@ -241,7 +241,7 @@ int ConsoleWindow::TextEditCallback(ImGuiInputTextCallbackData* Data)
         ImVector<const char*> Candidates;
         for (const auto& Command : Commands)
 	        if (Command.Strnicmp(WordStart, static_cast<int>(WordEnd - WordStart)) == 0)
-                Candidates.push_back(*Command);
+                Candidates.push_back(Command.c_char());
 
         if (Candidates.empty())
         {
@@ -311,7 +311,7 @@ int ConsoleWindow::TextEditCallback(ImGuiInputTextCallbackData* Data)
         {
             const FString HistoryStr = (HistoryPos >= 0) ? History[HistoryPos] : "";
             Data->DeleteChars(0, Data->BufTextLen);
-            Data->InsertChars(0, *HistoryStr);
+            Data->InsertChars(0, HistoryStr.c_char());
         }
         break;
     }

@@ -1,28 +1,29 @@
 #include "pch.h"
 #include "ShaderCache.h"
 #include "Engine/Engine.h"
+#include "Name.h"
 #include <d3d11shader.h>
 
-TArray<std::wstring> FShaderCache::GetShaderNames(const std::wstring& Directory) const
+TArray<FString> FShaderCache::GetShaderNames(const FString& Directory) const
 {
-	TArray<std::wstring> ShaderNames;
+	TArray<FString> ShaderNames;
 
-	WIN32_FIND_DATAW FindData;
+	WIN32_FIND_DATAA FindData;
 
-	HANDLE hFind = FindFirstFileW((Directory + L"\\*.hlsl").c_str(), &FindData);
+	HANDLE hFind = FindFirstFileA((Directory + TEXT("\\*.hlsl")).c_char(), &FindData);
 
 	if (hFind != INVALID_HANDLE_VALUE)
 	{
 		do {
-			std::wstring FileName = FindData.cFileName;
-			size_t Pos = FileName.find(L".hlsl");
+			FString FileName = FindData.cFileName;
+			size_t Pos = FileName.Find(TEXT(".hlsl"));
 
 			if (Pos != std::wstring::npos)
 			{
-				FileName = FileName.substr(0, Pos);
+				FileName = FileName.Substr(0, Pos);
 				ShaderNames.Add(FileName);
 			}
-		} while (FindNextFileW(hFind, &FindData) != 0);
+		} while (FindNextFileA(hFind, &FindData) != 0);
 
 		FindClose(hFind);
 	}
@@ -30,11 +31,14 @@ TArray<std::wstring> FShaderCache::GetShaderNames(const std::wstring& Directory)
 	return ShaderNames;
 }
 
-bool FShaderCache::CompileShader(const std::wstring& ShaderPath, const std::string& EntryPoint, const std::string& ShaderModel, ID3DBlob** ShaderBlob)
+bool FShaderCache::CompileShader(const FString& ShaderPath, const FString& EntryPoint, const FString& ShaderModel, ID3DBlob** ShaderBlob)
 {
 	ID3DBlob* ErrorMsg = nullptr;
+	
+	std::string EntryPointStr(EntryPoint.c_char());
+	std::string ShaderModelStr(ShaderModel.c_char());
 
-	HRESULT hr = D3DCompileFromFile(ShaderPath.c_str(), nullptr, nullptr, EntryPoint.c_str(), ShaderModel.c_str(), 0, 0, ShaderBlob, &ErrorMsg);
+	HRESULT hr = D3DCompileFromFile(ShaderPath.c_wchar(), nullptr, nullptr, EntryPointStr.c_str(), ShaderModelStr.c_str(), 0, 0, ShaderBlob, &ErrorMsg);
 
 	if (FAILED(hr))
 	{
@@ -118,7 +122,7 @@ bool FShaderCache::CreateInputLayout(ID3DBlob* VertexShaderBlob, ID3D11InputLayo
 	return true;
 }
 
-void FShaderCache::CreateShaders(const TArray<std::wstring>& ShaderNames)
+void FShaderCache::CreateShaders(const TArray<FString>& ShaderNames)
 {
 	/*
 	* 컴파일된 셰이더의 바이트코드를 저장할 변수 (ID3DBlob)
@@ -131,9 +135,9 @@ void FShaderCache::CreateShaders(const TArray<std::wstring>& ShaderNames)
 	*   - SIZE_T GetBufferSize
 	*     - 버퍼의 크기(바이트 갯수)를 돌려준다
 	*/
-	for (std::wstring ShaderName : ShaderNames)
+	for (const FString& ShaderName : ShaderNames)
 	{
-		std::wstring ShaderPath = L"Shaders/" + ShaderName + L".hlsl";
+		FString ShaderPath = TEXT("Shaders/") + ShaderName + TEXT(".hlsl");
 
 		FShaderData ShaderData;
 
@@ -167,7 +171,7 @@ void FShaderCache::CreateShaders(const TArray<std::wstring>& ShaderNames)
 	}
 }
 
-ID3D11VertexShader* FShaderCache::GetVertexShader(const std::wstring& ShaderName) const
+ID3D11VertexShader* FShaderCache::GetVertexShader(const FString& ShaderName) const
 {
 	if (ShaderDatas.Contains(ShaderName))
 	{
@@ -176,7 +180,7 @@ ID3D11VertexShader* FShaderCache::GetVertexShader(const std::wstring& ShaderName
 	return nullptr;
 }
 
-ID3D11PixelShader* FShaderCache::GetPixelShader(const std::wstring& ShaderName) const
+ID3D11PixelShader* FShaderCache::GetPixelShader(const FString& ShaderName) const
 {
 	if (ShaderDatas.Contains(ShaderName))
 	{
@@ -185,7 +189,7 @@ ID3D11PixelShader* FShaderCache::GetPixelShader(const std::wstring& ShaderName) 
 	return nullptr;
 }
 
-ID3D11InputLayout* FShaderCache::GetInputLayout(const std::wstring& ShaderName) const
+ID3D11InputLayout* FShaderCache::GetInputLayout(const FString& ShaderName) const
 {
 	if (ShaderDatas.Contains(ShaderName))
 	{

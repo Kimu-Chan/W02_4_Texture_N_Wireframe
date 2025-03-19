@@ -19,6 +19,7 @@
 #include "Engine/GameFrameWork/Arrow.h"
 #include "Engine/GameFrameWork/Cone.h"
 #include "Engine/GameFrameWork/Cylinder.h"
+#include "GameFrameWork/CatActor.h"
 #include "Gizmo/GizmoHandle.h"
 #include "ImGui/imgui_impl_dx11.h"
 #include "ImGui/imgui_impl_win32.h"
@@ -208,7 +209,7 @@ void UI::RenderMemoryUsage()
 
 void UI::RenderPrimitiveSelection()
 {
-    const char* items[] = { "Sphere", "Cube", "Cylinder", "Cone", "Arrow"};
+    const char* items[] = { "Sphere", "Cube", "Cylinder", "Cone", "Arrow", "Cat" };
 
     ImGui::Combo("Primitive", &currentItem, items, IM_ARRAYSIZE(items));
 
@@ -237,6 +238,10 @@ void UI::RenderPrimitiveSelection()
             {
                 World->SpawnActor<AArrow>();
             }
+            else if (strcmp(items[currentItem], "Cat") == 0)
+            {
+                World->SpawnActor<ACatActor>();
+            }
             //else if (strcmp(items[currentItem], "Triangle") == 0)
             //{
             //    Actor->AddComponent<UTriangleComp>();   
@@ -251,7 +256,8 @@ void UI::RenderPrimitiveSelection()
     UWorld* World = UEngine::Get().GetWorld();
     uint32 bufferSize = 100;
     char* SceneNameInput = new char[bufferSize];
-    strcpy_s(SceneNameInput, bufferSize, *World->SceneName);
+
+    strcpy_s(SceneNameInput, bufferSize, World->SceneName.c_char());
     
     if (ImGui::InputText("Scene Name", SceneNameInput, bufferSize))
     {
@@ -419,8 +425,8 @@ void UI::RenderPropertyWindow()
     USceneComponent* SelectedComponent = FEditorManager::Get().GetSelectedComponent();
     if (SelectedComponent != nullptr)
     {
-        ImGui::Text("Selected Actor : %s", *SelectedComponent->GetOwner()->GetName());
-		ImGui::Text("Selected Component : %s", *SelectedComponent->GetName());
+        ImGui::Text("Selected Actor : %s", SelectedComponent->GetOwner()->GetName().c_char());
+		ImGui::Text("Selected Component : %s", SelectedComponent->GetName().c_char());
 
 		bool bIsLocal = FEditorManager::Get().GetGizmoHandle()->bIsLocal;
 		if (ImGui::Checkbox("Local", &bIsLocal))
@@ -443,7 +449,6 @@ void UI::RenderPropertyWindow()
         if (ImGui::DragFloat3("Rotation", reinterpret_cast<float*>(&UIEulerAngle), 0.1f))
         {
             FVector DeltaEulerAngle = UIEulerAngle - PrevEulerAngle;
-			UE_LOG("DeltaEulerAngle %f, %f, %f", DeltaEulerAngle.X, DeltaEulerAngle.Y, DeltaEulerAngle.Z);
 
             selectedTransform.Rotate(DeltaEulerAngle);
             SelectedComponent->SetRelativeTransform(selectedTransform);

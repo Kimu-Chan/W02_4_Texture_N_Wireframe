@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 /*
  * Unreal Engine의 HAL/Platform.h를 목표로 하는 헤더
@@ -22,7 +22,7 @@
 // inline을 하지않는 매크로
 #define FORCENOINLINE __declspec(noinline)
 
-#define IS_WIDECHAR 0
+#define IS_WIDECHAR 1
 
 #if IS_WIDECHAR 
 	#define TEXT(x) L##x

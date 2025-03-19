@@ -1,8 +1,8 @@
-﻿#pragma once
+#pragma once
 #define DEFAULT_INI_FILE_PATH "\\engine.ini"
 
-#define SECTION_MAPPING(Section, Key) { EEngineConfigSectionType::Section, Key }
-#define CONFIG_MAPPING(Config, Key, ValueType, SectionType) { EEngineConfigValueType::Config, Key, EConfigValueType::ValueType, EEngineConfigSectionType::SectionType }
+#define SECTION_MAPPING(Section, Key) { EEngineConfigSectionType::Section, TEXT(Key) }
+#define CONFIG_MAPPING(Config, Key, ValueType, SectionType) { EEngineConfigValueType::Config, TEXT(Key), EConfigValueType::ValueType, EEngineConfigSectionType::SectionType }
 #include "Core/Container/String.h"
 #include "Core/Container/Array.h"
 #include "Core/Container/Map.h"
@@ -111,14 +111,15 @@ public:
 		}
 		EngineConfig[Section][InConfig] = FString::SanitizeFloat(InValue);
 		
-		auto Section_ft = ft.GetSection(*SectionMappings[static_cast<int>(Section)].Key);
+		std::string SectionStr(SectionMappings[static_cast<int>(Section)].Key.c_char());
+		auto Section_ft = ft.GetSection(SectionStr);
 
 		if (Section_ft)
 		{
-			Section_ft->SetValue(*ConfigMappings[static_cast<int>(InConfig)].Key, InValue);
+			Section_ft->SetValue(std::string(ConfigMappings[static_cast<int>(InConfig)].Key.c_char()), InValue);
 		}
 
-		ft.Save(*Path);
+		ft.Save(std::string(Path.c_char()));
 	}
 
 	template<typename T>
@@ -171,11 +172,6 @@ public:
 			return DefaultValue;
 		}
 	}
-
-	//void SaveEngineConfig(EEngineConfigValueType InConfig, UINT InValue);
-	//void SaveEngineConfig(EEngineConfigValueType InConfig, float InValue);
-	//void SaveEngineConfig(EEngineConfigValueType InConfig, const FString& InValue);
-
 	void SaveAllConfig();
 
 private:

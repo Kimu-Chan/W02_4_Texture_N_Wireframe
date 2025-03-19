@@ -1,4 +1,4 @@
-﻿#include "pch.h" 
+#include "pch.h" 
 #include "BufferCache.h"
 
 #include "MeshBuilder.h"
@@ -60,13 +60,13 @@ bool FBufferCache::BuildStaticMesh(const FString& ObjFilePath)
     }
 
     // Begin 파일 경로에서 파일 이름만 획득
-    std::string filePath = *ObjFilePath;
+    FString filePath = *ObjFilePath;
     
-    size_t pos = filePath.find_last_of("/\\");
-    std::string fileName = (pos == std::string::npos) ? filePath : filePath.substr(pos + 1);
+    size_t pos = filePath.FindLastOf(TEXT("/\\"));
+    FString fileName = (pos == std::string::npos) ? filePath : filePath.Substr(pos + 1);
     
-    size_t dotPos = fileName.find_last_of('.');
-    fileName = (dotPos == std::string::npos) ? fileName : fileName.substr(0, dotPos);
+    size_t dotPos = fileName.FindLastOf(TEXT("."));
+    fileName = (dotPos == std::string::npos) ? fileName : fileName.Substr(0, dotPos);
     // End 파일 경로에서 파일 이름만 획득
     FName Key(fileName);
 
@@ -220,8 +220,8 @@ TArray<FVertexSimple> FBufferCache::CreateCylinderVertices()
     TArray<FVertexSimple> vertices;
         
     int segments = 36;
-    float radius = .03f;
-    float height = .5f;
+    float radius = 1.f;
+    float height = 1.f;
 
 
 	// Cylinder bottom top

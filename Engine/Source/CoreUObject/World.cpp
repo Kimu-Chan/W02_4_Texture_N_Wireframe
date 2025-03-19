@@ -5,9 +5,7 @@
 #include "Core/Input/PlayerInput.h"
 #include "CoreUObject/Components/PrimitiveComponent.h"
 #include "Components/MeshComponent.h"
-#include "Gizmo/GizmoHandle.h"
 #include "Engine/GameFrameWork/Camera.h"
-#include "Static/EditorManager.h"
 #include "Core/Container/Map.h"
 #include "Utils/JsonSavehelper.h"
 
@@ -17,9 +15,8 @@
 #include "Engine/GameFrameWork/Sphere.h"
 #include "Input/PlayerController.h"
 
+#include "Components/Billboard.h"
 
-#include "Core/Rendering/TextureLoader.h"
-#include "../Billboard.h"
 REGISTER_CLASS(UWorld);
 void UWorld::BeginPlay()
 {
@@ -88,10 +85,10 @@ void UWorld::Render(float DeltaTime)
     }
     RenderMainTexture(*Renderer);
     RenderMesh(*Renderer);
-	RenderBillboard(*Renderer);
     
 	RenderBoundingBoxes(*Renderer);
     RenderDebugLines(*Renderer, DeltaTime);
+	RenderBillboard(*Renderer);
 
     // DisplayPickingTexture(*Renderer);
 }
@@ -179,6 +176,8 @@ void UWorld::RenderMesh(URenderer& Renderer)
 
 void UWorld::RenderBoundingBoxes(URenderer& Renderer)
 {
+	Renderer.PrepareMain();
+	Renderer.PrepareMainShader();
     for (FBox* Box : BoundingBoxes)
     {
         if (Box && Box->bCanBeRendered && Box->IsValidBox())
@@ -340,7 +339,7 @@ UWorldInfo UWorld::GetWorldInfo() const
     UWorldInfo WorldInfo;
     WorldInfo.ActorCount = Actors.Num();
     WorldInfo.ObjctInfos = new UObjectInfo*[WorldInfo.ActorCount];
-    WorldInfo.SceneName = *SceneName;
+    WorldInfo.SceneName = std::string(SceneName.c_char());
     WorldInfo.Version = 1;
     uint32 i = 0;
     for (auto& actor : Actors)

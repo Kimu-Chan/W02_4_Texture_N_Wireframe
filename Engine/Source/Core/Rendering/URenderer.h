@@ -39,7 +39,7 @@ public:
 	void PrepareRender();
 
 	/** 셰이더를 준비 합니다. */
-	void PrepareShader() const;
+	void PrepareMainShader() const;
 
 	void RenderPrimitive(class UPrimitiveComponent* PrimitiveComp);
 
@@ -115,7 +115,7 @@ public:
 
 	void RenderBillboard();
 
-	void UpdateTextureConstantBuffer(const FMatrix& World, float U, float V, float TotalCols, float TotalRows);
+	void UpdateTextureConstantBuffer(const FMatrix& World, float U, float V, float TotalCols, float TotalRows, FVector4 PartyMode);
 
 	// Text Billboard
 	// 버텍스 버퍼를 제외한 나머지 렌더링에 필요한 리소스는

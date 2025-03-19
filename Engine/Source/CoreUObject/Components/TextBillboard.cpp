@@ -10,7 +10,6 @@ UTextBillboard::UTextBillboard()
 void UTextBillboard::BeginPlay()
 {
 	Super::BeginPlay();
-	GetOwner()->GetWorld()->AddBillboardComponent(this);
 
 	int32 VertexCount = TextString.size() * 6;
 	UEngine::Get().GetRenderer()->CreateTextVertexBuffer(VertexCount);

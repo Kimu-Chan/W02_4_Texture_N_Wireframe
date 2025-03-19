@@ -3,13 +3,11 @@
 #include "CoreUObject/World.h"
 #include "CoreUObject/Components/SceneComponent.h"
 #include "CoreUObject/Components/PrimitiveComponent.h"
-#include "Debugging/DebugConsole.h"
 #include "Editor/Windows/ConsoleWindow.h"
 #include "Static/EditorManager.h"
-#include "../../../Billboard.h"
-#include "../TextBillboard.h"
+#include "Components/Billboard.h"
+#include "Components/TextBillboard.h"
 #include "Core/Rendering/TextureLoader.h"
-#include "Sphere.h"
 #include "Camera.h"
 
 REGISTER_CLASS(AActor);

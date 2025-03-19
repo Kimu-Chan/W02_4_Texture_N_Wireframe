@@ -67,8 +67,6 @@ LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             }
             int32 Width = LOWORD(lParam);
             int32 Height = HIWORD(lParam);
-            UEngine::Get().ResizeWidth = Width;
-            UEngine::Get().ResizeHeight = Height;
             UEngine::Get().UpdateWindowSize(Width, Height);
         }
         return 0;
@@ -155,7 +153,7 @@ void UEngine::Run()
 
         // Renderer Update
         Renderer->PrepareRender();
-        Renderer->PrepareShader();
+        Renderer->PrepareMainShader();
 
         // World Update
         if (World)
@@ -291,8 +289,12 @@ void UEngine::InitTextureLoader()
     TextureLoaderInstance = new TextureLoader(Renderer->GetDevice(), Renderer->GetDeviceContext());
 
 	// Texture Load
-    LoadTexture(L"ASCII", L"ASCII.png", 16, 16);
-    LoadTexture(L"Cat", L"Cat.jpg", 1, 1);
+    bool bLoaded = true;
+    bLoaded |= LoadTexture(L"ASCII", L"ASCII.png", 16, 16);
+    bLoaded |= LoadTexture(L"Cat", L"Cat.jpg", 1, 1);
+    bLoaded |= LoadTexture(L"HappyCat", L"HappyCat.png", 11, 11);
+    bLoaded |= LoadTexture(L"AppleCat", L"AppleCat.png", 2, 2);
+    bLoaded |= LoadTexture(L"DancingCat", L"DancingCat.png", 2, 2);
 
 	const TextureInfo* TextureInfo = GetTextureInfo(L"ASCII");
 
@@ -328,7 +330,6 @@ void UEngine::UpdateWindowSize(const uint32 InScreenWidth, const uint32 InScreen
     {
         ui.OnUpdateWindowSize(InScreenWidth, InScreenHeight);
     }
-	ResizeWidth = ResizeHeight = 0;
 
     APlayerInput::Get().SetWindowSize(ScreenWidth, ScreenHeight);
 
