@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "TextureLoader.h"
+#include "CoreUObject/NameTypes.h"
 #include <DirectXTK/WICTextureLoader.h>
 
 TextureLoader::TextureLoader(ID3D11Device* InDevice, ID3D11DeviceContext* InContext)
@@ -12,52 +13,53 @@ TextureLoader::~TextureLoader()
     ReleaseTextures();
 }
 
-bool TextureLoader::LoadTexture(const std::wstring& Name, const std::wstring& FileName, int32 InRows, int32 InColumns)
+bool TextureLoader::LoadTexture(const FName& Name, const FString& FileName, int32 InRows, int32 InColumns)
 {
     // 맵 확인
-    std::unordered_map<std::wstring, TextureInfo>::iterator iter = TextureMap.find(Name);
-    if (iter != TextureMap.end())
+    TextureInfo* Info = TextureMap.Find(Name);
+
+    if (Info)
     {
         return true;
     }
 
-    std::wstring FullPath = GetFullPath(FileName);
+    FString FullPath = GetFullPath(FileName);
 
     // DirectX 텍스처 로드
     ID3D11ShaderResourceView* ShaderResourceView;
-    HRESULT Result = DirectX::CreateWICTextureFromFile(Device, Context, FullPath.c_str() , nullptr, &ShaderResourceView);
+    HRESULT Result = DirectX::CreateWICTextureFromFile(Device, Context, FullPath.c_wchar(), nullptr, &ShaderResourceView);
 	if (FAILED(Result))
 	{
 		return false;
 	}
     
     // 텍스처 정보 추가
-    TextureInfo Info;
-    Info.Rows = InRows;
-    Info.Cols = InColumns;
-	Info.ShaderResourceView = ShaderResourceView;
+    TextureInfo NewInfo;
+    NewInfo.Rows = InRows;
+    NewInfo.Cols = InColumns;
+    NewInfo.ShaderResourceView = ShaderResourceView;
     
-    TextureMap[Name] = Info;
+	TextureMap.Add(Name, NewInfo);
 
     return true;
 }
 
-TextureInfo* TextureLoader::GetTextureInfo(const std::wstring& Name) 
+TextureInfo* TextureLoader::GetTextureInfo(const FName& Name)
 {
-    std::unordered_map<std::wstring, TextureInfo>::iterator iter = TextureMap.find(Name);
-    if (TextureMap.end() != iter)
-    {
-        return &iter->second;
-    }
-    return nullptr;
+    TextureInfo* Info = TextureMap.Find(Name);
+    return Info;
 }
 
 void TextureLoader::ReleaseTextures()
 {
-	TextureMap.clear();
+	for (auto& Pair : TextureMap)
+	{
+		Pair.Value.ShaderResourceView->Release();
+	}
+    TextureMap.Empty();
 }
 
-std::wstring TextureLoader::GetFullPath(const std::wstring& FileName) const
+FString TextureLoader::GetFullPath(const FString& FileName) const
 {
     return RESOURCE_PATH + FileName;
 }

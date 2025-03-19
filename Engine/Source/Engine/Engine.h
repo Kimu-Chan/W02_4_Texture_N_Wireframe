@@ -78,8 +78,8 @@ public:
 
     void SetWorldGridGap(float InWorldGridGap) { WorldGridGap = InWorldGridGap; }
 
-    bool LoadTexture(const std::wstring& Name, const std::wstring& FileName, int32 Rows = 1, int32 Columns = 1);
-    TextureInfo* GetTextureInfo(const std::wstring& Name) const;
+    bool LoadTexture(const FName& Name, const FString& FileName, int32 Rows = 1, int32 Columns = 1);
+    TextureInfo* GetTextureInfo(const FName& Name) const;
 private:
     bool bIsExit = false;
     EScreenMode ScreenMode = EScreenMode::Windowed;

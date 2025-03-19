@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "PlatformType.h"
 #include "PlatformMemory.h"

@@ -1,7 +1,8 @@
 #pragma once
 
-#define RESOURCE_PATH L"Resources/"
-
+#define RESOURCE_PATH TEXT("Resources/")
+#include "Container/Map.h"
+#include "NameTypes.h"
 
 struct TextureInfo
 {
@@ -16,15 +17,15 @@ public:
 	TextureLoader(ID3D11Device* InDevice, ID3D11DeviceContext* InContext);
 	~TextureLoader();
 
-	bool LoadTexture(const std::wstring& Name, const std::wstring& FileName, int32 InRows, int32 InColumns);
-	TextureInfo* GetTextureInfo(const std::wstring& Name);
+	bool LoadTexture(const FName& Name, const FString& FileName, int32 InRows, int32 InColumns);
+	TextureInfo* GetTextureInfo(const FName& Name);
 	void ReleaseTextures();
 
 private:
 	ID3D11Device* Device;
 	ID3D11DeviceContext* Context;
-	std::unordered_map<std::wstring, TextureInfo> TextureMap;
+	TMap<FName, TextureInfo> TextureMap;
 
-	std::wstring GetFullPath(const std::wstring& FileName) const;
+	FString GetFullPath(const FString& FileName) const;
 };
 

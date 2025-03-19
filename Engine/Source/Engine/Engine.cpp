@@ -290,13 +290,13 @@ void UEngine::InitTextureLoader()
 
 	// Texture Load
     bool bLoaded = true;
-    bLoaded |= LoadTexture(L"ASCII", L"ASCII.png", 16, 16);
-    bLoaded |= LoadTexture(L"Cat", L"Cat.jpg", 1, 1);
-    bLoaded |= LoadTexture(L"HappyCat", L"HappyCat.png", 11, 11);
-    bLoaded |= LoadTexture(L"AppleCat", L"AppleCat.png", 2, 2);
-    bLoaded |= LoadTexture(L"DancingCat", L"DancingCat.png", 2, 2);
+    bLoaded |= LoadTexture(TEXT("ASCII"), TEXT("ASCII.png"), 16, 16);
+    bLoaded |= LoadTexture(TEXT("Cat"), TEXT("Cat.jpg"), 1, 1);
+    bLoaded |= LoadTexture(TEXT("HappyCat"), TEXT("HappyCat.png"), 11, 11);
+    bLoaded |= LoadTexture(TEXT("AppleCat"), TEXT("AppleCat.png"), 2, 2);
+    bLoaded |= LoadTexture(TEXT("DancingCat"), TEXT("DancingCat.png"), 2, 2);
 
-	const TextureInfo* TextureInfo = GetTextureInfo(L"ASCII");
+    const TextureInfo* TextureInfo = GetTextureInfo(TEXT("ASCII"));
 
     int b = 0;
     
@@ -355,7 +355,7 @@ UObject* UEngine::GetObjectByUUID(uint32 InUUID) const
     return nullptr;
 }
 
-bool UEngine::LoadTexture(const std::wstring& Name, const std::wstring& FileName, int32 Rows, int32 Columns)
+bool UEngine::LoadTexture(const FName& Name, const FString& FileName, int32 Rows, int32 Columns)
 {
 	if (TextureLoaderInstance)
 	{
@@ -364,7 +364,7 @@ bool UEngine::LoadTexture(const std::wstring& Name, const std::wstring& FileName
     return false;
 }
 
- TextureInfo* UEngine::GetTextureInfo(const std::wstring& Name) const
+ TextureInfo* UEngine::GetTextureInfo(const FName& Name) const
 {
     if (TextureLoaderInstance)
     {
