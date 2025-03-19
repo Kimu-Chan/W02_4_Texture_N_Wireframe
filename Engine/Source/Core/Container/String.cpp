@@ -3,15 +3,23 @@
 #include "Core/Math/MathUtility.h"
 #include "Template/Template.h"
 
-#if IS_WIDECHAR
 std::wstring FString::ConvertWideChar(const ANSICHAR* NarrowStr)
 {
     const int Size = MultiByteToWideChar(CP_UTF8, 0, NarrowStr, -1, nullptr, 0);
-    std::wstring Str(Size, 0);
+    std::wstring Str;
+    Str.resize(Size - 1);
     MultiByteToWideChar(CP_UTF8, 0, NarrowStr, -1, Str.data(), Size);
     return Str;
 }
-#endif
+
+std::string FString::ConvertMultibyte(const WIDECHAR* WideStr)
+{
+	const int Size = WideCharToMultiByte(CP_UTF8, 0, WideStr, -1, nullptr, 0, nullptr, nullptr);
+    std::string Str;
+	Str.resize(Size - 1);
+	WideCharToMultiByte(CP_UTF8, 0, WideStr, -1, Str.data(), Size, nullptr, nullptr);
+	return Str;
+}
 
 FString FString::FromInt(int32 Num)
 {

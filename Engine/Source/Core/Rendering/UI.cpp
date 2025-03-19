@@ -251,7 +251,8 @@ void UI::RenderPrimitiveSelection()
     UWorld* World = UEngine::Get().GetWorld();
     uint32 bufferSize = 100;
     char* SceneNameInput = new char[bufferSize];
-    strcpy_s(SceneNameInput, bufferSize, *World->SceneName);
+
+    strcpy_s(SceneNameInput, bufferSize, World->SceneName.c_char());
     
     if (ImGui::InputText("Scene Name", SceneNameInput, bufferSize))
     {
@@ -419,8 +420,8 @@ void UI::RenderPropertyWindow()
     USceneComponent* SelectedComponent = FEditorManager::Get().GetSelectedComponent();
     if (SelectedComponent != nullptr)
     {
-        ImGui::Text("Selected Actor : %s", *SelectedComponent->GetOwner()->GetName());
-		ImGui::Text("Selected Component : %s", *SelectedComponent->GetName());
+        ImGui::Text("Selected Actor : %s", SelectedComponent->GetOwner()->GetName().c_char());
+		ImGui::Text("Selected Component : %s", SelectedComponent->GetName().c_char());
 
 		bool bIsLocal = FEditorManager::Get().GetGizmoHandle()->bIsLocal;
 		if (ImGui::Checkbox("Local", &bIsLocal))

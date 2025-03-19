@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 // There is only FName right now, Can be expanded to include other name types
 
 #include "HAL/PlatformType.h"

@@ -54,7 +54,10 @@ public:
 	}
 	bool GetVisibility() const { return bVisibility; }
 
-	void SetItemLabel(const FString& InItemLabel) { ItemLabel = InItemLabel; }
+	void SetItemLabel(const FString& InItemLabel) 
+    { 
+        ItemLabel = InItemLabel;
+    }
     FString GetItemLabel() const { return ItemLabel; }
 	void SetType(const FString& InType) { Type = InType; }
     FString GetType() const { return Type; }
@@ -109,7 +112,8 @@ public:
 
         if (is_folder)
         {
-            bool open = ImGui::TreeNodeEx(*node->ItemLabel, node_flags);
+            const char* itemlabel = node->ItemLabel.c_char();
+            bool open = ImGui::TreeNodeEx(itemlabel, node_flags);
             ImGui::TableSetColumnIndex(0);
             ImGui::PushID(node);
             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
@@ -117,12 +121,12 @@ public:
             ImGui::PopStyleVar();
             ImGui::PopID();
             ImGui::TableSetColumnIndex(4);
-            ImGui::TextUnformatted(*node->Type);
+            ImGui::TextUnformatted((node->Type).c_char());
             ImGui::TableNextColumn();
-            ImGui::TextUnformatted(*FString::FromInt(node->GetUUID()));
+            ImGui::TextUnformatted(FString::FromInt(node->GetUUID()).c_char());
         	ImGui::TableNextColumn();
             if (node->Parent)
-				ImGui::TextUnformatted(*FString::FromInt(node->Parent->GetUUID()));
+				ImGui::TextUnformatted(FString::FromInt(node->Parent->GetUUID()).c_char());
 
             if (open)
             {
@@ -137,7 +141,8 @@ public:
         }
 		else // Display leaf node
         {
-            ImGui::TreeNodeEx(*node->ItemLabel, node_flags | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen);
+            const char* itemlabel = node->ItemLabel.c_char();
+            ImGui::TreeNodeEx(itemlabel, node_flags | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen);
             ImGui::TableSetColumnIndex(0);
             ImGui::PushID(node);
             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
@@ -145,12 +150,12 @@ public:
             ImGui::PopStyleVar();
             ImGui::PopID();
             ImGui::TableSetColumnIndex(4);
-            ImGui::TextUnformatted(*node->Type);
+            ImGui::TextUnformatted(node->Type.c_char());
             ImGui::TableNextColumn();
-            ImGui::TextUnformatted(*FString::FromInt(node->GetUUID()));
+            ImGui::TextUnformatted(FString::FromInt(node->GetUUID()).c_char());
             ImGui::TableNextColumn();
             if (node->Parent)
-				ImGui::TextUnformatted(*FString::FromInt(node->Parent->GetUUID()));
+				ImGui::TextUnformatted(FString::FromInt(node->Parent->GetUUID()).c_char());
         }
     }
 

@@ -88,10 +88,10 @@ void UWorld::Render(float DeltaTime)
     }
     RenderMainTexture(*Renderer);
     RenderMesh(*Renderer);
-	RenderBillboard(*Renderer);
     
 	RenderBoundingBoxes(*Renderer);
     RenderDebugLines(*Renderer, DeltaTime);
+	RenderBillboard(*Renderer);
 
     // DisplayPickingTexture(*Renderer);
 }
@@ -179,6 +179,8 @@ void UWorld::RenderMesh(URenderer& Renderer)
 
 void UWorld::RenderBoundingBoxes(URenderer& Renderer)
 {
+	Renderer.PrepareMain();
+	Renderer.PrepareMainShader();
     for (FBox* Box : BoundingBoxes)
     {
         if (Box && Box->bCanBeRendered && Box->IsValidBox())
@@ -340,7 +342,7 @@ UWorldInfo UWorld::GetWorldInfo() const
     UWorldInfo WorldInfo;
     WorldInfo.ActorCount = Actors.Num();
     WorldInfo.ObjctInfos = new UObjectInfo*[WorldInfo.ActorCount];
-    WorldInfo.SceneName = *SceneName;
+    WorldInfo.SceneName = std::string(SceneName.c_char());
     WorldInfo.Version = 1;
     uint32 i = 0;
     for (auto& actor : Actors)

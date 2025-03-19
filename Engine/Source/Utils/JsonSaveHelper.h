@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Core/HAL/PlatformType.h"
 #include "Core/Math/Vector.h"

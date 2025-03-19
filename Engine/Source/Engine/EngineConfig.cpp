@@ -1,11 +1,12 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "EngineConfig.h"
 #include "IniParser/iniparser.hpp"
 
 FEngineConfig::FEngineConfig()
 {
-	Path = "engine.ini";
-	ft.Load(*Path);
+	Path = TEXT("engine.ini");
+	std::string PathStr(Path.c_char());
+	ft.Load(PathStr);
 }
 
 FEngineConfig::~FEngineConfig()
@@ -20,12 +21,13 @@ void FEngineConfig::LoadEngineConfig()
 		if (SectionMapping.Section == EEngineConfigSectionType::ECS_None)
 			continue;
 
-		INI::Section* Section = ft.GetSection(*SectionMapping.Key);
+		std::string SectionName(SectionMapping.Key.c_char());
+		INI::Section* Section = ft.GetSection(SectionName);
 
 		TArray<ConfigMapping> ConfigList = GetConfigList(SectionMapping.Section);
 		for (auto& Config : ConfigList)
 		{
-			FString Value = Section->GetValue(*Config.Key).AsString();
+			FString Value = Section->GetValue(std::string(Config.Key.c_char())).AsString();
 
 			if (Value.IsEmpty() || Value == "")
 				continue;
@@ -38,18 +40,18 @@ void FEngineConfig::SaveAllConfig()
 {
 	for (auto& SectionMapping : SectionMappings)
 	{
-		INI::Section* Section = ft.GetSection(*SectionMapping.Key);
+		INI::Section* Section = ft.GetSection(std::string(SectionMapping.Key.c_char()));
 		for (auto& ConfigMapping : ConfigMappings)
 		{
 			FString Value = EngineConfig[SectionMapping.Section][ConfigMapping.Config];
 			if (Value.IsEmpty() || Value == "")
 				continue;
 
-			Section->SetValue(*ConfigMapping.Key, EngineConfig[SectionMapping.Section][ConfigMapping.Config]);
+			Section->SetValue(std::string(ConfigMapping.Key.c_char()), EngineConfig[SectionMapping.Section][ConfigMapping.Config]);
 		}
 	}
 
-	ft.Save(*Path);
+	ft.Save(std::string(Path.c_char()));
 }
 
 EEngineConfigSectionType FEngineConfig::FindSection(const EEngineConfigValueType& InValueType) const
