@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "CatActor.h"
 
 #include "Camera.h"
@@ -13,12 +13,12 @@ ACatActor::ACatActor()
 {
     UBillboard* Root = AddComponent<UBillboard>();
     RootComponent = Root;
-    TextureInfo* TexInfo = UEngine::Get().GetTextureInfo(L"Cat");
+    TextureInfo* TexInfo = UEngine::Get().GetTextureInfo(TEXT("Cat"));
     Root->SetTexture(TexInfo->ShaderResourceView);
     Root->bCanBeRendered = true;
 
     HappyCatBillboard = AddComponent<UAnimatedBillboard>();
-    TexInfo = UEngine::Get().GetTextureInfo(L"HappyCat"); // TODO: TEXT 매크로
+    TexInfo = UEngine::Get().GetTextureInfo(TEXT("HappyCat")); // TODO: TEXT 매크로
     HappyCatBillboard->SetTexture(TexInfo->ShaderResourceView, 11, 11);
     HappyCatBillboard->SetupAttachment(Root);
     HappyCatBillboard->SetPlayRate(25);
@@ -27,7 +27,7 @@ ACatActor::ACatActor()
     HappyCatBillboard->PartyTrigger = 3.5f;
     
     AppleCatBillboard = AddComponent<UAnimatedBillboard>();
-    TexInfo = UEngine::Get().GetTextureInfo(L"AppleCat");
+    TexInfo = UEngine::Get().GetTextureInfo(TEXT("AppleCat"));
     AppleCatBillboard->SetTexture(TexInfo->ShaderResourceView, 2, 2);
     AppleCatBillboard->SetupAttachment(Root);
     AppleCatBillboard->SetPlayRate(12);
@@ -36,7 +36,7 @@ ACatActor::ACatActor()
     AppleCatBillboard->PartyTrigger = 3.5f;
     
     DancingCatBillboard = AddComponent<UAnimatedBillboard>();
-    TexInfo = UEngine::Get().GetTextureInfo(L"DancingCat");
+    TexInfo = UEngine::Get().GetTextureInfo(TEXT("DancingCat"));
     DancingCatBillboard->SetTexture(TexInfo->ShaderResourceView, 2, 2);
     DancingCatBillboard->SetupAttachment(Root);
     DancingCatBillboard->SetPlayRate(4);
